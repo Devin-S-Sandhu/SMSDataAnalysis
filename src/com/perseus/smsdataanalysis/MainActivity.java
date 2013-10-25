@@ -78,5 +78,16 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	public void startAnalysisActivity(View view) {
+		Intent myIntent = new Intent(MainActivity.this, AnalysisMenuActivity.class);
+		//myIntent.putExtra("key", value); //Optional parameters
+		MainActivity.this.startActivity(myIntent);
+	}
 
+	public void startBattleActivity(View view) {
+		Intent myIntent = new Intent(MainActivity.this, BattleMenuActivity.class);
+		//myIntent.putExtra("key", value); //Optional parameters
+		MainActivity.this.startActivity(myIntent);
+	}
 }
