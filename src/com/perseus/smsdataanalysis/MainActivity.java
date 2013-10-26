@@ -1,22 +1,19 @@
 package com.perseus.smsdataanalysis;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.EditText;
-import android.util.Log;
 
 public class MainActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";

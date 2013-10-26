@@ -8,7 +8,17 @@
     <string name="title_section3">Section 3</string>
     <string name="dataAnalysis_text">Data Analysis</string>
     <string name="friendBattle_text">Friend Battle</string>
-    
-    
+    <string name="analysis_type_text">Type of Analysis</string>
+    <string name="analyze_text">Analyze</string>
+    <string name="from_text">FROM</string>
+    <string name="to_text">TO</string>
+    <string name="select_contact_hint">select contacts...</string>
+
+    <string-array name="analaysis_type_arrays">
+        <item>Type 0</item>
+        <item>Type 1</item>
+        <item>Type 2</item>
+        <item>Type 3</item>
+    </string-array>
 
 </resources>
