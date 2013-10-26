@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
-	private Spinner spinner1;
+	private Spinner analysisType;
 	private Button btnSubmit;
 	private TextView startDate, endDate;
 
@@ -53,7 +53,6 @@ public class AnalysisMenuActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 
-		addListenerOnButton();
 		addListenerOnSpinnerItemSelection();
 		setCurrentDateOnView();
 
@@ -112,27 +111,9 @@ public class AnalysisMenuActivity extends Activity {
 		return true;
 	}
 
-	// get the selected dropdown list value
-	public void addListenerOnButton() {
-		spinner1 = (Spinner) findViewById(R.id.analysis_type);
-		btnSubmit = (Button) findViewById(R.id.btnAnalyze);
-
-		btnSubmit.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(
-						AnalysisMenuActivity.this,
-						"OnClickListener : " + "\nSpinner 1 : "
-								+ String.valueOf(spinner1.getSelectedItem()),
-						Toast.LENGTH_SHORT).show();
-			}
-
-		});
-	}
-
 	public void addListenerOnSpinnerItemSelection() {
-		spinner1 = (Spinner) findViewById(R.id.analysis_type);
-		spinner1.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+		analysisType = (Spinner) findViewById(R.id.analysis_type);
+		analysisType.setOnItemSelectedListener(new CustomOnItemSelectedListener());
 	}
 
 	private class CustomOnItemSelectedListener implements
@@ -266,4 +247,12 @@ public class AnalysisMenuActivity extends Activity {
 			}
 		}
 	};
+	
+	public void analyze(View view) {
+		Intent myIntent = new Intent(AnalysisMenuActivity.this, AnalysisResultActivity.class);
+		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
+		myIntent.putExtra("start_date", startDate.getText().toString());
+		myIntent.putExtra("end_date", endDate.getText().toString());
+		AnalysisMenuActivity.this.startActivity(myIntent);
+	}
 }
