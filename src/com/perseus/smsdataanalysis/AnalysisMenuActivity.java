@@ -6,16 +6,15 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,8 +23,8 @@ import android.widget.Toast;
 public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
-	private Button btnSubmit;
 	private TextView startDate, endDate;
+	private TextView selectContact;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -40,9 +39,9 @@ public class AnalysisMenuActivity extends Activity {
 	static final int CURR_MONTH = Calendar.getInstance().get(Calendar.MONTH);
 	static final int CURR_DAY = Calendar.getInstance().get(
 			Calendar.DAY_OF_MONTH);
-	
+
 	private static final int CONTACT_PICKER_RESULT = 1001;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,6 +51,7 @@ public class AnalysisMenuActivity extends Activity {
 		this.setTitle("Data Analysis Menu");
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
+		selectContact = (TextView) findViewById(R.id.select_contact);
 
 		addListenerOnSpinnerItemSelection();
 		setCurrentDateOnView();
@@ -61,48 +61,59 @@ public class AnalysisMenuActivity extends Activity {
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
 	}
+
 	public void doLaunchContactPicker(View view) {
-		Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+		Intent intent = new Intent(Intent.ACTION_PICK,
+				ContactsContract.Contacts.CONTENT_URI);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
-	
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-            case CONTACT_PICKER_RESULT:
-            	Uri result = data.getData();
-            	Log.v(LOG_TAG, "Got a result: " + result.toString());
-/*
-            	// get the phone number id from the Uri
-            	String id = result.getLastPathSegment();
 
-            	// query the phone numbers for the selected phone number id
-            	Cursor c = getContentResolver().query(
-            	    Phone.CONTENT_URI, null,
-            	    Phone._ID + "=?",
-            	    new String[]{id}, null);
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case CONTACT_PICKER_RESULT:
+				Uri contactData = data.getData();
+				@SuppressWarnings("deprecation")
+				Cursor c = managedQuery(contactData, null, null, null, null);
+				if (c.moveToFirst()) {
+					String id = c
+							.getString(c
+									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
 
-            	int phoneIdx = c.getColumnIndex(Phone.NUMBER);
+					String hasPhone = c
+							.getString(c
+									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
 
-            	if(c.getCount() == 1) { // contact has a single phone number
-            	    // get the only phone number
-            	    if(c.moveToFirst()) {
-            	        String phone = c.getString(phoneIdx);
-            	        Log.v(TAG, "Got phone number: " + phone);
+					if (hasPhone.equalsIgnoreCase("1")) {
+						Cursor phones = getContentResolver()
+								.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+										null,
+										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+												+ " = " + id, null, null);
+						phones.moveToFirst();
+						String cNumber = phones
+								.getString(phones
+										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+						Toast.makeText(getApplicationContext(), cNumber,
+								Toast.LENGTH_SHORT).show();
 
-            	        loadContactInfo(phone); // do something with the phone number
+						String nameContact = c
+								.getString(c
+										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 
-            	    } else {
-            	        Log.w(TAG, "No results");
-            	    }
-            	}*/
-                break;
-            }
-        } else {
-            // gracefully handle failure
-            Log.w(LOG_TAG, "Warning: activity result not ok");
-        }
-    }
+						selectContact.setText(new StringBuilder()
+								.append(selectContact.getText().toString())
+								.append(nameContact).append(" <")
+								.append(cNumber).append(">").append(", "));
+					}
+				}
+				break;
+			}
+		} else {
+			// gracefully handle failure
+			Log.w(LOG_TAG, "Warning: activity result not ok");
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,7 +124,8 @@ public class AnalysisMenuActivity extends Activity {
 
 	public void addListenerOnSpinnerItemSelection() {
 		analysisType = (Spinner) findViewById(R.id.analysis_type);
-		analysisType.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+		analysisType
+				.setOnItemSelectedListener(new CustomOnItemSelectedListener());
 	}
 
 	private class CustomOnItemSelectedListener implements
@@ -194,9 +206,10 @@ public class AnalysisMenuActivity extends Activity {
 					|| (selectedYear == end_year && selectedMonth > end_month)
 					|| (selectedYear == end_year
 							&& selectedMonth == start_month && selectedDay > end_day)) {
-				Toast.makeText(AnalysisMenuActivity.this, "Invalid start date!",
-						Toast.LENGTH_SHORT).show();
-				startDatePickerDialog.updateDate(start_year, start_month, start_day);
+				Toast.makeText(AnalysisMenuActivity.this,
+						"Invalid start date!", Toast.LENGTH_SHORT).show();
+				startDatePickerDialog.updateDate(start_year, start_month,
+						start_day);
 			} else {
 				start_day = selectedDay;
 				start_month = selectedMonth;
@@ -220,8 +233,7 @@ public class AnalysisMenuActivity extends Activity {
 				Toast.makeText(AnalysisMenuActivity.this,
 						"Invalid end date! Cannot analyze future texts!",
 						Toast.LENGTH_SHORT).show();
-				endDatePickerDialog.updateDate(end_year, end_month,
-						end_day);
+				endDatePickerDialog.updateDate(end_year, end_month, end_day);
 			} else {
 				if ((selectedYear < start_year)
 						|| (selectedYear == start_year && selectedMonth < start_month)
@@ -231,11 +243,12 @@ public class AnalysisMenuActivity extends Activity {
 					start_month = end_month;
 					start_year = end_year;
 					// set selected date into textview
-					startDate.setText(new StringBuilder().append(start_month + 1)
-							.append("-").append(start_day).append("-")
-							.append(start_year).append(" "));
-					startDatePickerDialog
-							.updateDate(start_year, start_month, start_day);
+					startDate.setText(new StringBuilder()
+							.append(start_month + 1).append("-")
+							.append(start_day).append("-").append(start_year)
+							.append(" "));
+					startDatePickerDialog.updateDate(start_year, start_month,
+							start_day);
 				}
 				end_year = selectedYear;
 				end_month = selectedMonth;
@@ -247,12 +260,14 @@ public class AnalysisMenuActivity extends Activity {
 			}
 		}
 	};
-	
+
 	public void analyze(View view) {
-		Intent myIntent = new Intent(AnalysisMenuActivity.this, AnalysisResultActivity.class);
+		Intent myIntent = new Intent(AnalysisMenuActivity.this,
+				AnalysisResultActivity.class);
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
+		myIntent.putExtra("contacts", selectContact.getText().toString());
 		AnalysisMenuActivity.this.startActivity(myIntent);
 	}
 }

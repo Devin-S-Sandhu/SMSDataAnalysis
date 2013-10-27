@@ -12,7 +12,8 @@
     <string name="analyze_text">Analyze</string>
     <string name="from_text">FROM</string>
     <string name="to_text">TO</string>
-    <string name="select_contact_hint">select contacts...</string>
+    <string name="contacts_text">Contacts</string>
+    <string name="select_contact_hint">select contacts&#8230;</string>
 
     <string-array name="analaysis_type_arrays">
         <item>Type 0</item>

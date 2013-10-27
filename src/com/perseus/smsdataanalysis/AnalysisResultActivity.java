@@ -14,6 +14,7 @@ public class AnalysisResultActivity extends Activity {
 	private TextView analysisType;
 	private TextView startDate;
 	private TextView endDate;
+	private TextView contacts;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +27,14 @@ public class AnalysisResultActivity extends Activity {
 		analysisType = (TextView) findViewById(R.id.analysis_type);
 		startDate = (TextView) findViewById(R.id.start_date);
 		endDate = (TextView) findViewById(R.id.end_date);
+		contacts = (TextView) findViewById(R.id.contacts);
 		
 		Intent intent = getIntent();
 
 		analysisType.setText(intent.getStringExtra("type"));
 		startDate.setText(intent.getStringExtra("start_date"));
 		endDate.setText(intent.getStringExtra("end_date"));
+		contacts.setText(intent.getStringExtra("contacts"));
 	}
 
 	@Override

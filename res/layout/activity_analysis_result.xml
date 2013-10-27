@@ -22,4 +22,11 @@
         android:layout_height="wrap_content"
         android:text="@string/to_text"/>
 
+    <TextView
+        android:id="@+id/contacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_contact_hint"/>
+    
+
 </LinearLayout>
