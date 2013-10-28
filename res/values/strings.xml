@@ -16,10 +16,9 @@
     <string name="select_contact_hint">select contacts&#8230;</string>
 
     <string-array name="analaysis_type_arrays">
-        <item>Type 0</item>
-        <item>Type 1</item>
-        <item>Type 2</item>
-        <item>Type 3</item>
+        <item>Word Frequency</item>
+        <item>Word Frequency Sent</item>
+        <item>Word Frequency Received</item>
     </string-array>
 
 </resources>
