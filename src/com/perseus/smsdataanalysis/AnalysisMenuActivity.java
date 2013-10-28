@@ -52,6 +52,7 @@ public class AnalysisMenuActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (TextView) findViewById(R.id.select_contact);
+		selectContact.setWidth(500);
 
 		addListenerOnSpinnerItemSelection();
 		setCurrentDateOnView();
@@ -105,6 +106,7 @@ public class AnalysisMenuActivity extends Activity {
 								.append(selectContact.getText().toString())
 								.append(nameContact).append(" <")
 								.append(cNumber).append(">").append(", "));
+						selectContact.setWidth(500);
 					}
 				}
 				break;
