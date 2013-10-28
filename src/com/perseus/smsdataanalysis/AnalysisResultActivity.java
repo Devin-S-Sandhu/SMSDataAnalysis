@@ -18,7 +18,6 @@ public class AnalysisResultActivity extends Activity {
 	private TextView contacts;
 	private TextView result;
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,10 +35,13 @@ public class AnalysisResultActivity extends Activity {
 
 		Intent intent = getIntent();
 
-		ArrayList<String> queryResult = mAnalyzer.query(intent.getStringExtra("type"),
+		Analyzer.Query query = mAnalyzer.new Query(
+				intent.getStringExtra("type"),
 				intent.getStringExtra("start_date"),
 				intent.getStringExtra("end_date"),
 				intent.getStringExtra("contacts"), getApplicationContext());
+
+		ArrayList<String> queryResult = mAnalyzer.doQuery(query);
 
 		analysisType.setText(intent.getStringExtra("type"));
 		startDate.setText(intent.getStringExtra("start_date"));
