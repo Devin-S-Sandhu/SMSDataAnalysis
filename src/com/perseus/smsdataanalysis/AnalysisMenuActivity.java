@@ -164,12 +164,12 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	private void setCurrentDate() {
-		start_year = CURR_YEAR;
-		start_month = CURR_MONTH;
-		start_day = CURR_DAY;
-		end_year = start_year;
-		end_month = start_month;
-		end_day = start_day;
+		start_year = 1900;
+		start_month = 0;
+		start_day = 1;
+		end_year = CURR_YEAR;
+		end_month = CURR_MONTH;
+		end_day = CURR_DAY;
 	}
 
 	@SuppressWarnings("deprecation")
