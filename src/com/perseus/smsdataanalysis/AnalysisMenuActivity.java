@@ -52,7 +52,7 @@ public class AnalysisMenuActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (TextView) findViewById(R.id.select_contact);
-		selectContact.setWidth(500);
+		//selectContact.setWidth(500);
 
 		addListenerOnSpinnerItemSelection();
 		setCurrentDateOnView();
@@ -61,12 +61,6 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-	}
-
-	public void doLaunchContactPicker(View view) {
-		Intent intent = new Intent(Intent.ACTION_PICK,
-				ContactsContract.Contacts.CONTENT_URI);
-		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,7 +100,7 @@ public class AnalysisMenuActivity extends Activity {
 								.append(selectContact.getText().toString())
 								.append(nameContact).append(" <")
 								.append(cNumber).append(">").append(", "));
-						selectContact.setWidth(500);
+						//selectContact.setWidth(500);
 					}
 				}
 				break;
@@ -171,17 +165,7 @@ public class AnalysisMenuActivity extends Activity {
 		end_month = CURR_MONTH;
 		end_day = CURR_DAY;
 	}
-
-	@SuppressWarnings("deprecation")
-	public void pickStartDate(View view) {
-		showDialog(START_DATE_DIALOG_ID);
-	}
-
-	@SuppressWarnings("deprecation")
-	public void pickEndDate(View view) {
-		showDialog(END_DATE_DIALOG_ID);
-	}
-
+	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
@@ -263,6 +247,16 @@ public class AnalysisMenuActivity extends Activity {
 		}
 	};
 
+	@SuppressWarnings("deprecation")
+	public void pickStartDate(View view) {
+		showDialog(START_DATE_DIALOG_ID);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void pickEndDate(View view) {
+		showDialog(END_DATE_DIALOG_ID);
+	}
+
 	public void analyze(View view) {
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
@@ -271,5 +265,11 @@ public class AnalysisMenuActivity extends Activity {
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		myIntent.putExtra("contacts", selectContact.getText().toString());
 		AnalysisMenuActivity.this.startActivity(myIntent);
+	}
+
+	public void doLaunchContactPicker(View view) {
+		Intent intent = new Intent(Intent.ACTION_PICK,
+				ContactsContract.Contacts.CONTENT_URI);
+		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 }
