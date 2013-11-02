@@ -71,12 +71,13 @@
         android:layout_height="wrap_content"
         android:padding="5dip" >
 
-        <EditText
+        <MultiAutoCompleteTextView
             android:id="@+id/select_contact"
             android:layout_width="0dp"
+            android:layout_height="fill_parent"
             android:layout_weight="2"
-            android:hint="@string/select_contact_hint"
-            android:inputType="phone" />
+            android:hint="@string/select_contact_hint" >
+        </MultiAutoCompleteTextView>
 
         <Button
             android:id="@+id/btnSelect_contact"

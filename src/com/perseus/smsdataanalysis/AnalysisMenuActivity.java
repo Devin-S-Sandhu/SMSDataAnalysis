@@ -1,21 +1,30 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CursorAdapter;
 import android.widget.DatePicker;
+import android.widget.Filterable;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +33,7 @@ public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
 	private TextView startDate, endDate;
-	private TextView selectContact;
+	private MultiAutoCompleteTextView selectContact;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -42,6 +51,10 @@ public class AnalysisMenuActivity extends Activity {
 
 	private static final int CONTACT_PICKER_RESULT = 1001;
 
+	public static final String[] PEOPLE_PROJECTION = new String[] {
+			ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
+			ContactsContract.CommonDataKinds.Phone.NUMBER};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,8 +64,7 @@ public class AnalysisMenuActivity extends Activity {
 		this.setTitle("Data Analysis Menu");
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
-		selectContact = (TextView) findViewById(R.id.select_contact);
-		//selectContact.setWidth(500);
+		selectContact = (MultiAutoCompleteTextView) findViewById(R.id.select_contact);
 
 		addListenerOnSpinnerItemSelection();
 		setCurrentDateOnView();
@@ -61,6 +73,75 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
+		ContentResolver content = getContentResolver();
+		Cursor cursor = content.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+				PEOPLE_PROJECTION, null, null, null);
+		ContactListAdapter adapter = new ContactListAdapter(this, cursor);
+		selectContact.setThreshold(0);
+		selectContact.setAdapter(adapter);
+		selectContact.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer() );
+		selectContact.setVerticalScrollBarEnabled(true);
+	}
+
+	private class ContactListAdapter extends CursorAdapter implements
+			Filterable {
+		private ContentResolver mCR;
+
+		@SuppressWarnings("deprecation")
+		public ContactListAdapter(Context context, Cursor c) {
+			super(context, c);
+			mCR = context.getContentResolver();
+		}
+
+		@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+
+			((TextView) view).setText(new StringBuilder()
+			.append(cursor.getString(1)).append(" ")
+			.append(cursor.getString(2)));
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			final LayoutInflater inflater = LayoutInflater.from(context);
+			final TextView view = (TextView) inflater.inflate(
+					android.R.layout.simple_dropdown_item_1line, parent, false);
+			view.setText(cursor.getString(1));
+			return view;
+
+		}
+
+		@Override
+		public String convertToString(Cursor cursor) {
+			// output text
+			return new StringBuilder()
+			.append(cursor.getString(1)).append(" <")
+			.append(cursor.getString(2)).append(">").append(", ").toString();
+		}
+
+		public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
+			if (getFilterQueryProvider() != null) {
+				return getFilterQueryProvider().runQuery(constraint);
+			}
+
+			StringBuilder buffer = null;
+			String[] args = null;
+			if (constraint != null) {
+				buffer = new StringBuilder();
+				buffer.append("UPPER(");
+				buffer.append(Contacts.DISPLAY_NAME);
+				buffer.append(") GLOB ?");
+				args = new String[] { constraint.toString().toUpperCase(Locale.US) + "*" };
+			}
+
+			return mCR.query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, //URI
+					PEOPLE_PROJECTION, // projection
+					buffer == null ? null: buffer.toString(), //selection
+					args, //selectionArgs
+					Contacts.DISPLAY_NAME //sortOrder
+					);
+		}
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -100,7 +181,7 @@ public class AnalysisMenuActivity extends Activity {
 								.append(selectContact.getText().toString())
 								.append(nameContact).append(" <")
 								.append(cNumber).append(">").append(", "));
-						//selectContact.setWidth(500);
+						// selectContact.setWidth(500);
 					}
 				}
 				break;
@@ -165,7 +246,7 @@ public class AnalysisMenuActivity extends Activity {
 		end_month = CURR_MONTH;
 		end_day = CURR_DAY;
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
