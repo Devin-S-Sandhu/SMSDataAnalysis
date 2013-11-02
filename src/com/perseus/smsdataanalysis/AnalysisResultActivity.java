@@ -1,6 +1,7 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,7 +42,7 @@ public class AnalysisResultActivity extends Activity {
 				intent.getStringExtra("end_date"),
 				intent.getStringExtra("contacts"));
 
-		ArrayList<String> queryResult = mAnalyzer.doQuery(query);
+		ArrayList<Entry<String, Integer>> queryResult = mAnalyzer.doQuery(query);
 
 		analysisType.setText(intent.getStringExtra("type"));
 		startDate.setText(intent.getStringExtra("start_date"));
