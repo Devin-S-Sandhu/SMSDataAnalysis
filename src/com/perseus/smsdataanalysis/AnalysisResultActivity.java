@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -24,7 +23,7 @@ public class AnalysisResultActivity extends Activity {
 	private TextView startDate;
 	private TextView endDate;
 	private TextView contacts;
-	private TextView result;
+	//private TextView result;
 
 	private PieChart pie;
 
@@ -41,7 +40,7 @@ public class AnalysisResultActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date);
 		endDate = (TextView) findViewById(R.id.end_date);
 		contacts = (TextView) findViewById(R.id.contacts);
-		result = (TextView) findViewById(R.id.text_result);
+		//result = (TextView) findViewById(R.id.text_result);
 
 		Intent intent = getIntent();
 
