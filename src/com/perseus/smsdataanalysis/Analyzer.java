@@ -72,6 +72,38 @@ public class Analyzer {
 
 	}
 
+	private class Pair<K, V> {
+
+		private K element0;
+		private V element1;
+
+		public Pair<K, V> createPair(K element0, V element1) {
+			return new Pair<K, V>(element0, element1);
+		}
+
+		public Pair(K element0, V element1) {
+			this.element0 = element0;
+			this.element1 = element1;
+		}
+
+		public K getElement0() {
+			return element0;
+		}
+
+		public V getElement1() {
+			return element1;
+		}
+
+		public void setElement0(K newVal) {
+			this.element0 = newVal;
+		}
+
+		public void setElement1(V newVal) {
+			this.element1 = newVal;
+		}
+
+	}
+
 	public Analyzer(Context context) {
 		this.context = context;
 		types = new HashMap<String, Integer>();
@@ -111,6 +143,18 @@ public class Analyzer {
 			result = smsFrequency("inbox", query.getStartDate(),
 					query.getEndDate(), contactsList);
 			break;
+		case 6:
+			result = smsLength("", query.getStartDate(), query.getEndDate(),
+					contactsList);
+			break;
+		case 7:
+			result = smsLength("sent", query.getStartDate(),
+					query.getEndDate(), contactsList);
+			break;
+		case 8:
+			result = smsLength("inbox", query.getStartDate(),
+					query.getEndDate(), contactsList);
+			break;
 		}
 		return result;
 
@@ -126,8 +170,7 @@ public class Analyzer {
 		String number = "";
 		while (matcher.find()) {
 			number = PhoneNumberUtils.stripSeparators(matcher.group(1));
-			contactsList
-					.add(number);
+			contactsList.add(number);
 		}
 		return contactsList;
 	}
@@ -250,6 +293,7 @@ public class Analyzer {
 					name = number;
 				// time for terrible performance to deal with those pesky
 				// country codes
+				// TODO don't do this each time but only once at the end, duh!
 				for (String s : contactNames.keySet())
 					if (PhoneNumberUtils.compare(s, number)) {
 						name = contactNames.get(s);
@@ -265,6 +309,51 @@ public class Analyzer {
 		}
 
 		return formatResult(freq.entrySet());
+	}
+
+	// TODO handle date range
+	private ArrayList<Entry<String, Integer>> smsLength(String scope,
+			String startDate, String endDate, ArrayList<String> contactsList) {
+		Cursor cursor = context.getContentResolver().query(
+				Uri.parse("content://sms/" + scope),
+				new String[] { "body", "address" }, null, null, null);
+		HashMap<String, Pair<Integer, Integer>> length = new HashMap<String, Pair<Integer, Integer>>();
+		String body = "";
+		String address = "";
+		if (cursor.moveToFirst()) {
+			getContactNames();
+			do {
+				// Checking numbers
+				if (contactsList.size() != 0) {
+					String number = PhoneNumberUtils.stripSeparators(cursor
+							.getString(0));
+					if (!contactsList.contains(number))
+						continue;
+				}
+				// Grab all words without punctuation and ignoring case
+				body = cursor.getString(0);
+				address = cursor.getString(1);
+				// pairs are freq, total length
+				if (length.containsKey(address)) {
+					Pair<Integer, Integer> pair = length.get(address);
+					pair.setElement0(pair.getElement0() + 1);
+					pair.setElement1(pair.getElement1() + body.length());
+				} else
+					length.put(address,
+							new Pair<Integer, Integer>(1, body.length()));
+			} while (cursor.moveToNext());
+		}
+
+		// for now we return the address, but I'm keeping the frequency and
+		// total length in case we change our minds later
+		// also until refactor does simplistic name grabbing
+		HashMap<String, Integer> average = new HashMap<String, Integer>();
+		for (String key : length.keySet())
+			average.put(contactNames.containsKey(key) ? contactNames.get(key)
+					: key, (Integer) length.get(key).getElement1()
+					/ length.get(key).getElement0());
+
+		return formatResult(average.entrySet());
 	}
 
 }
