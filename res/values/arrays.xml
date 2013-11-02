@@ -8,6 +8,9 @@
         <item>SMS Frequency</item>
         <item>SMS Frequency Sent</item>
         <item>SMS Frequency Received</item>
+        <item>SMS Length</item>
+        <item>SMS Length Sent</item>
+        <item>SMS Length Received</item>
     </string-array>
 
 </resources>

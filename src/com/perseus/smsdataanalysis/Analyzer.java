@@ -89,27 +89,27 @@ public class Analyzer {
 		switch (types.get(query.getAnalysisType())) {
 		case 0:
 			result = wordFrequency("", query.getStartDate(),
-					query.getEndDate(), contactsList, context);
+					query.getEndDate(), contactsList);
 			break;
 		case 1:
 			result = wordFrequency("sent", query.getStartDate(),
-					query.getEndDate(), contactsList, context);
+					query.getEndDate(), contactsList);
 			break;
 		case 2:
 			result = wordFrequency("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList, context);
+					query.getEndDate(), contactsList);
 			break;
 		case 3:
 			result = smsFrequency("", query.getStartDate(), query.getEndDate(),
-					contactsList, context);
+					contactsList);
 			break;
 		case 4:
 			result = smsFrequency("sent", query.getStartDate(),
-					query.getEndDate(), contactsList, context);
+					query.getEndDate(), contactsList);
 			break;
 		case 5:
 			result = smsFrequency("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList, context);
+					query.getEndDate(), contactsList);
 			break;
 		}
 		return result;
@@ -123,9 +123,11 @@ public class Analyzer {
 		ArrayList<String> contactsList = new ArrayList<String>();
 		Pattern pattern = Pattern.compile("[^<]+<([^>]+)>");
 		Matcher matcher = pattern.matcher(contacts);
+		String number = "";
 		while (matcher.find()) {
+			number = PhoneNumberUtils.stripSeparators(matcher.group(1));
 			contactsList
-					.add(PhoneNumberUtils.stripSeparators(matcher.group(1)));
+					.add(number);
 		}
 		return contactsList;
 	}
@@ -144,20 +146,19 @@ public class Analyzer {
 						PhoneNumberUtils.stripSeparators(cursor.getString(1)),
 						cursor.getString(0));
 				Log.d(LOG_TAG,
-						cursor.getString(1)
-								+ " : "
-								+ PhoneNumberUtils.stripSeparators(cursor
-										.getString(1)) + " : "
-								+ cursor.getString(0));
+						PhoneNumberUtils.stripSeparators(cursor.getString(1))
+								+ " : " + cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
 	}
 
 	// Temporary method to display the data in a textual format, should be
 	// replaced with graphics soonish
-    // AAAHHHH now it doesn't flatten just returns the set to help with the graphing
+	// AAAHHHH now it doesn't flatten just returns the set to help with the
+	// graphing
 	// TODO change name
-	private ArrayList<Entry<String, Integer>> flattenEntry(Set<Entry<String, Integer>> entrySet) {
+	private ArrayList<Entry<String, Integer>> formatResult(
+			Set<Entry<String, Integer>> entrySet) {
 		ArrayList<Entry<String, Integer>> out = new ArrayList<Entry<String, Integer>>();
 		out.addAll(entrySet);
 
@@ -177,22 +178,22 @@ public class Analyzer {
 			}
 
 		});
-		
+
 		return out;
 
 		// Breaking open the entries and displaying them as strings, to be
 		// replaced by a graphic
-//		ArrayList<String> result = new ArrayList<String>();
-//		for (int index = 0; index < out.size(); index++) {
-//			result.add(out.get(index).getValue() + ": "
-//					+ out.get(index).getKey());
-//		}
-//		return result;
+		// ArrayList<String> result = new ArrayList<String>();
+		// for (int index = 0; index < out.size(); index++) {
+		// result.add(out.get(index).getValue() + ": "
+		// + out.get(index).getKey());
+		// }
+		// return result;
 	}
 
 	// TODO handle date range
-	private ArrayList<Entry<String, Integer>> wordFrequency(String scope, String startDate,
-			String endDate, ArrayList<String> contactsList, Context context) {
+	private ArrayList<Entry<String, Integer>> wordFrequency(String scope,
+			String startDate, String endDate, ArrayList<String> contactsList) {
 		String[] columnsForAnalysis;
 		if (contactsList.size() == 0)
 			columnsForAnalysis = new String[] { "body" };
@@ -202,7 +203,7 @@ public class Analyzer {
 				Uri.parse("content://sms/" + scope), columnsForAnalysis, null,
 				null, null);
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
-		int count = 0;
+		int debugCount = 0;
 		if (cursor.moveToFirst()) {
 			do {
 				// Checking numbers
@@ -221,20 +222,18 @@ public class Analyzer {
 						freq.put(s, 1);
 					Log.v(LOG_TAG, cursor.getString(0));
 				}
-				count++;
+				debugCount++;
 			} while (cursor.moveToNext());
 		}
 
-		Log.d(LOG_TAG, count + " messages total");
+		Log.d(LOG_TAG, debugCount + " messages total");
 
-		ArrayList<Entry<String, Integer>> result = flattenEntry(freq.entrySet());
-		return result;
-
+		return formatResult(freq.entrySet());
 	}
 
 	// TODO handle date range
-	private ArrayList<Entry<String, Integer>> smsFrequency(String scope, String startDate,
-			String endDate, ArrayList<String> contactsList, Context context) {
+	private ArrayList<Entry<String, Integer>> smsFrequency(String scope,
+			String startDate, String endDate, ArrayList<String> contactsList) {
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		Cursor cursor = context.getContentResolver().query(
 				Uri.parse("content://sms/" + scope),
@@ -265,8 +264,7 @@ public class Analyzer {
 			} while (cursor.moveToNext());
 		}
 
-		ArrayList<Entry<String, Integer>> result = flattenEntry(freq.entrySet());
-		return result;
+		return formatResult(freq.entrySet());
 	}
 
 }
