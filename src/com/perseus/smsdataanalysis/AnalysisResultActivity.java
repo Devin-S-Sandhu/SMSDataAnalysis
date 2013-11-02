@@ -23,7 +23,7 @@ public class AnalysisResultActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_analysis_result);
 		Log.v(LOG_TAG, "A verbose message");
-		Analyzer mAnalyzer = new Analyzer();
+		Analyzer mAnalyzer = new Analyzer(getApplicationContext());
 
 		this.setTitle("Data Analysis Result");
 
@@ -39,7 +39,7 @@ public class AnalysisResultActivity extends Activity {
 				intent.getStringExtra("type"),
 				intent.getStringExtra("start_date"),
 				intent.getStringExtra("end_date"),
-				intent.getStringExtra("contacts"), getApplicationContext());
+				intent.getStringExtra("contacts"));
 
 		ArrayList<String> queryResult = mAnalyzer.doQuery(query);
 

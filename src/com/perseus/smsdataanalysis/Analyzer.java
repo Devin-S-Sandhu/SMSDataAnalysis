@@ -16,6 +16,7 @@ import android.util.Log;
 
 public class Analyzer {
 	private HashMap<String, Integer> types;
+	private Context context;
 	private final static String LOG_TAG = "Analyzer";
 
 	public class Query {
@@ -23,15 +24,13 @@ public class Analyzer {
 		private String startDate;
 		private String endDate;
 		private String contacts;
-		private Context context;
 
 		public Query(String analysisType, String startDate, String endDate,
-				String contacts, Context context) {
+				String contacts) {
 			this.analysisType = analysisType;
 			this.startDate = startDate;
 			this.endDate = endDate;
 			this.contacts = contacts;
-			this.context = context;
 		}
 
 		public String getAnalysisType() {
@@ -66,23 +65,15 @@ public class Analyzer {
 			this.contacts = contacts;
 		}
 
-		public Context getContext() {
-			return context;
-		}
-
-		public void setContext(Context context) {
-			this.context = context;
-		}
-
 	}
 
-	public Analyzer() {
-		// TODO make this an enum, or something an array in xml
+	public Analyzer(Context context) {
+		this.context = context;
 		types = new HashMap<String, Integer>();
-		int ct = 0;
-		types.put("Word Frequency", ct++);
-		types.put("Word Frequency Sent", ct++);
-		types.put("Word Frequency Received", ct++);
+		String[] analysisTypes = context.getResources().getStringArray(
+				R.array.analaysis_type_arrays);
+		for (int index = 0; index < analysisTypes.length; index++)
+			types.put(analysisTypes[index], index);
 
 	}
 
@@ -93,15 +84,15 @@ public class Analyzer {
 		switch (types.get(query.getAnalysisType())) {
 		case 0:
 			result = wordFrequency("", query.getStartDate(),
-					query.getEndDate(), contactsList, query.getContext());
+					query.getEndDate(), contactsList, context);
 			break;
 		case 1:
 			result = wordFrequency("sent", query.getStartDate(),
-					query.getEndDate(), contactsList, query.getContext());
+					query.getEndDate(), contactsList, context);
 			break;
 		case 2:
 			result = wordFrequency("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList, query.getContext());
+					query.getEndDate(), contactsList, context);
 			break;
 		}
 		return result;
@@ -143,6 +134,7 @@ public class Analyzer {
 				if (!contactsList.contains(number))
 					continue;
 			}
+			// Grab all words without punctuation and ignoring case
 			for (String s : cursor.getString(0).split("\\s+")) {
 				s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
 				if (freq.containsKey(s))
@@ -153,18 +145,19 @@ public class Analyzer {
 			}
 			count++;
 		} while (cursor.moveToNext());
-		
+
 		Log.d(LOG_TAG, count + " messages total");
-		
+
 		ArrayList<Entry<String, Integer>> out = new ArrayList<Entry<String, Integer>>();
 		out.addAll(freq.entrySet());
-		
-//		TODO make only one pas to put the data in a form that the graph api wants
-//		for(Entry<String, Integer> entry : freq.entrySet())
-//		{
-//			
-//		}
-		
+
+		// TODO make only one pas to put the data in a form that the graph api
+		// wants
+		// for(Entry<String, Integer> entry : freq.entrySet())
+		// {
+		//
+		// }
+
 		Collections.sort(out, new Comparator<Entry<String, Integer>>() {
 
 			@Override
@@ -175,6 +168,8 @@ public class Analyzer {
 
 		});
 
+		// Breaking open the entries and displaying them as strings, to be
+		// replaced by a graphic
 		ArrayList<String> result = new ArrayList<String>();
 		for (int index = 0; index < out.size(); index++) {
 			result.add(out.get(index).getValue() + ": "

@@ -5,6 +5,9 @@
         <item>Word Frequency</item>
         <item>Word Frequency Sent</item>
         <item>Word Frequency Received</item>
+        <item>Text Frequency</item>
+        <item>Text Frequency Sent</item>
+        <item>Text Frequency Received</item>
     </string-array>
 
 </resources>
