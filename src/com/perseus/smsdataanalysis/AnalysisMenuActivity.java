@@ -239,7 +239,7 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	private void setCurrentDate() {
-		start_year = 1900;
+		start_year = 1970;
 		start_month = 0;
 		start_day = 1;
 		end_year = CURR_YEAR;
