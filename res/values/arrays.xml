@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="analaysis_type_arrays">
+        <item>Word Frequency</item>
+        <item>Word Frequency Sent</item>
+        <item>Word Frequency Received</item>
+    </string-array>
+
+</resources>
