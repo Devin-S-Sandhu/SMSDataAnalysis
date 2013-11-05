@@ -223,7 +223,7 @@ public class Analyzer {
 				+ " and " + endDate);
 		if (contactsList.size() != 0) {
 			String list = contactsList.toString();
-			selection.append(" AND address in (");
+			selection.append(" AND address IN (");
 			selection.append(list.substring(1, list.length() - 1));
 			selection.append(")");
 		}
