@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/xyplot"
+        android:layout_width="fill_parent"
+        android:layout_height="520dp"
+        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+        androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+        androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+        androidPlot.graphWidget.marginBottom="25dp"
+        androidPlot.graphWidget.marginLeft="15dp"
+        androidPlot.graphWidget.marginRight="10dp"
+        androidPlot.graphWidget.marginTop="20dp"
+        androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+        androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
+        androidPlot.legendWidget.heightMetric.value="25dp"
+        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="5dp"
+        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+        androidPlot.legendWidget.positionMetrics.xPositionMetric.value="0"
+        androidPlot.legendWidget.textPaint.textSize="10dp"
+        androidPlot.legendWidget.widthMetric.value="1"
+        androidPlot.rangeLabel="Word Counts"
+        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+        androidPlot.title="Result"
+        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+
+    <com.androidplot.pie.PieChart
+        android:id="@+id/mySimplePieChart"
+        android:layout_width="fill_parent"
+        android:layout_height="520dp"
+        androidPlot.title="A Simple Pie Chart"
+        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/analysis_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/analysis_type_text" />
+
+        <TextView
+            android:id="@+id/start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/from_text" />
+
+        <TextView
+            android:id="@+id/end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to_text" />
+
+        <TextView
+            android:id="@+id/contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_contact_hint" />
+
+        <TextView
+            android:id="@+id/text_result"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>

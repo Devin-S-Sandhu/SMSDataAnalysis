@@ -170,8 +170,8 @@ public class AnalysisMenuActivity extends Activity {
 						String cNumber = phones
 								.getString(phones
 										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-						Toast.makeText(getApplicationContext(), cNumber,
-								Toast.LENGTH_SHORT).show();
+						/*Toast.makeText(getApplicationContext(), cNumber,
+								Toast.LENGTH_SHORT).show();*/
 
 						String nameContact = c
 								.getString(c
@@ -210,11 +210,11 @@ public class AnalysisMenuActivity extends Activity {
 
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
 				long id) {
-			Toast.makeText(
+			/*Toast.makeText(
 					parent.getContext(),
 					"OnItemSelectedListener : "
 							+ parent.getItemAtPosition(pos).toString(),
-					Toast.LENGTH_SHORT).show();
+					Toast.LENGTH_SHORT).show();*/
 		}
 
 		@Override
