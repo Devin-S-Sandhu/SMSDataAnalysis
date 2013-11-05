@@ -13,9 +13,17 @@
         <Spinner
             android:id="@+id/analysis_type"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:entries="@array/analaysis_type_arrays"
             android:prompt="@string/analysis_type_text"
+            android:spinnerMode="dialog" />
+        
+        <Spinner
+            android:id="@+id/scope"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:entries="@array/scope_array"
+            android:prompt="@string/scope_text"
             android:spinnerMode="dialog" />
     </TableRow>
 

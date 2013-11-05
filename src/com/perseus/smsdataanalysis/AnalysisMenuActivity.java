@@ -32,6 +32,7 @@ import android.widget.Toast;
 public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
+	private Spinner scope;
 	private TextView startDate, endDate;
 	private MultiAutoCompleteTextView selectContact;
 
@@ -62,6 +63,7 @@ public class AnalysisMenuActivity extends Activity {
 		Log.v(LOG_TAG, "A verbose message");
 
 		this.setTitle("Data Analysis Menu");
+		scope = (Spinner) findViewById(R.id.scope);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (MultiAutoCompleteTextView) findViewById(R.id.select_contact);
@@ -342,6 +344,7 @@ public class AnalysisMenuActivity extends Activity {
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
+		myIntent.putExtra("scope", scope.getSelectedItem().toString());
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		myIntent.putExtra("contacts", selectContact.getText().toString());

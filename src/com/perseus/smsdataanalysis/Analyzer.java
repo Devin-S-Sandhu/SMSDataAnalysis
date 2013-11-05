@@ -22,6 +22,7 @@ import android.util.Log;
 
 public class Analyzer {
 	private HashMap<String, Integer> types;
+	private HashMap<String, String> scopes;
 	private HashMap<String, String> contactNames;
 	private Context context;
 	private final static String LOG_TAG = "Analyzer";
@@ -33,10 +34,10 @@ public class Analyzer {
 		private String endDate;
 		private String contacts;
 
-		public Query(String analysisType, String scope, String startDate, String endDate,
-				String contacts) {
+		public Query(String analysisType, String scope, String startDate,
+				String endDate, String contacts) {
 			this.analysisType = analysisType;
-			this.scope = scope;
+			this.setScope(scope);
 			this.startDate = startDate;
 			this.endDate = endDate;
 			this.contacts = contacts;
@@ -74,6 +75,14 @@ public class Analyzer {
 			this.contacts = contacts;
 		}
 
+		public String getScope() {
+			return scope;
+		}
+
+		public void setScope(String scope) {
+			this.scope = scope;
+		}
+
 	}
 
 	private class Pair<K, V> {
@@ -108,10 +117,17 @@ public class Analyzer {
 		this.context = context;
 		contactNames = new HashMap<String, String>();
 		types = new HashMap<String, Integer>();
+		scopes = new HashMap<String, String>();
 		String[] analysisTypes = context.getResources().getStringArray(
 				R.array.analaysis_type_arrays);
+		String[] analysisScopes = context.getResources().getStringArray(
+				R.array.scope_array);
+
 		for (int index = 0; index < analysisTypes.length; index++)
 			types.put(analysisTypes[index], index);
+		scopes.put(analysisScopes[0], "");
+		scopes.put(analysisScopes[1], "sent");
+		scopes.put(analysisScopes[2], "inbox");
 
 	}
 
@@ -123,40 +139,16 @@ public class Analyzer {
 				query.getEndDate());
 		switch (types.get(query.getAnalysisType())) {
 		case 0:
-			result = wordFrequency("", range.getElement0(),
-					range.getElement1(), contactsList);
+			result = wordFrequency(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList);
 			break;
 		case 1:
-			result = wordFrequency("sent", range.getElement0(),
-					range.getElement1(), contactsList);
+			result = smsFrequency(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList);
 			break;
 		case 2:
-			result = wordFrequency("inbox", range.getElement0(),
-					range.getElement1(), contactsList);
-			break;
-		case 3:
-			result = smsFrequency("", range.getElement0(), range.getElement1(),
-					contactsList);
-			break;
-		case 4:
-			result = smsFrequency("sent", range.getElement0(),
-					range.getElement1(), contactsList);
-			break;
-		case 5:
-			result = smsFrequency("inbox", range.getElement0(),
-					range.getElement1(), contactsList);
-			break;
-		case 6:
-			result = smsLength("", range.getElement0(), range.getElement1(),
-					contactsList);
-			break;
-		case 7:
-			result = smsLength("sent", range.getElement0(),
-					range.getElement1(), contactsList);
-			break;
-		case 8:
-			result = smsLength("inbox", range.getElement0(),
-					range.getElement1(), contactsList);
+			result = smsLength(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList);
 			break;
 		}
 		return result;
@@ -190,11 +182,14 @@ public class Analyzer {
 		ArrayList<String> contactsList = new ArrayList<String>();
 		Pattern pattern = Pattern.compile("([^<]+)<([^>]+)>,? ?");
 		Matcher matcher = pattern.matcher(contacts);
-		String number = "";
+		String number;
+		String name;
 		while (matcher.find()) {
+			name = matcher.group(1);
 			number = PhoneNumberUtils.stripSeparators(matcher.group(2));
 			contactsList.add(number);
-			contactNames.put(matcher.group(1), number);
+			contactNames.put(number, name);
+			contactNames.put(matcher.group(2), name);
 		}
 		return contactsList;
 	}
@@ -226,8 +221,8 @@ public class Analyzer {
 		if (contactsList.size() != 0) {
 			selection.append(" AND (address");
 			boolean first = true;
-			for(String contact : contactsList){
-				if(!first)
+			for (String contact : contactsList) {
+				if (!first)
 					selection.append(" OR address");
 				selection.append(" LIKE '%");
 				selection.append(contact);
@@ -266,7 +261,7 @@ public class Analyzer {
 		Cursor cursor = getCursor(scope, new String[] { "body" }, startDate,
 				endDate, contactsList);
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
-		
+
 		if (cursor.moveToFirst()) {
 			do {
 				// Grab all words without punctuation and ignoring case
@@ -321,8 +316,8 @@ public class Analyzer {
 
 	private ArrayList<Entry<String, Integer>> smsLength(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		Cursor cursor = getCursor(scope, new String[] { "body", "address" }, startDate,
-				endDate, contactsList);
+		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
+				startDate, endDate, contactsList);
 
 		HashMap<String, Pair<Integer, Integer>> smsLength = new HashMap<String, Pair<Integer, Integer>>();
 		int messageLength;

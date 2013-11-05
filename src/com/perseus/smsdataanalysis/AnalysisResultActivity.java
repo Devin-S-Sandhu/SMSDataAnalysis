@@ -89,6 +89,7 @@ public class AnalysisResultActivity extends Activity {
 
 		Analyzer.Query query = mAnalyzer.new Query(
 				intent.getStringExtra("type"),
+				intent.getStringExtra("scope"),
 				intent.getStringExtra("start_date"),
 				intent.getStringExtra("end_date"),
 				intent.getStringExtra("contacts"));
@@ -96,14 +97,12 @@ public class AnalysisResultActivity extends Activity {
 		queryResult = mAnalyzer.doQuery(query);
 		String resultDump = TextUtils.join("\n", queryResult);
 		Log.d(LOG_TAG, "Result: " + resultDump);
-		
+
 		if (queryResult != null && !queryResult.isEmpty()) {
 			lv = (ListView) findViewById(R.id.listView1);
 			lv.setAdapter(new MyViewAdapter(getApplicationContext(),
 					R.layout.listview_analysis_result_item, null));
-		}
-		else
-		{
+		} else {
 			Toast.makeText(getApplicationContext(), "The result is empty",
 					Toast.LENGTH_SHORT).show();
 		}
