@@ -1,5 +1,7 @@
 package com.perseus.smsdataanalysis;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,10 +79,6 @@ public class Analyzer {
 		private K element0;
 		private V element1;
 
-		public Pair<K, V> createPair(K element0, V element1) {
-			return new Pair<K, V>(element0, element1);
-		}
-
 		public Pair(K element0, V element1) {
 			this.element0 = element0;
 			this.element1 = element1;
@@ -106,6 +104,7 @@ public class Analyzer {
 
 	public Analyzer(Context context) {
 		this.context = context;
+		contactNames = new HashMap<String, String>();
 		types = new HashMap<String, Integer>();
 		String[] analysisTypes = context.getResources().getStringArray(
 				R.array.analaysis_type_arrays);
@@ -118,99 +117,111 @@ public class Analyzer {
 	public ArrayList<Entry<String, Integer>> doQuery(Query query) {
 		ArrayList<Entry<String, Integer>> result = new ArrayList<Entry<String, Integer>>();
 		ArrayList<String> contactsList = parseContacts(query.getContacts());
+		Pair<Long, Long> range = parseDates(query.getStartDate(),
+				query.getEndDate());
 		switch (types.get(query.getAnalysisType())) {
 		case 0:
-			result = wordFrequency("", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = wordFrequency("", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 1:
-			result = wordFrequency("sent", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = wordFrequency("sent", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 2:
-			result = wordFrequency("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = wordFrequency("inbox", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 3:
-			result = smsFrequency("", query.getStartDate(), query.getEndDate(),
+			result = smsFrequency("", range.getElement0(), range.getElement1(),
 					contactsList);
 			break;
 		case 4:
-			result = smsFrequency("sent", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = smsFrequency("sent", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 5:
-			result = smsFrequency("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = smsFrequency("inbox", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 6:
-			result = smsLength("", query.getStartDate(), query.getEndDate(),
+			result = smsLength("", range.getElement0(), range.getElement1(),
 					contactsList);
 			break;
 		case 7:
-			result = smsLength("sent", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = smsLength("sent", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		case 8:
-			result = smsLength("inbox", query.getStartDate(),
-					query.getEndDate(), contactsList);
+			result = smsLength("inbox", range.getElement0(),
+					range.getElement1(), contactsList);
 			break;
 		}
 		return result;
 
 	}
 
+	// parses dates of the format MM-DD-YYYY into longs for use in analyses
+	private Pair<Long, Long> parseDates(String startDate, String endDate) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss",
+				Locale.US);
+		long start;
+		long end;
+		try {
+			start = sdf.parse(startDate + " 00:00:00").getTime();
+			end = sdf.parse(endDate + " 23:59:59").getTime();
+			Log.d(LOG_TAG, sdf.format(start));
+			Log.d(LOG_TAG, sdf.format(end));
+		} catch (ParseException e) {
+			// TODO do better error handling, prompt the user somehow
+			Log.e(LOG_TAG, "Parse Error: " + e.getMessage());
+			start = 0;
+			end = System.currentTimeMillis();
+		}
+		return new Pair<Long, Long>(start, end);
+	}
+
 	// parses contact strings of the following form
 	// NAME <111-111-1111>, NAME <111-111-1111>, etc.
-	// TODO also create the contacts hash here to save time
 	private ArrayList<String> parseContacts(String contacts) {
 		ArrayList<String> contactsList = new ArrayList<String>();
-		Pattern pattern = Pattern.compile("[^<]+<([^>]+)>");
+		Pattern pattern = Pattern.compile("([^<]+)<([^>]+)>,? ?");
 		Matcher matcher = pattern.matcher(contacts);
 		String number = "";
 		while (matcher.find()) {
-			number = PhoneNumberUtils.stripSeparators(matcher.group(1));
+			number = PhoneNumberUtils.stripSeparators(matcher.group(2));
 			contactsList.add(number);
+			contactNames.put(matcher.group(1), number);
 		}
 		return contactsList;
 	}
 
 	// creates a hash of numbers to names
-	private void getContactNames() {
+	private void getContactNames(ArrayList<String> contactsList) {
+		// contact names was already populated in parseContacts()
+		if (contactNames.size() == 0)
+			return;
 		Cursor cursor = context.getContentResolver().query(
 				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
 				new String[] { Phone.DISPLAY_NAME, Phone.NUMBER }, null, null,
 				Phone.DISPLAY_NAME + " ASC");
-		contactNames = new HashMap<String, String>();
 		if (cursor.moveToFirst()) {
 			do {
 				// key = parsed phone number, value = contact name
 				contactNames.put(
 						PhoneNumberUtils.stripSeparators(cursor.getString(1)),
 						cursor.getString(0));
-				Log.d(LOG_TAG,
-						PhoneNumberUtils.stripSeparators(cursor.getString(1))
-								+ " : " + cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
 	}
 
 	// Temporary method to display the data in a textual format, should be
 	// replaced with graphics soonish
-	// AAAHHHH now it doesn't flatten just returns the set to help with the
-	// graphing
-	// TODO change name
 	private ArrayList<Entry<String, Integer>> formatResult(
 			Set<Entry<String, Integer>> entrySet) {
 		ArrayList<Entry<String, Integer>> out = new ArrayList<Entry<String, Integer>>();
 		out.addAll(entrySet);
-
-		// TODO make only one pas to put the data in a form that the graph api
-		// wants
-		// for(Entry<String, Integer> entry : freq.entrySet())
-		// {
-		//
-		// }
 
 		Collections.sort(out, new Comparator<Entry<String, Integer>>() {
 
@@ -223,39 +234,25 @@ public class Analyzer {
 		});
 
 		return out;
-
-		// Breaking open the entries and displaying them as strings, to be
-		// replaced by a graphic
-		// ArrayList<String> result = new ArrayList<String>();
-		// for (int index = 0; index < out.size(); index++) {
-		// result.add(out.get(index).getValue() + ": "
-		// + out.get(index).getKey());
-		// }
-		// return result;
 	}
 
-	// TODO handle date range
 	private ArrayList<Entry<String, Integer>> wordFrequency(String scope,
-			String startDate, String endDate, ArrayList<String> contactsList) {
-		String[] columnsForAnalysis;
-		if (contactsList.size() == 0)
-			columnsForAnalysis = new String[] { "body" };
-		else
-			columnsForAnalysis = new String[] { "body", "address" };
+			Long startDate, Long endDate, ArrayList<String> contactsList) {
+		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
+				+ " and " + endDate);
+		if (contactsList.size() != 0) {
+			String list = contactsList.toString();
+			selection.append(" AND address in (");
+			selection.append(list.substring(1, list.length() - 1));
+			selection.append(")");
+		}
 		Cursor cursor = context.getContentResolver().query(
-				Uri.parse("content://sms/" + scope), columnsForAnalysis, null,
-				null, null);
+				Uri.parse("content://sms/" + scope), new String[] { "body" },
+				selection.toString(), null, null);
+
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
-		int debugCount = 0;
 		if (cursor.moveToFirst()) {
 			do {
-				// Checking numbers
-				if (contactsList.size() != 0) {
-					String number = PhoneNumberUtils.stripSeparators(cursor
-							.getString(0));
-					if (!contactsList.contains(number))
-						continue;
-				}
 				// Grab all words without punctuation and ignoring case
 				for (String s : cursor.getString(0).split("\\s+")) {
 					s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
@@ -263,95 +260,114 @@ public class Analyzer {
 						freq.put(s, freq.get(s) + 1);
 					else
 						freq.put(s, 1);
-					Log.v(LOG_TAG, cursor.getString(0));
 				}
-				debugCount++;
 			} while (cursor.moveToNext());
 		}
-
-		Log.d(LOG_TAG, debugCount + " messages total");
 
 		return formatResult(freq.entrySet());
 	}
 
-	// TODO handle date range
 	private ArrayList<Entry<String, Integer>> smsFrequency(String scope,
-			String startDate, String endDate, ArrayList<String> contactsList) {
-		HashMap<String, Integer> freq = new HashMap<String, Integer>();
+			Long startDate, Long endDate, ArrayList<String> contactsList) {
+		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
+				+ " and " + endDate);
+		if (contactsList.size() != 0) {
+			String list = contactsList.toString();
+			selection.append(" AND address in (");
+			selection.append(list.substring(1, list.length() - 1));
+			selection.append(")");
+		}
 		Cursor cursor = context.getContentResolver().query(
 				Uri.parse("content://sms/" + scope),
-				new String[] { "address" }, null, null, null);
+				new String[] { "address" }, selection.toString(), null, null);
+
+		HashMap<String, Integer> freq = new HashMap<String, Integer>();
+		String name;
+		String number;
 		if (cursor.moveToFirst()) {
-			getContactNames();
+			getContactNames(contactsList);
 			do {
-				String number = PhoneNumberUtils.stripSeparators(cursor
-						.getString(0));
-				if (contactsList.size() != 0 && !contactsList.contains(number))
-					continue;
-				String name = contactNames.get(number);
-				if (name == null)
+				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
+				// if we don't have a name for the number let's try some fuzzy
+				// matching and if that fails the number if their name
+				if (contactNames.containsKey(number))
+					name = contactNames.get(number);
+				else {
 					name = number;
-				// time for terrible performance to deal with those pesky
-				// country codes
-				// TODO don't do this each time but only once at the end, duh!
-				for (String s : contactNames.keySet())
-					if (PhoneNumberUtils.compare(s, number)) {
-						name = contactNames.get(s);
-						break;
-					}
+					for (String s : contactNames.keySet())
+						if (PhoneNumberUtils.compare(s, number)) {
+							name = contactNames.get(s);
+							contactNames.put(number, name);
+							break;
+						}
+				}
 				if (freq.containsKey(name))
 					freq.put(name, freq.get(name) + 1);
 				else
 					freq.put(name, 1);
 
-				// Log.d(LOG_TAG, number + " : " + cursor.getString(1));
 			} while (cursor.moveToNext());
 		}
 
 		return formatResult(freq.entrySet());
 	}
 
-	// TODO handle date range
 	private ArrayList<Entry<String, Integer>> smsLength(String scope,
-			String startDate, String endDate, ArrayList<String> contactsList) {
+			Long startDate, Long endDate, ArrayList<String> contactsList) {
+		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
+				+ " and " + endDate);
+		if (contactsList.size() != 0) {
+			String list = contactsList.toString();
+			selection.append(" AND address in (");
+			selection.append(list.substring(1, list.length() - 1));
+			selection.append(")");
+		}
 		Cursor cursor = context.getContentResolver().query(
 				Uri.parse("content://sms/" + scope),
-				new String[] { "body", "address" }, null, null, null);
-		HashMap<String, Pair<Integer, Integer>> length = new HashMap<String, Pair<Integer, Integer>>();
-		String body = "";
-		String address = "";
+				new String[] { "body", "address" }, selection.toString(), null,
+				null);
+
+		HashMap<String, Pair<Integer, Integer>> smsLength = new HashMap<String, Pair<Integer, Integer>>();
+		int messageLength;
+		String address;
 		if (cursor.moveToFirst()) {
-			getContactNames();
+			getContactNames(contactsList);
 			do {
-				// Checking numbers
-				if (contactsList.size() != 0) {
-					String number = PhoneNumberUtils.stripSeparators(cursor
-							.getString(0));
-					if (!contactsList.contains(number))
-						continue;
-				}
-				// Grab all words without punctuation and ignoring case
-				body = cursor.getString(0);
+				messageLength = cursor.getString(0).length();
 				address = cursor.getString(1);
+				// key is address, value is a pair
 				// pairs are freq, total length
-				if (length.containsKey(address)) {
-					Pair<Integer, Integer> pair = length.get(address);
+				if (smsLength.containsKey(address)) {
+					Pair<Integer, Integer> pair = smsLength.get(address);
 					pair.setElement0(pair.getElement0() + 1);
-					pair.setElement1(pair.getElement1() + body.length());
+					pair.setElement1(pair.getElement1() + messageLength);
 				} else
-					length.put(address,
-							new Pair<Integer, Integer>(1, body.length()));
+					smsLength.put(address, new Pair<Integer, Integer>(1,
+							messageLength));
 			} while (cursor.moveToNext());
 		}
 
 		// for now we return the address, but I'm keeping the frequency and
 		// total length in case we change our minds later
-		// also until refactor does simplistic name grabbing
 		HashMap<String, Integer> average = new HashMap<String, Integer>();
-		for (String key : length.keySet())
-			average.put(contactNames.containsKey(key) ? contactNames.get(key)
-					: key, (Integer) length.get(key).getElement1()
-					/ length.get(key).getElement0());
+		String name;
+		for (String key : smsLength.keySet()) {
+			if (contactNames.containsKey(key))
+				name = contactNames.get(key);
+			else {
+				name = key;
+				// time for terrible performance to deal with those pesky
+				// country codes
+				for (String s : contactNames.keySet())
+					if (PhoneNumberUtils.compare(s, key)) {
+						name = contactNames.get(s);
+						contactNames.put(key, name);
+						break;
+					}
+			}
+			average.put(name, (Integer) smsLength.get(key).getElement1()
+					/ smsLength.get(key).getElement0());
+		}
 
 		return formatResult(average.entrySet());
 	}
