@@ -94,6 +94,9 @@ public class AnalysisResultActivity extends Activity {
 				intent.getStringExtra("contacts"));
 
 		queryResult = mAnalyzer.doQuery(query);
+		String resultDump = TextUtils.join("\n", queryResult);
+		Log.d(LOG_TAG, "Result: " + resultDump);
+		
 		if (queryResult != null && !queryResult.isEmpty()) {
 			lv = (ListView) findViewById(R.id.listView1);
 			lv.setAdapter(new MyViewAdapter(getApplicationContext(),
@@ -145,10 +148,7 @@ public class AnalysisResultActivity extends Activity {
 			startDate.setText(intent.getStringExtra("start_date"));
 			endDate.setText(intent.getStringExtra("end_date"));
 			contacts.setText(intent.getStringExtra("contacts"));
-			String resultDump = TextUtils.join("\n", queryResult);
-			result.setText(resultDump);
-
-			Log.d(LOG_TAG, "Result: " + resultDump);
+			result.setText(TextUtils.join("\n", queryResult));
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);

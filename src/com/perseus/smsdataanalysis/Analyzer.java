@@ -218,6 +218,29 @@ public class Analyzer {
 		}
 	}
 
+	// returns a cursor filled with the relevant texts
+	private Cursor getCursor(String scope, String[] projection, Long startDate,
+			Long endDate, ArrayList<String> contactsList) {
+		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
+				+ " AND " + endDate);
+		if (contactsList.size() != 0) {
+			selection.append(" AND (address");
+			boolean first = true;
+			for(String contact : contactsList){
+				if(!first)
+					selection.append(" OR address");
+				selection.append(" LIKE '%");
+				selection.append(contact);
+				selection.append("%'");
+				first = false;
+			}
+			selection.append(")");
+		}
+		return context.getContentResolver().query(
+				Uri.parse("content://sms/" + scope), projection,
+				selection.toString(), null, null);
+	}
+
 	// Temporary method to display the data in a textual format, should be
 	// replaced with graphics soonish
 	private ArrayList<Entry<String, Integer>> formatResult(
@@ -240,19 +263,10 @@ public class Analyzer {
 
 	private ArrayList<Entry<String, Integer>> wordFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
-				+ " and " + endDate);
-		if (contactsList.size() != 0) {
-			String list = contactsList.toString();
-			selection.append(" AND address in (");
-			selection.append(list.substring(1, list.length() - 1));
-			selection.append(")");
-		}
-		Cursor cursor = context.getContentResolver().query(
-				Uri.parse("content://sms/" + scope), new String[] { "body" },
-				selection.toString(), null, null);
-
+		Cursor cursor = getCursor(scope, new String[] { "body" }, startDate,
+				endDate, contactsList);
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
+		
 		if (cursor.moveToFirst()) {
 			do {
 				// Grab all words without punctuation and ignoring case
@@ -271,17 +285,8 @@ public class Analyzer {
 
 	private ArrayList<Entry<String, Integer>> smsFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
-				+ " and " + endDate);
-		if (contactsList.size() != 0) {
-			String list = contactsList.toString();
-			selection.append(" AND address in (");
-			selection.append(list.substring(1, list.length() - 1));
-			selection.append(")");
-		}
-		Cursor cursor = context.getContentResolver().query(
-				Uri.parse("content://sms/" + scope),
-				new String[] { "address" }, selection.toString(), null, null);
+		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
+				endDate, contactsList);
 
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		String name;
@@ -292,10 +297,9 @@ public class Analyzer {
 				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
 				// if we don't have a name for the number let's try some fuzzy
 				// matching and if that fails the number if their name
-				if (contactNames.containsKey(number)) {
+				if (contactNames.containsKey(number))
 					name = contactNames.get(number);
-					Log.d(LOG_TAG, name + " : " + number);
-				} else {
+				else {
 					name = number;
 					for (String s : contactNames.keySet())
 						if (PhoneNumberUtils.compare(s, number)) {
@@ -317,18 +321,8 @@ public class Analyzer {
 
 	private ArrayList<Entry<String, Integer>> smsLength(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
-				+ " and " + endDate);
-		if (contactsList.size() != 0) {
-			String list = contactsList.toString();
-			selection.append(" AND address in (");
-			selection.append(list.substring(1, list.length() - 1));
-			selection.append(")");
-		}
-		Cursor cursor = context.getContentResolver().query(
-				Uri.parse("content://sms/" + scope),
-				new String[] { "body", "address" }, selection.toString(), null,
-				null);
+		Cursor cursor = getCursor(scope, new String[] { "body", "address" }, startDate,
+				endDate, contactsList);
 
 		HashMap<String, Pair<Integer, Integer>> smsLength = new HashMap<String, Pair<Integer, Integer>>();
 		int messageLength;
