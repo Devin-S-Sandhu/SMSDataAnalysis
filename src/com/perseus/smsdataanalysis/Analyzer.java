@@ -28,13 +28,15 @@ public class Analyzer {
 
 	public class Query {
 		private String analysisType;
+		private String scope;
 		private String startDate;
 		private String endDate;
 		private String contacts;
 
-		public Query(String analysisType, String startDate, String endDate,
+		public Query(String analysisType, String scope, String startDate, String endDate,
 				String contacts) {
 			this.analysisType = analysisType;
+			this.scope = scope;
 			this.startDate = startDate;
 			this.endDate = endDate;
 			this.contacts = contacts;
