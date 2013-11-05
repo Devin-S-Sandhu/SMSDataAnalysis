@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidplot.LineRegion;
 import com.androidplot.pie.PieChart;
@@ -49,21 +50,20 @@ import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
-import com.androidplot.xy.XYStepMode;
 
 public class AnalysisResultActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisResultActivity";
 	private static final String NO_SELECTION_TXT = "Touch bar to select.";
-	private final 	Random generator = new Random();
-	
+	private final Random generator = new Random();
+
 	private TextView analysisType;
 	private TextView startDate;
 	private TextView endDate;
 	private TextView contacts;
 	private TextView result;
-	
+
 	private ListView lv;
-	
+
 	private PieChart pie;
 	private XYPlot plot;
 
@@ -72,10 +72,10 @@ public class AnalysisResultActivity extends Activity {
 	private TextLabelWidget selectionWidget;
 
 	private Pair<Integer, XYSeries> selection;
-	
+
 	private ArrayList<Entry<String, Integer>> queryResult;
 	private Intent intent;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,7 +85,7 @@ public class AnalysisResultActivity extends Activity {
 
 		this.setTitle("Data Analysis Result");
 
-		 intent = getIntent();
+		intent = getIntent();
 
 		Analyzer.Query query = mAnalyzer.new Query(
 				intent.getStringExtra("type"),
@@ -94,11 +94,16 @@ public class AnalysisResultActivity extends Activity {
 				intent.getStringExtra("contacts"));
 
 		queryResult = mAnalyzer.doQuery(query);
-
-
-		lv = (ListView) findViewById(R.id.listView1);
-		lv.setAdapter(new MyViewAdapter(getApplicationContext(),
-		R.layout.listview_analysis_result_item, null));
+		if (queryResult != null && !queryResult.isEmpty()) {
+			lv = (ListView) findViewById(R.id.listView1);
+			lv.setAdapter(new MyViewAdapter(getApplicationContext(),
+					R.layout.listview_analysis_result_item, null));
+		}
+		else
+		{
+			Toast.makeText(getApplicationContext(), "The result is empty",
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -134,13 +139,17 @@ public class AnalysisResultActivity extends Activity {
 			endDate = (TextView) v.findViewById(R.id.end_date);
 			contacts = (TextView) v.findViewById(R.id.contacts);
 			result = (TextView) v.findViewById(R.id.text_result);
-			
-			analysisType.setText(intent.getStringExtra("type"));
+
+			String type = intent.getStringExtra("type");
+			analysisType.setText(type);
 			startDate.setText(intent.getStringExtra("start_date"));
 			endDate.setText(intent.getStringExtra("end_date"));
 			contacts.setText(intent.getStringExtra("contacts"));
-			result.setText(TextUtils.join("\n", queryResult));
-			
+			String resultDump = TextUtils.join("\n", queryResult);
+			result.setText(resultDump);
+
+			Log.d(LOG_TAG, "Result: " + resultDump);
+
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
 
@@ -184,30 +193,31 @@ public class AnalysisResultActivity extends Activity {
 				}
 			});
 
-	        plot.setDomainValueFormat(new NumberFormat() {
-	            /**
+			plot.setDomainValueFormat(new NumberFormat() {
+				/**
 				 * 
 				 */
 				private static final long serialVersionUID = 1L;
 
 				@Override
-	            public StringBuffer format(double value, StringBuffer buffer, FieldPosition field) {
-	                return new StringBuffer("");
-	            }
+				public StringBuffer format(double value, StringBuffer buffer,
+						FieldPosition field) {
+					return new StringBuffer("");
+				}
 
-	            @Override
-	            public StringBuffer format(long value, StringBuffer buffer, FieldPosition field) {
-	                throw new UnsupportedOperationException("Not yet implemented.");
-	            }
+				@Override
+				public StringBuffer format(long value, StringBuffer buffer,
+						FieldPosition field) {
+					throw new UnsupportedOperationException(
+							"Not yet implemented.");
+				}
 
-	            @Override
-	            public Number parse(String string, ParsePosition position) {
-	                throw new UnsupportedOperationException("Not yet implemented.");
-	            }
-	        });
-	        plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
-	        plot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
-
+				@Override
+				public Number parse(String string, ParsePosition position) {
+					throw new UnsupportedOperationException(
+							"Not yet implemented.");
+				}
+			});
 
 			// Remove all current series from each plot
 			Iterator<XYSeries> iterator1 = plot.getSeriesSet().iterator();
@@ -215,50 +225,46 @@ public class AnalysisResultActivity extends Activity {
 				XYSeries setElement = iterator1.next();
 				plot.removeSeries(setElement);
 			}
-			
+
 			int numSeg = queryResult.size();
 			numSeg = (numSeg > 10) ? 10 : numSeg;
 			Segment segments[] = new Segment[numSeg];
 			SegmentFormatter sf[] = new SegmentFormatter[numSeg];
 
-			EmbossMaskFilter emf = new EmbossMaskFilter(new float[] { 1, 1, 1 },
-					0.4f, 10, 8.2f);
+			EmbossMaskFilter emf = new EmbossMaskFilter(
+					new float[] { 1, 1, 1 }, 0.4f, 10, 8.2f);
 
+			int max = 0;
 			Log.v(LOG_TAG, "initalizing segemnts");
 			for (int i = 0; i < numSeg; i++) {
 				Entry<String, Integer> curr = queryResult.get(i);
 				int count = curr.getValue();
+				max = (count > max) ? count : max;
 				String label = curr.getKey();
 				segments[i] = new Segment(label, count);
-				int color = Color.argb(255,
-						generator.nextInt(256), generator.nextInt(256),
-						generator.nextInt(256));
+				int color = Color.argb(255, generator.nextInt(256),
+						generator.nextInt(256), generator.nextInt(256));
 				sf[i] = new SegmentFormatter(color);
 				sf[i].getFillPaint().setMaskFilter(emf);
-				
 
-				Number[] x = {i};
+				Number[] x = { i };
 				XYSeries curSeries = new SimpleXYSeries(Arrays.asList(x),
 						Arrays.asList(count), label);
 
 				MyBarFormatter formatter = new MyBarFormatter(Color.argb(255,
 						generator.nextInt(256), generator.nextInt(256),
-						generator.nextInt(256)),
-						Color.LTGRAY);
-				
+						generator.nextInt(256)), Color.LTGRAY);
+
 				plot.addSeries(curSeries, formatter);
-
-			}
-
-			Log.v(LOG_TAG, "adding segemnts");
-			for (int i = 0; i < numSeg; i++) {
 				pie.addSeries(segments[i], sf[i]);
 			}
 			pie.getBorderPaint().setColor(Color.TRANSPARENT);
 			pie.getBackgroundPaint().setColor(Color.DKGRAY);
-			
+
 			updatePlot();
 
+			pie.setTitle(type + " Pie Chart Result");
+			plot.setTitle(type + " Bar Graph Result");
 			return v;
 		}
 	}
@@ -328,8 +334,8 @@ public class AnalysisResultActivity extends Activity {
 		if (selection == null) {
 			selectionWidget.setText(NO_SELECTION_TXT);
 		} else {
-			selectionWidget.setText("Word: " + selection.second.getTitle()
-					+ ", Count: " + selection.second.getY(selection.first));
+			selectionWidget.setText(selection.second.getTitle() + ", Count: "
+					+ selection.second.getY(selection.first));
 		}
 		plot.redraw();
 	}
