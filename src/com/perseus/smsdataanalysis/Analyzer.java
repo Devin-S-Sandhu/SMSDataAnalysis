@@ -220,11 +220,18 @@ public class Analyzer {
 	private Cursor getCursor(String scope, String[] projection, Long startDate,
 			Long endDate, ArrayList<String> contactsList) {
 		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
-				+ " and " + endDate);
+				+ " AND " + endDate);
 		if (contactsList.size() != 0) {
-			String list = contactsList.toString();
-			selection.append(" AND address IN (");
-			selection.append(list.substring(1, list.length() - 1));
+			selection.append(" AND (address");
+			boolean first = true;
+			for(String contact : contactsList){
+				if(!first)
+					selection.append(" OR address");
+				selection.append(" LIKE '%");
+				selection.append(contact);
+				selection.append("%'");
+				first = false;
+			}
 			selection.append(")");
 		}
 		return context.getContentResolver().query(
