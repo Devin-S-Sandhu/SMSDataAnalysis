@@ -200,7 +200,7 @@ public class Analyzer {
 	// creates a hash of numbers to names
 	private void getContactNames(ArrayList<String> contactsList) {
 		// contact names was already populated in parseContacts()
-		if (contactNames.size() == 0)
+		if (contactNames.size() != 0)
 			return;
 		Cursor cursor = context.getContentResolver().query(
 				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -290,9 +290,10 @@ public class Analyzer {
 				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
 				// if we don't have a name for the number let's try some fuzzy
 				// matching and if that fails the number if their name
-				if (contactNames.containsKey(number))
+				if (contactNames.containsKey(number)) {
 					name = contactNames.get(number);
-				else {
+					Log.d(LOG_TAG, name + " : " + number);
+				} else {
 					name = number;
 					for (String s : contactNames.keySet())
 						if (PhoneNumberUtils.compare(s, number)) {
