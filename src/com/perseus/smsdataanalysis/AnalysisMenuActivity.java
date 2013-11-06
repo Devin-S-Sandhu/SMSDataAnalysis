@@ -75,8 +75,7 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-		ContentResolver content = getContentResolver();
-		Cursor cursor = content.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+		Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
 				PEOPLE_PROJECTION, null, null, null);
 		ContactListAdapter adapter = new ContactListAdapter(this, cursor);
 		selectContact.setThreshold(0);
