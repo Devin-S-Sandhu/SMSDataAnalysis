@@ -102,6 +102,9 @@ public class AnalysisResultActivity extends Activity {
 			lv = (ListView) findViewById(R.id.listView1);
 			lv.setAdapter(new MyViewAdapter(getApplicationContext(),
 					R.layout.listview_analysis_result_item, null));
+
+			Toast.makeText(getApplicationContext(), "Scroll down for more graphs",
+					Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(getApplicationContext(), "The result is empty",
 					Toast.LENGTH_SHORT).show();
