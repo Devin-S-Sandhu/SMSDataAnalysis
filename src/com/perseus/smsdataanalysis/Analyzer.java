@@ -148,7 +148,11 @@ public class Analyzer {
 			break;
 		case 2:
 			result = smsLength(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList);
+					range.getElement0(), range.getElement1(), contactsList, false);
+			break;
+		case 3:
+			result = smsLength(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList, true);
 			break;
 		}
 		return result;
@@ -315,7 +319,7 @@ public class Analyzer {
 	}
 
 	private ArrayList<Entry<String, Integer>> smsLength(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList) {
+			Long startDate, Long endDate, ArrayList<String> contactsList, boolean reverse) {
 		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
 				startDate, endDate, contactsList);
 
@@ -360,8 +364,11 @@ public class Analyzer {
 			average.put(name, (Integer) smsLength.get(key).getElement1()
 					/ smsLength.get(key).getElement0());
 		}
-
-		return formatResult(average.entrySet());
+		
+		ArrayList<Entry<String, Integer>> result = formatResult(average.entrySet());
+		if(reverse)
+			Collections.reverse(result);
+		return result;
 	}
 
 }

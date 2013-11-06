@@ -4,13 +4,13 @@
     <string-array name="analaysis_type_arrays">
         <item>Word Frequency</item>
         <item>SMS Frequency</item>
-        <item>SMS Length</item>
+        <item>SMS Longest Length</item>
+        <item>SMS Shortest Length</item>
     </string-array>
-    
     <string-array name="scope_array">
-        <item >All</item>
-        <item >Sent</item>
-        <item >Received</item>
+        <item>All</item>
+        <item>Sent</item>
+        <item>Received</item>
     </string-array>
 
 </resources>
