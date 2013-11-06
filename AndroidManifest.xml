@@ -41,6 +41,10 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name="com.perseus.smsdataanalysis.BattleResultActivity"
+            android:label="@string/title_activity_battle_result" >
+        </activity>
     </application>
 
 </manifest>
