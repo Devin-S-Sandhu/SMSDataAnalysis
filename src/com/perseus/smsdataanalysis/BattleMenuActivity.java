@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,9 +18,11 @@ public class BattleMenuActivity extends Activity {
     private final static String LOG_TAG = "MyFirstApp_tag";
     
     private final static int CONTACT_PICKER_RESULT = 0;
-
-    private String contactOne = "", contactTwo = "";
     
+
+    private String contactOne, contactTwo;
+    private boolean battleFlag = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,8 +31,30 @@ public class BattleMenuActivity extends Activity {
 
 		this.setTitle("Friend Battle Menu");
 		
-		//Intent intent = getIntent();
-		//String value = intent.getStringExtra("key"); //if it's a string you stored.
+		contactOne = contactTwo = "";
+		
+		TextView label = (TextView) findViewById(R.id.friend_one_label);
+		label.setText(R.string.friend_one);
+		
+		label = (TextView) findViewById(R.id.friend_two_label);
+		label.setText(R.string.friend_two);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if (battleFlag) {
+			contactOne = contactTwo = "";
+			
+			TextView label = (TextView) findViewById(R.id.friend_one_label);
+			label.setText(R.string.friend_one);
+			
+			label = (TextView) findViewById(R.id.friend_two_label);
+			label.setText(R.string.friend_two);
+			
+			battleFlag = false;
+		}
 	}
 
 	@Override
@@ -45,6 +70,10 @@ public class BattleMenuActivity extends Activity {
 					BattleResultActivity.class);
 			intent.putExtra("contactOne", contactOne);
 			intent.putExtra("contactTwo", contactTwo);
+			intent.putExtra("timeSpan", ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString());
+			
+			battleFlag = true;
+			
 			startActivity(intent);
 		}
 		else {

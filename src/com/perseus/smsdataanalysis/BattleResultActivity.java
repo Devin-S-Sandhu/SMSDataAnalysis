@@ -1,6 +1,9 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import android.app.Activity;
@@ -12,7 +15,18 @@ import android.widget.TextView;
 
 public class BattleResultActivity extends Activity {
 	private static final String LOG_TAG = "BattleResultActivity";
+	
+	private final int CURR_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+    private final int CURR_MONTH = Calendar.getInstance().get(Calendar.MONTH);
+    private final int CURR_DAY = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
+    private HashMap<String, Integer> timeSpans;
+    private String timeSpan;
+    
+    private Date startDate;
+    private Date endDate;
+
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -20,6 +34,29 @@ public class BattleResultActivity extends Activity {
 		
 		Analyzer analyzer = new Analyzer(getApplicationContext());
 		Intent intent = getIntent();
+		
+		timeSpans = new HashMap<String, Integer>();
+		String[] timeSpanArray = getApplicationContext().getResources().getStringArray(R.array.time_span_array);
+		for (int i = 0; i < timeSpanArray.length; i++) {
+			timeSpans.put(timeSpanArray[i], i);
+		}
+		timeSpan = intent.getStringExtra("timeSpan");
+		
+		endDate = new Date(CURR_YEAR, CURR_MONTH, CURR_DAY);
+		Calendar c = Calendar.getInstance();
+		c.setTime(endDate);
+		switch (timeSpans.get(timeSpan)) {
+		case 0:
+			c.add(Calendar.MONTH, -1);
+			break;
+		case 1:
+			c.add(Calendar.YEAR, -1);
+			break;
+		default:
+			c.add(Calendar.YEAR, -30);
+			break;
+		}
+		startDate = c.getTime();
 		
 		// TODO use value in arrays.xml for analysis type
 		String contacts = new StringBuilder()
@@ -29,8 +66,12 @@ public class BattleResultActivity extends Activity {
 		Analyzer.Query query = analyzer.new Query(
 				"SMS Frequency",
 				"Received",
-				"10-4-2013",
-				"11-4-2013",
+				startDate.getMonth() + "-" +
+				startDate.getDay() + "-" +
+				startDate.getYear(),
+				endDate.getMonth() + "-" +
+				endDate.getDay() + "-" +
+				endDate.getYear(),
 				contacts);
 		
 		ArrayList<Entry<String, Integer>> queryResult = analyzer
@@ -42,8 +83,9 @@ public class BattleResultActivity extends Activity {
 			Entry<String, Integer> contactTwoData = queryResult.get(1);
 			
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
-			winnerLabel.setText(contactOneData.getValue() > contactTwoData.getValue() ? 
-					contactOneData.getKey() : contactTwoData.getKey() + " " + winnerLabel.getText());
+			String winner = contactOneData.getValue() > contactTwoData.getValue() ? 
+					contactOneData.getKey() : contactTwoData.getKey();
+			winnerLabel.setText(winner + " Wins!");
 			
 			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneData.getKey() + ": " + 
 					contactOneData.getValue() + " texts");

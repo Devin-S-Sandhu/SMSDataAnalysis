@@ -14,13 +14,13 @@
     <string name="from_text">FROM</string>
     <string name="to_text">TO</string>
     <string name="contacts_text">Contacts</string>
-    <string name="select_contact_hint">select contacts&#8230;</string>
+    <string name="select_contact_hint">select contacts (default all)</string>
     <string name="friend_one">Friend One:</string>
     <string name="friend_two">Friend Two:</string>
     <string name="add_contact">Add Contact</string>
     <string name="battle_text">Battle!</string>
     <string name="title_activity_battle_result">Battle Result</string>
     <string name="hello_world">Hello world!</string>
-    <string name="winner_text">Wins!</string>
+    <string name="time_span">Time Span: </string>
 
 </resources>
