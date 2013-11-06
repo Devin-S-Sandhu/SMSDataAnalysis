@@ -148,11 +148,13 @@ public class Analyzer {
 			break;
 		case 2:
 			result = smsLength(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList, false);
+					range.getElement0(), range.getElement1(), contactsList,
+					false);
 			break;
 		case 3:
 			result = smsLength(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList, true);
+					range.getElement0(), range.getElement1(), contactsList,
+					true);
 			break;
 		}
 		return result;
@@ -193,8 +195,10 @@ public class Analyzer {
 			number = PhoneNumberUtils.stripSeparators(matcher.group(2));
 			contactsList.add(number);
 			contactNames.put(number, name);
-			contactNames.put(matcher.group(2), name);
+			contactNames.put(number.replace("+", ""), name);
 		}
+		Log.d(LOG_TAG, contactsList.toString());
+		Log.d(LOG_TAG, contactNames.toString());
 		return contactsList;
 	}
 
@@ -228,9 +232,11 @@ public class Analyzer {
 			for (String contact : contactsList) {
 				if (!first)
 					selection.append(" OR address");
+				// handles country code issues, but makes the matching a lot
+				// fuzzier which may have unintended consquences
 				selection.append(" LIKE '%");
 				selection.append(contact);
-				selection.append("%'");
+				selection.append("'");
 				first = false;
 			}
 			selection.append(")");
@@ -286,6 +292,7 @@ public class Analyzer {
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
 		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
 				endDate, contactsList);
+		Log.d(LOG_TAG, "cursor.getCount: " + cursor.getCount());
 
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		String name;
@@ -307,6 +314,7 @@ public class Analyzer {
 							break;
 						}
 				}
+				Log.d(LOG_TAG, "address: " + number);
 				if (freq.containsKey(name))
 					freq.put(name, freq.get(name) + 1);
 				else
@@ -319,7 +327,8 @@ public class Analyzer {
 	}
 
 	private ArrayList<Entry<String, Integer>> smsLength(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList, boolean reverse) {
+			Long startDate, Long endDate, ArrayList<String> contactsList,
+			boolean reverse) {
 		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
 				startDate, endDate, contactsList);
 
@@ -364,9 +373,10 @@ public class Analyzer {
 			average.put(name, (Integer) smsLength.get(key).getElement1()
 					/ smsLength.get(key).getElement0());
 		}
-		
-		ArrayList<Entry<String, Integer>> result = formatResult(average.entrySet());
-		if(reverse)
+
+		ArrayList<Entry<String, Integer>> result = formatResult(average
+				.entrySet());
+		if (reverse)
 			Collections.reverse(result);
 		return result;
 	}
