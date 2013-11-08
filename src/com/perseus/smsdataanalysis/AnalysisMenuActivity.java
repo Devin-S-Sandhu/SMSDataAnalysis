@@ -1,29 +1,22 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
-import android.widget.Filterable;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,7 +47,9 @@ public class AnalysisMenuActivity extends Activity {
 
 	public static final String[] PEOPLE_PROJECTION = new String[] {
 			ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
-			ContactsContract.CommonDataKinds.Phone.NUMBER};
+			ContactsContract.CommonDataKinds.Phone.NUMBER };
+
+	private TextView debug1, debug2, debug3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,83 +61,28 @@ public class AnalysisMenuActivity extends Activity {
 		scope = (Spinner) findViewById(R.id.scope);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
+		debug1 = (TextView) findViewById(R.id.debug1);
+		debug2 = (TextView) findViewById(R.id.debug2);
+		debug3 = (TextView) findViewById(R.id.debug3);
 		selectContact = (MultiAutoCompleteTextView) findViewById(R.id.select_contact);
 
-		addListenerOnSpinnerItemSelection();
+		analysisType = (Spinner) findViewById(R.id.analysis_type);
 		setCurrentDateOnView();
 
 		startDatePickerDialog = new DatePickerDialog(this,
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-		Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+		Cursor cursor = getContentResolver().query(
+				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
 				PEOPLE_PROJECTION, null, null, null);
 		ContactListAdapter adapter = new ContactListAdapter(this, cursor);
 		selectContact.setThreshold(0);
 		selectContact.setAdapter(adapter);
-		selectContact.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer() );
+		selectContact
+				.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 		selectContact.setVerticalScrollBarEnabled(true);
-	}
-
-	private class ContactListAdapter extends CursorAdapter implements
-			Filterable {
-		private ContentResolver mCR;
-
-		@SuppressWarnings("deprecation")
-		public ContactListAdapter(Context context, Cursor c) {
-			super(context, c);
-			mCR = context.getContentResolver();
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-
-			((TextView) view).setText(new StringBuilder()
-			.append(cursor.getString(1)).append(" ")
-			.append(cursor.getString(2)));
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			final LayoutInflater inflater = LayoutInflater.from(context);
-			final TextView view = (TextView) inflater.inflate(
-					android.R.layout.simple_dropdown_item_1line, parent, false);
-			view.setText(cursor.getString(1));
-			return view;
-
-		}
-
-		@Override
-		public String convertToString(Cursor cursor) {
-			// output text
-			return new StringBuilder()
-			.append(cursor.getString(1)).append(" <")
-			.append(cursor.getString(2)).append(">").append(", ").toString();
-		}
-
-		public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-			if (getFilterQueryProvider() != null) {
-				return getFilterQueryProvider().runQuery(constraint);
-			}
-
-			StringBuilder buffer = null;
-			String[] args = null;
-			if (constraint != null) {
-				buffer = new StringBuilder();
-				buffer.append("UPPER(");
-				buffer.append(Contacts.DISPLAY_NAME);
-				buffer.append(") GLOB ?");
-				args = new String[] { constraint.toString().toUpperCase(Locale.US) + "*" };
-			}
-
-			return mCR.query(
-					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, //URI
-					PEOPLE_PROJECTION, // projection
-					buffer == null ? null: buffer.toString(), //selection
-					args, //selectionArgs
-					Contacts.DISPLAY_NAME //sortOrder
-					);
-		}
+		selectContact.addTextChangedListener(textWatcher);
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -171,8 +111,10 @@ public class AnalysisMenuActivity extends Activity {
 						String cNumber = phones
 								.getString(phones
 										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-						/*Toast.makeText(getApplicationContext(), cNumber,
-								Toast.LENGTH_SHORT).show();*/
+						/*
+						 * Toast.makeText(getApplicationContext(), cNumber,
+						 * Toast.LENGTH_SHORT).show();
+						 */
 
 						String nameContact = c
 								.getString(c
@@ -198,31 +140,6 @@ public class AnalysisMenuActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	}
-
-	public void addListenerOnSpinnerItemSelection() {
-		analysisType = (Spinner) findViewById(R.id.analysis_type);
-		analysisType
-				.setOnItemSelectedListener(new CustomOnItemSelectedListener());
-	}
-
-	private class CustomOnItemSelectedListener implements
-			OnItemSelectedListener {
-
-		public void onItemSelected(AdapterView<?> parent, View view, int pos,
-				long id) {
-			/*Toast.makeText(
-					parent.getContext(),
-					"OnItemSelectedListener : "
-							+ parent.getItemAtPosition(pos).toString(),
-					Toast.LENGTH_SHORT).show();*/
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
-			// TODO Auto-generated method stub
-		}
-
 	}
 
 	// display current date
@@ -355,4 +272,26 @@ public class AnalysisMenuActivity extends Activity {
 				ContactsContract.Contacts.CONTENT_URI);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
+
+	private TextWatcher textWatcher = new TextWatcher() {
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			debug1.setText("onTextChanged - CharSequence: " + s.toString() + " start: " + start + " before: " + before
+					+ " count: " + count);
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			debug2.setText("beforeTextChanged - CharSequence: " + s.toString() + " start: " + start + " after: " + after
+					+ " count: " + count);
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			debug3.setText("afterTextChanged - Editable: " + s.toString());
+		}
+	};
 }
