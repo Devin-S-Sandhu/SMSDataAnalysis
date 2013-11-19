@@ -233,8 +233,9 @@ public class Analyzer {
 				if (!first)
 					selection.append(" OR address");
 				// handles country code issues, but makes the matching a lot
-				// fuzzier which may have unintended consquences
+				// fuzzier which may have unintended consequences
 				selection.append(" LIKE '%");
+				Log.d(LOG_TAG, "!!! " + contact);
 				selection.append(contact);
 				selection.append("'");
 				first = false;
@@ -246,8 +247,7 @@ public class Analyzer {
 				selection.toString(), null, null);
 	}
 
-	// Temporary method to display the data in a textual format, should be
-	// replaced with graphics soonish
+	// Temporary method to display the data in a textual format
 	private ArrayList<Entry<String, Integer>> formatResult(
 			Set<Entry<String, Integer>> entrySet) {
 		ArrayList<Entry<String, Integer>> out = new ArrayList<Entry<String, Integer>>();
@@ -273,7 +273,7 @@ public class Analyzer {
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 
 		if (cursor.moveToFirst()) {
-			do {
+			while (!cursor.isAfterLast()) {
 				// Grab all words without punctuation and ignoring case
 				for (String s : cursor.getString(0).split("\\s+")) {
 					s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
@@ -282,7 +282,8 @@ public class Analyzer {
 					else
 						freq.put(s, 1);
 				}
-			} while (cursor.moveToNext());
+				cursor.moveToNext();
+			}
 		}
 
 		return formatResult(freq.entrySet());
@@ -290,6 +291,18 @@ public class Analyzer {
 
 	private ArrayList<Entry<String, Integer>> smsFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
+		// DEBUG TIME
+		// Cursor debugCursor = getCursor("", new String[] { "address", "body"
+		// },
+		// startDate, endDate, new ArrayList<String>());
+		// while (debugCursor.moveToNext()) {
+		// if (debugCursor.getString(0).contains("210"))
+		// Log.d(LOG_TAG, "DEBUGZ: " + debugCursor.getString(0) + " becomes "
+		// + PhoneNumberUtils.stripSeparators(debugCursor.getString(0)));
+		//
+		// }
+		// END DEBUG TIME
+
 		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
 				endDate, contactsList);
 		Log.d(LOG_TAG, "cursor.getCount: " + cursor.getCount());
@@ -299,7 +312,7 @@ public class Analyzer {
 		String number;
 		if (cursor.moveToFirst()) {
 			getContactNames(contactsList);
-			do {
+			while (!cursor.isAfterLast()) {
 				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
 				// if we don't have a name for the number let's try some fuzzy
 				// matching and if that fails the number if their name
@@ -319,8 +332,8 @@ public class Analyzer {
 					freq.put(name, freq.get(name) + 1);
 				else
 					freq.put(name, 1);
-
-			} while (cursor.moveToNext());
+				cursor.moveToNext();
+			}
 		}
 
 		return formatResult(freq.entrySet());
@@ -337,7 +350,7 @@ public class Analyzer {
 		String address;
 		if (cursor.moveToFirst()) {
 			getContactNames(contactsList);
-			do {
+			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
 				address = cursor.getString(1);
 				// key is address, value is a pair
@@ -349,7 +362,8 @@ public class Analyzer {
 				} else
 					smsLength.put(address, new Pair<Integer, Integer>(1,
 							messageLength));
-			} while (cursor.moveToNext());
+				cursor.moveToNext();
+			}
 		}
 
 		// for now we return the address, but I'm keeping the frequency and

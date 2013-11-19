@@ -22,7 +22,7 @@ Instructions:
 Features Completed from Prototype:
   Several analysis types
     Most frequently used words
-    Most frequently texted
+    Most frequently texted contacts
     Average longest length of message
     Average shortest length of message
   Constraining analyses by a time range

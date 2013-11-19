@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
@@ -55,7 +56,6 @@ public class AnalysisMenuActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_analysis_menu);
-		Log.v(LOG_TAG, "A verbose message");
 
 		this.setTitle("Data Analysis Menu");
 		scope = (Spinner) findViewById(R.id.scope);
@@ -294,4 +294,5 @@ public class AnalysisMenuActivity extends Activity {
 			debug3.setText("afterTextChanged - Editable: " + s.toString());
 		}
 	};
+	
 }

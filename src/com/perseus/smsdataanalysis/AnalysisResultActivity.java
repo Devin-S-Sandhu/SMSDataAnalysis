@@ -11,12 +11,14 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,7 @@ import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
+import com.perseus.smsdataanalysis.Analyzer.Query;
 
 public class AnalysisResultActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisResultActivity";
@@ -75,40 +79,71 @@ public class AnalysisResultActivity extends Activity {
 
 	private ArrayList<Entry<String, Integer>> queryResult;
 	private Intent intent;
+	private Analyzer mAnalyzer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v(LOG_TAG, "A verbose message");
 		setContentView(R.layout.activity_analysis_result);
-		Analyzer mAnalyzer = new Analyzer(getApplicationContext());
-
 		this.setTitle("Data Analysis Result");
 
+		mAnalyzer = new Analyzer(getApplicationContext());
 		intent = getIntent();
-
 		Analyzer.Query query = mAnalyzer.new Query(
-				intent.getStringExtra("type"),
-				intent.getStringExtra("scope"),
+				intent.getStringExtra("type"), intent.getStringExtra("scope"),
 				intent.getStringExtra("start_date"),
 				intent.getStringExtra("end_date"),
 				intent.getStringExtra("contacts"));
 
-		queryResult = mAnalyzer.doQuery(query);
-		String resultDump = TextUtils.join("\n", queryResult);
-		Log.d(LOG_TAG, "Result: " + resultDump);
+		Log.d(LOG_TAG, "before asnyc task");
 
-		if (queryResult != null && !queryResult.isEmpty()) {
-			lv = (ListView) findViewById(R.id.listView1);
-			lv.setAdapter(new MyViewAdapter(getApplicationContext(),
-					R.layout.listview_analysis_result_item, null));
+		new AnalysisTask().execute(query);
+	}
 
-			Toast.makeText(getApplicationContext(), "Scroll down for more graphs",
-					Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(getApplicationContext(), "The result is empty",
-					Toast.LENGTH_SHORT).show();
+	private class AnalysisTask extends
+			AsyncTask<Analyzer.Query, Void, ArrayList<Entry<String, Integer>>> {
+		ProgressDialog mProgressDialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			mProgressDialog = new ProgressDialog(AnalysisResultActivity.this);
+			mProgressDialog.setTitle(intent.getStringExtra("type"));
+			mProgressDialog.setMessage(getResources().getString(
+					R.string.spinner_message));
+			mProgressDialog.setIndeterminate(true);
+			mProgressDialog.setCanceledOnTouchOutside(false);
+			mProgressDialog.show();
 		}
+
+		@Override
+		protected ArrayList<Entry<String, Integer>> doInBackground(
+				Query... params) {
+			return mAnalyzer.doQuery(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Entry<String, Integer>> result) {
+			mProgressDialog.dismiss();
+			Log.d(LOG_TAG, result.toString());
+			queryResult = result;
+			String resultDump = TextUtils.join("\n", queryResult);
+			Log.d(LOG_TAG, "Result: " + resultDump);
+
+			if (queryResult != null && !queryResult.isEmpty()) {
+				lv = (ListView) findViewById(R.id.listView1);
+				lv.setAdapter(new MyViewAdapter(getApplicationContext(),
+						R.layout.listview_analysis_result_item, null));
+
+				Toast.makeText(getApplicationContext(),
+						"Scroll down for more graphs", Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				Toast.makeText(getApplicationContext(), "The result is empty",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
 	}
 
 	@Override
