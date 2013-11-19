@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:id="@+id/numResults"
+        android:defaultValue="@string/default_num_results"
+        android:title="Number of Results"
+        android:summary="Number of analysis results to display"
+        android:key="num_results" />
+
+</PreferenceScreen>

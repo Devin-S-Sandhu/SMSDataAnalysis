@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends Activity {
@@ -24,16 +25,29 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(LOG_TAG, "in onOptionsItemSelected selecting");
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivityForResult(new Intent(this, Settings.class), 0);
+			return true;
+		}
+		return false;
+	}
+
 	public void startAnalysisActivity(View view) {
-		Intent myIntent = new Intent(MainActivity.this, AnalysisMenuActivity.class);
-		//myIntent.putExtra("key", value); //Optional parameters
+		Intent myIntent = new Intent(MainActivity.this,
+				AnalysisMenuActivity.class);
+		// myIntent.putExtra("key", value); //Optional parameters
 		MainActivity.this.startActivity(myIntent);
 	}
 
 	public void startBattleActivity(View view) {
-		Intent myIntent = new Intent(MainActivity.this, BattleMenuActivity.class);
-		//myIntent.putExtra("key", value); //Optional parameters
+		Intent myIntent = new Intent(MainActivity.this,
+				BattleMenuActivity.class);
+		// myIntent.putExtra("key", value); //Optional parameters
 		MainActivity.this.startActivity(myIntent);
 	}
 }

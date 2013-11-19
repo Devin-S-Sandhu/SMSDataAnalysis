@@ -112,6 +112,7 @@ public class AnalysisResultActivity extends Activity {
 			mProgressDialog.setMessage(getResources().getString(
 					R.string.spinner_message));
 			mProgressDialog.setIndeterminate(true);
+			mProgressDialog.setCancelable(false);
 			mProgressDialog.setCanceledOnTouchOutside(false);
 			mProgressDialog.show();
 		}

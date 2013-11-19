@@ -22,6 +22,7 @@
     <string name="title_activity_battle_result">Battle Result</string>
     <string name="hello_world">Hello world!</string>
     <string name="time_span">Time Span: </string>
-    <string name="spinner_message">Analyzing</string>
+    <string name="spinner_message">Analyzing&#8230;</string>
+    <string name="default_num_results">10</string>
 
 </resources>
