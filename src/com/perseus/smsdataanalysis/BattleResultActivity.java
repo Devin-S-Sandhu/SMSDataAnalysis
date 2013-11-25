@@ -74,23 +74,23 @@ public class BattleResultActivity extends Activity {
 				endDate.getYear(),
 				contacts);
 		
-		ArrayList<Entry<String, Integer>> queryResult = analyzer
+		ArrayList<Analyzer.Pair<String, Integer>> queryResult = analyzer
 				.doQuery(query);
 		Log.d(LOG_TAG, queryResult.toString());
 		
 		if (queryResult.size() >= 2) {
-			Entry<String, Integer> contactOneData = queryResult.get(0);
-			Entry<String, Integer> contactTwoData = queryResult.get(1);
+			Analyzer.Pair<String, Integer> contactOneData = queryResult.get(0);
+			Analyzer.Pair<String, Integer> contactTwoData = queryResult.get(1);
 			
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
-			String winner = contactOneData.getValue() > contactTwoData.getValue() ? 
-					contactOneData.getKey() : contactTwoData.getKey();
+			String winner = contactOneData.getElement1() > contactTwoData.getElement1() ? 
+					contactOneData.getElement0() : contactTwoData.getElement0();
 			winnerLabel.setText(winner + " Wins!");
 			
-			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneData.getKey() + ": " + 
-					contactOneData.getValue() + " texts");
-			((TextView) findViewById(R.id.friend_two_info)).setText(contactTwoData.getKey() + ": " + 
-					contactTwoData.getValue() + " texts");
+			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneData.getElement0() + ": " + 
+					contactOneData.getElement1() + " texts");
+			((TextView) findViewById(R.id.friend_two_info)).setText(contactTwoData.getElement0() + ": " + 
+					contactTwoData.getElement1() + " texts");
 		}
 		else {
 			Log.wtf(LOG_TAG, "lol wut: " + queryResult.size());

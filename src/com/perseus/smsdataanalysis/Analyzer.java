@@ -85,7 +85,7 @@ public class Analyzer {
 
 	}
 
-	private class Pair<K, V> {
+	public class Pair<K, V> {
 
 		private K element0;
 		private V element1;
@@ -132,8 +132,8 @@ public class Analyzer {
 	}
 
 	// Parsing the query and calling the correct method
-	public ArrayList<Entry<String, Integer>> doQuery(Query query) {
-		ArrayList<Entry<String, Integer>> result = new ArrayList<Entry<String, Integer>>();
+	public ArrayList<Pair<String, Integer>> doQuery(Query query) {
+		ArrayList<Pair<String, Integer>> result = new ArrayList<Pair<String, Integer>>();
 		ArrayList<String> contactsList = parseContacts(query.getContacts());
 		Pair<Long, Long> range = parseDates(query.getStartDate(),
 				query.getEndDate());
@@ -247,18 +247,30 @@ public class Analyzer {
 				selection.toString(), null, null);
 	}
 
-	// Temporary method to display the data in a textual format
-	private ArrayList<Entry<String, Integer>> formatResult(
-			Set<Entry<String, Integer>> entrySet) {
-		ArrayList<Entry<String, Integer>> out = new ArrayList<Entry<String, Integer>>();
-		out.addAll(entrySet);
+	// Creates an arraylist of pairs to return and be graphed
+	// Also, if contacts list is not makes sure that each contact is in the out
+	// array
+	private ArrayList<Pair<String, Integer>> formatResult(
+			HashMap<String, Integer> hash) {
+		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
-		Collections.sort(out, new Comparator<Entry<String, Integer>>() {
+		for (Entry<String, Integer> e : hash.entrySet())
+			out.add(new Pair<String, Integer>(e.getKey(), e.getValue()));
+
+		// if given a contact list, check if we haven't added a contact to the
+		// out list and add them with a dummy value
+		for (String contact : contactNames.values()) {
+			if (!hash.containsKey(contact)) {
+				out.add(new Pair<String, Integer>(contact, 0));
+			}
+		}
+
+		Collections.sort(out, new Comparator<Pair<String, Integer>>() {
 
 			@Override
-			public int compare(Entry<String, Integer> lhs,
-					Entry<String, Integer> rhs) {
-				return rhs.getValue() - lhs.getValue();
+			public int compare(Pair<String, Integer> lhs,
+					Pair<String, Integer> rhs) {
+				return rhs.getElement1() - lhs.getElement1();
 			}
 
 		});
@@ -266,7 +278,7 @@ public class Analyzer {
 		return out;
 	}
 
-	private ArrayList<Entry<String, Integer>> wordFrequency(String scope,
+	private ArrayList<Pair<String, Integer>> wordFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
 		Cursor cursor = getCursor(scope, new String[] { "body" }, startDate,
 				endDate, contactsList);
@@ -286,10 +298,12 @@ public class Analyzer {
 			}
 		}
 
-		return formatResult(freq.entrySet());
+		// we graph words not contacts so we don't need to pass contactslist to
+		// formatResult
+		return formatResult(freq);
 	}
 
-	private ArrayList<Entry<String, Integer>> smsFrequency(String scope,
+	private ArrayList<Pair<String, Integer>> smsFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
 		// DEBUG TIME
 		// Cursor debugCursor = getCursor("", new String[] { "address", "body"
@@ -336,10 +350,10 @@ public class Analyzer {
 			}
 		}
 
-		return formatResult(freq.entrySet());
+		return formatResult(freq);
 	}
 
-	private ArrayList<Entry<String, Integer>> smsLength(String scope,
+	private ArrayList<Pair<String, Integer>> smsLength(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList,
 			boolean reverse) {
 		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
@@ -388,11 +402,9 @@ public class Analyzer {
 					/ smsLength.get(key).getElement0());
 		}
 
-		ArrayList<Entry<String, Integer>> result = formatResult(average
-				.entrySet());
+		ArrayList<Pair<String, Integer>> result = formatResult(average);
 		if (reverse)
 			Collections.reverse(result);
 		return result;
 	}
-
 }

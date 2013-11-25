@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import android.app.Activity;
@@ -30,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +75,7 @@ public class AnalysisResultActivity extends Activity {
 
 	private Pair<Integer, XYSeries> selection;
 
-	private ArrayList<Entry<String, Integer>> queryResult;
+	private ArrayList<Analyzer.Pair<String, Integer>> queryResult;
 	private Intent intent;
 	private Analyzer mAnalyzer;
 
@@ -100,8 +98,9 @@ public class AnalysisResultActivity extends Activity {
 		new AnalysisTask().execute(query);
 	}
 
-	private class AnalysisTask extends
-			AsyncTask<Analyzer.Query, Void, ArrayList<Entry<String, Integer>>> {
+	private class AnalysisTask
+			extends
+			AsyncTask<Analyzer.Query, Void, ArrayList<Analyzer.Pair<String, Integer>>> {
 		ProgressDialog mProgressDialog;
 
 		@Override
@@ -118,18 +117,17 @@ public class AnalysisResultActivity extends Activity {
 		}
 
 		@Override
-		protected ArrayList<Entry<String, Integer>> doInBackground(
+		protected ArrayList<Analyzer.Pair<String, Integer>> doInBackground(
 				Query... params) {
 			return mAnalyzer.doQuery(params[0]);
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Entry<String, Integer>> result) {
+		protected void onPostExecute(
+				ArrayList<Analyzer.Pair<String, Integer>> result) {
 			mProgressDialog.dismiss();
 			Log.d(LOG_TAG, result.toString());
 			queryResult = result;
-			String resultDump = TextUtils.join("\n", queryResult);
-			Log.d(LOG_TAG, "Result: " + resultDump);
 
 			if (queryResult != null && !queryResult.isEmpty()) {
 				lv = (ListView) findViewById(R.id.listView1);
@@ -164,6 +162,23 @@ public class AnalysisResultActivity extends Activity {
 			return 1;
 		}
 
+		public String textDump(){
+			boolean first = true;
+			StringBuilder builder = new StringBuilder();
+			for (Analyzer.Pair<String, Integer> p : queryResult) {
+				if (!first)
+					builder.append("\n");
+				else
+					first = false;
+
+				builder.append(p.getElement0());
+				builder.append(" = ");
+				builder.append(p.getElement1());
+			}
+			Log.d(LOG_TAG,builder.toString());
+			return builder.toString();
+		}
+		
 		@Override
 		public View getView(int pos, View convertView, ViewGroup parent) {
 			LayoutInflater inf = (LayoutInflater) getContext()
@@ -186,7 +201,19 @@ public class AnalysisResultActivity extends Activity {
 			startDate.setText(intent.getStringExtra("start_date"));
 			endDate.setText(intent.getStringExtra("end_date"));
 			contacts.setText(intent.getStringExtra("contacts"));
-			result.setText(TextUtils.join("\n", queryResult));
+			boolean first = true;
+			StringBuilder builder = new StringBuilder();
+			for (Analyzer.Pair<String, Integer> p : queryResult) {
+				if (!first)
+					builder.append("\n");
+				else
+					first = false;
+
+				builder.append(p.getElement1());
+				builder.append(" : ");
+				builder.append(p.getElement0());
+			}
+			result.setText(textDump());
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
@@ -275,10 +302,10 @@ public class AnalysisResultActivity extends Activity {
 			int max = 0;
 			Log.v(LOG_TAG, "initalizing segemnts");
 			for (int i = 0; i < numSeg; i++) {
-				Entry<String, Integer> curr = queryResult.get(i);
-				int count = curr.getValue();
+				Analyzer.Pair<String, Integer> curr = queryResult.get(i);
+				int count = curr.getElement1();
 				max = (count > max) ? count : max;
-				String label = curr.getKey();
+				String label = curr.getElement0();
 				segments[i] = new Segment(label, count);
 				int color = Color.argb(255, generator.nextInt(256),
 						generator.nextInt(256), generator.nextInt(256));
