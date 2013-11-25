@@ -11,8 +11,8 @@
     <string name="analysis_type_text">Type of Analysis</string>
     <string name="scope_text">Scope of Analysis</string>
     <string name="analyze_text">Analyze</string>
-    <string name="from_text">FROM</string>
-    <string name="to_text">TO</string>
+    <string name="from_text">Start Date</string>
+    <string name="to_text">End Date</string>
     <string name="contacts_text">Contacts</string>
     <string name="select_contact_hint">select contacts (default all)</string>
     <string name="friend_one">Friend One:</string>
