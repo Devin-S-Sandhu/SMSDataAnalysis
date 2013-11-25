@@ -79,13 +79,12 @@
         android:layout_height="wrap_content"
         android:padding="5dip" >
 
-        <MultiAutoCompleteTextView
+        <com.perseus.smsdataanalysis.CustomMultiAutoCompleteTextView
             android:id="@+id/select_contact"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
-            android:hint="@string/select_contact_hint" >
-        </MultiAutoCompleteTextView>
+            android:hint="@string/select_contact_hint" />
 
         <Button
             android:id="@+id/btnSelect_contact"

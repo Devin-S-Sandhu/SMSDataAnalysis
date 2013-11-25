@@ -28,7 +28,7 @@ public class AnalysisMenuActivity extends Activity {
 	private Spinner analysisType;
 	private Spinner scope;
 	private TextView startDate, endDate;
-	private MultiAutoCompleteTextView selectContact;
+	private CustomMultiAutoCompleteTextView selectContact;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -50,8 +50,6 @@ public class AnalysisMenuActivity extends Activity {
 			ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
 			ContactsContract.CommonDataKinds.Phone.NUMBER };
 
-	private TextView debug1, debug2, debug3;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,10 +59,7 @@ public class AnalysisMenuActivity extends Activity {
 		scope = (Spinner) findViewById(R.id.scope);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
-		debug1 = (TextView) findViewById(R.id.debug1);
-		debug2 = (TextView) findViewById(R.id.debug2);
-		debug3 = (TextView) findViewById(R.id.debug3);
-		selectContact = (MultiAutoCompleteTextView) findViewById(R.id.select_contact);
+		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
 
 		analysisType = (Spinner) findViewById(R.id.analysis_type);
 		setCurrentDateOnView();
@@ -73,16 +68,18 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-		Cursor cursor = getContentResolver().query(
-				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-				PEOPLE_PROJECTION, null, null, null);
-		ContactListAdapter adapter = new ContactListAdapter(this, cursor);
-		selectContact.setThreshold(0);
+		//Cursor cursor = getContentResolver().query(
+		//		ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+		//		PEOPLE_PROJECTION, null, null, null);
+		//ContactListAdapter adapter = new ContactListAdapter(this, cursor);
+
+		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
+				android.R.layout.simple_list_item_1, SmsUtil.getContacts(
+					this, false));
 		selectContact.setAdapter(adapter);
-		selectContact
-				.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-		selectContact.setVerticalScrollBarEnabled(true);
-		selectContact.addTextChangedListener(textWatcher);
+		//selectContact
+		//		.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+		selectContact.setHorizontalScrollBarEnabled(true);
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -273,26 +270,5 @@ public class AnalysisMenuActivity extends Activity {
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
-	private TextWatcher textWatcher = new TextWatcher() {
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-			debug1.setText("onTextChanged - CharSequence: " + s.toString() + " start: " + start + " before: " + before
-					+ " count: " + count);
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-			debug2.setText("beforeTextChanged - CharSequence: " + s.toString() + " start: " + start + " after: " + after
-					+ " count: " + count);
-		}
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			debug3.setText("afterTextChanged - Editable: " + s.toString());
-		}
-	};
 	
 }
