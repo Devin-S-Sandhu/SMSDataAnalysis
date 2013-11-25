@@ -343,6 +343,8 @@ public class AnalysisResultActivity extends Activity {
 		renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.values()[0]);
 		renderer.setBarWidth(50);
 		renderer.setBarGap(1);
+		
+		plot.setDomainBoundaries(0, 2, BoundaryMode.FIXED);
 
 		plot.setRangeTopMin(0);
 
