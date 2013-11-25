@@ -326,7 +326,7 @@ public class AnalysisResultActivity extends Activity {
 				pie.addSeries(segments[i], sf[i]);
 			}
 			pie.getBorderPaint().setColor(Color.TRANSPARENT);
-			pie.getBackgroundPaint().setColor(Color.LTGRAY);
+			pie.getBackgroundPaint().setColor(Color.DKGRAY);
 			pie.getRenderer(PieRenderer.class).setDonutSize(0.25f,
 					DonutMode.PERCENT);
 
