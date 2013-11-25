@@ -34,6 +34,8 @@ import android.widget.Toast;
 
 import com.androidplot.LineRegion;
 import com.androidplot.pie.PieChart;
+import com.androidplot.pie.PieRenderer;
+import com.androidplot.pie.PieRenderer.DonutMode;
 import com.androidplot.pie.Segment;
 import com.androidplot.pie.SegmentFormatter;
 import com.androidplot.ui.AnchorPosition;
@@ -162,7 +164,7 @@ public class AnalysisResultActivity extends Activity {
 			return 1;
 		}
 
-		public String textDump(){
+		public String textDump() {
 			boolean first = true;
 			StringBuilder builder = new StringBuilder();
 			for (Analyzer.Pair<String, Integer> p : queryResult) {
@@ -175,10 +177,10 @@ public class AnalysisResultActivity extends Activity {
 				builder.append(" = ");
 				builder.append(p.getElement1());
 			}
-			Log.d(LOG_TAG,builder.toString());
+			Log.d(LOG_TAG, builder.toString());
 			return builder.toString();
 		}
-		
+
 		@Override
 		public View getView(int pos, View convertView, ViewGroup parent) {
 			LayoutInflater inf = (LayoutInflater) getContext()
@@ -324,7 +326,9 @@ public class AnalysisResultActivity extends Activity {
 				pie.addSeries(segments[i], sf[i]);
 			}
 			pie.getBorderPaint().setColor(Color.TRANSPARENT);
-			pie.getBackgroundPaint().setColor(Color.DKGRAY);
+			pie.getBackgroundPaint().setColor(Color.LTGRAY);
+			pie.getRenderer(PieRenderer.class).setDonutSize(0.25f,
+					DonutMode.PERCENT);
 
 			updatePlot();
 
@@ -343,9 +347,11 @@ public class AnalysisResultActivity extends Activity {
 		renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.values()[0]);
 		renderer.setBarWidth(50);
 		renderer.setBarGap(1);
-		
-		plot.setDomainBoundaries(0, 2, BoundaryMode.FIXED);
 
+		// If we're only plotting one value we need to do this so it shows up
+		if (plot.getSeriesSet().size() == 1)
+			plot.setDomainBoundaries(0, 2, BoundaryMode.FIXED);
+		
 		plot.setRangeTopMin(0);
 
 		plot.redraw();
