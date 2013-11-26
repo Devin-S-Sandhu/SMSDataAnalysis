@@ -6,8 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.perseus.smsdataanalysis.Analyzer.Pair;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +29,8 @@ public class BattleResultActivity extends Activity {
     
     private Date startDate;
     private Date endDate;
+    
+    private Analyzer mAnalyzer;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -32,7 +38,7 @@ public class BattleResultActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_battle_result);
 		
-		Analyzer analyzer = new Analyzer(getApplicationContext());
+		mAnalyzer = new Analyzer(getApplicationContext());
 		Intent intent = getIntent();
 		
 		timeSpans = new HashMap<String, Integer>();
@@ -63,7 +69,9 @@ public class BattleResultActivity extends Activity {
 		.append(intent.getStringExtra("contactOne"))
 		.append(intent.getStringExtra("contactTwo")).toString();
 		Log.d(LOG_TAG, contacts);
-		Analyzer.Query query = analyzer.new Query(
+		
+		// create queries
+		Analyzer.Query query1 = mAnalyzer.new Query(
 				"SMS Frequency",
 				"Received",
 				startDate.getMonth() + "-" +
@@ -74,27 +82,81 @@ public class BattleResultActivity extends Activity {
 				endDate.getYear(),
 				contacts);
 		
-		ArrayList<Analyzer.Pair<String, Integer>> queryResult = analyzer
-				.doQuery(query);
-		Log.d(LOG_TAG, queryResult.toString());
+		Analyzer.Query query2 = mAnalyzer.new Query(
+				"SMS Frequency",
+				"Sent",
+				startDate.getMonth() + "-" +
+				startDate.getDay() + "-" +
+				startDate.getYear(),
+				endDate.getMonth() + "-" +
+				endDate.getDay() + "-" +
+				endDate.getYear(),
+				contacts);
 		
-		if (queryResult.size() >= 2) {
-			Analyzer.Pair<String, Integer> contactOneData = queryResult.get(0);
-			Analyzer.Pair<String, Integer> contactTwoData = queryResult.get(1);
+		new BattleTask().execute(query1, query2);
+	}
+	
+	private class BattleTask extends AsyncTask<Analyzer.Query, Void, ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>> {
+		ProgressDialog mProgressDialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			mProgressDialog = new ProgressDialog(BattleResultActivity.this);
+			mProgressDialog.setTitle("Friend Battle");
+			mProgressDialog.setMessage(getResources().getString(
+					R.string.spinner_message));
+			mProgressDialog.setIndeterminate(true);
+			mProgressDialog.setCancelable(false);
+			mProgressDialog.setCanceledOnTouchOutside(false);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected ArrayList<ArrayList<Analyzer.Pair<String, Integer>>> doInBackground(Analyzer.Query... params) {
+			ArrayList<ArrayList<Analyzer.Pair<String, Integer>>> result = new ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>();
+			result.add(mAnalyzer.doQuery(params[0]));
+			result.add(mAnalyzer.doQuery(params[1]));
+			return result;
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList<ArrayList<Analyzer.Pair<String, Integer>>> result) {
+			Analyzer.Pair<String, Integer> contactOneData, contactTwoData;
+			String contactOneName = result.get(0).get(0).getElement0(), contactTwoName = result.get(0).get(1).getElement0();
+			int contactOneWins = 0, contactTwoWins = 0;
+			
+			for (ArrayList<Analyzer.Pair<String, Integer>> queryResult : result) {
+				if (queryResult.size() < 2) {
+					mProgressDialog.dismiss();
+					return;
+				}
+				
+				contactOneData = queryResult.get(0);
+				contactTwoData = queryResult.get(1);
+				
+				if (contactOneData.getElement1() > contactTwoData.getElement1())
+					contactOneWins++;
+				else if (contactTwoData.getElement1() > contactOneData.getElement1())
+					contactTwoWins++;
+			}
 			
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
-			String winner = contactOneData.getElement1() > contactTwoData.getElement1() ? 
-					contactOneData.getElement0() : contactTwoData.getElement0();
-			winnerLabel.setText(winner + " Wins!");
+			String winner = "It's a tie!";
+			if(contactOneWins > contactTwoWins)
+				winner = contactOneName + " Wins!";
+			else if(contactTwoWins > contactOneWins)
+				winner = contactTwoName + " Wins!";
+			winnerLabel.setText(winner);
 			
-			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneData.getElement0() + ": " + 
-					contactOneData.getElement1() + " texts");
-			((TextView) findViewById(R.id.friend_two_info)).setText(contactTwoData.getElement0() + ": " + 
-					contactTwoData.getElement1() + " texts");
+			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneName + ": " + 
+					contactOneWins + " wins");
+			((TextView) findViewById(R.id.friend_two_info)).setText(contactTwoName + ": " + 
+					contactTwoWins + " wins");
+			
+			mProgressDialog.dismiss();
 		}
-		else {
-			Log.wtf(LOG_TAG, "lol wut: " + queryResult.size());
-		}
+		
 	}
 
 	@Override
