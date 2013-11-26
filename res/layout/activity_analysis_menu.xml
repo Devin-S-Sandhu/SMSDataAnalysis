@@ -17,7 +17,7 @@
             android:entries="@array/analaysis_type_arrays"
             android:prompt="@string/analysis_type_text"
             android:spinnerMode="dialog" />
-        
+
         <Spinner
             android:id="@+id/scope"
             android:layout_width="0dp"
@@ -103,7 +103,8 @@
         <Button
             android:id="@+id/btnAnalyze"
             android:onClick="analyze"
-            android:text="@string/analyze_text" />
+            android:text="@string/analyze_text"
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -111,35 +112,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dip" >
+
         <TextView
             android:id="@+id/debug1"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="" />
     </TableRow>
-    
+
     <TableRow
         android:id="@+id/tableRow7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dip" >
+
         <TextView
             android:id="@+id/debug2"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="" />
     </TableRow>
-    
+
     <TableRow
         android:id="@+id/tableRow8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dip" >
+
         <TextView
             android:id="@+id/debug3"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
     </TableRow>
 
 </TableLayout>
