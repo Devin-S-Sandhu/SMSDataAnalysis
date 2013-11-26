@@ -127,6 +127,7 @@ public class Analyzer {
 
 		for (int index = 0; index < analysisTypes.length; index++)
 			types.put(analysisTypes[index], index);
+		Log.d(LOG_TAG, "HAI GUYZ: " + types.toString());
 		scopes.put(analysisScopes[0], "");
 		scopes.put(analysisScopes[1], "sent");
 		scopes.put(analysisScopes[2], "inbox");
@@ -158,6 +159,14 @@ public class Analyzer {
 					range.getElement0(), range.getElement1(), contactsList,
 					true);
 			break;
+		case 4:
+			result = smsInterval(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList,
+					false);
+		case 5:
+			result = smsInterval(scopes.get(query.getScope()),
+					range.getElement0(), range.getElement1(), contactsList,
+					true);
 		}
 		return result;
 
@@ -412,5 +421,16 @@ public class Analyzer {
 		if (reverse)
 			Collections.reverse(result);
 		return result;
+	}
+
+	private ArrayList<Pair<String, Integer>> smsInterval(String scope,
+			Long startDate, Long endDate, ArrayList<String> contactsList,
+			boolean reverse) {
+		return null;
+//		TODO analyze!!!
+//		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
+//		if (reverse)
+//			Collections.reverse(result);
+//		return result;
 	}
 }

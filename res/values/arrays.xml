@@ -6,6 +6,8 @@
         <item>SMS Frequency</item>
         <item>SMS Longest Length</item>
         <item>SMS Shortest Length</item>
+        <item>SMS Longest Interval</item>
+        <item>SMS Shortest Interval</item>
     </string-array>
     <string-array name="scope_array">
         <item>All</item>

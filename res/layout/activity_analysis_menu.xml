@@ -53,7 +53,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow15"
+            android:id="@+id/tableRow3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp" >
@@ -66,7 +66,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow3"
+            android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -87,10 +87,10 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow4"
+            android:id="@+id/tableRow5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dip" >
+            android:padding="5dp" >
 
             <TextView
                 android:id="@+id/start_date_display"
@@ -112,13 +112,13 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow5"
+            android:id="@+id/tableRow6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp" >
 
             <View
-                android:id="@+id/firstDivider"
+                android:id="@+id/secondDivider"
                 android:layout_width="wrap_content"
                 android:layout_height="2dp"
                 android:background="@android:color/darker_gray" />
@@ -163,17 +163,38 @@
             android:id="@+id/tableRow9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dip" >
+            android:padding="10dp" >
 
-            <Button
-                android:id="@+id/btnAnalyze"
-                android:layout_weight="1"
-                android:onClick="analyze"
-                android:text="@string/analyze_text" />
+            <View
+                android:id="@+id/thirdDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/darker_gray" />
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnAnalyze"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:onClick="analyze"
+                android:text="@string/analyze_text" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -186,7 +207,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow11"
+            android:id="@+id/tableRow12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -199,7 +220,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow12"
+            android:id="@+id/tableRow13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -212,7 +233,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow13"
+            android:id="@+id/tableRow14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
         </TableRow>
