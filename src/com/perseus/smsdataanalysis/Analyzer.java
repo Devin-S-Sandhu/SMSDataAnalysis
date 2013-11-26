@@ -25,6 +25,7 @@ public class Analyzer {
 	private HashMap<String, String> scopes;
 	private HashMap<String, String> contactNames;
 	private Context context;
+	private boolean includeAllContacts;
 	private final static String LOG_TAG = "Analyzer";
 
 	public class Query {
@@ -114,6 +115,7 @@ public class Analyzer {
 	}
 
 	public Analyzer(Context context) {
+		includeAllContacts = false;
 		this.context = context;
 		contactNames = new HashMap<String, String>();
 		types = new HashMap<String, Integer>();
@@ -197,8 +199,11 @@ public class Analyzer {
 			contactNames.put(number, name);
 			contactNames.put(number.replace("+", ""), name);
 		}
+		Log.d(LOG_TAG, "HAI: " + contactsList.size());
 		Log.d(LOG_TAG, contactsList.toString());
 		Log.d(LOG_TAG, contactNames.toString());
+		if (contactsList.size() != 0)
+			includeAllContacts = true;
 		return contactsList;
 	}
 
@@ -251,7 +256,7 @@ public class Analyzer {
 	// Also, if contacts list is not makes sure that each contact is in the out
 	// array
 	private ArrayList<Pair<String, Integer>> formatResult(
-			HashMap<String, Integer> hash) {
+			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts) {
 		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
 		for (Entry<String, Integer> e : hash.entrySet())
@@ -259,9 +264,10 @@ public class Analyzer {
 
 		// if given a contact list, check if we haven't added a contact to the
 		// out list and add them with a dummy value
-		for (String contact : contactNames.values()) {
-			if (!hash.containsKey(contact)) {
-				out.add(new Pair<String, Integer>(contact, 0));
+		if (includeAllContacts && reallyIncludeAllContacts) {
+			for (String contact : contactNames.values()) {
+				if (!hash.containsKey(contact))
+					out.add(new Pair<String, Integer>(contact, 0));
 			}
 		}
 
@@ -300,7 +306,7 @@ public class Analyzer {
 
 		// we graph words not contacts so we don't need to pass contactslist to
 		// formatResult
-		return formatResult(freq);
+		return formatResult(freq, false);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsFrequency(String scope,
@@ -350,7 +356,7 @@ public class Analyzer {
 			}
 		}
 
-		return formatResult(freq);
+		return formatResult(freq, true);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsLength(String scope,
@@ -402,7 +408,7 @@ public class Analyzer {
 					/ smsLength.get(key).getElement0());
 		}
 
-		ArrayList<Pair<String, Integer>> result = formatResult(average);
+		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
 		if (reverse)
 			Collections.reverse(result);
 		return result;
