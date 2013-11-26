@@ -56,12 +56,12 @@ public class AnalysisMenuActivity extends Activity {
 		setContentView(R.layout.activity_analysis_menu);
 
 		this.setTitle("Data Analysis Menu");
-		scope = (Spinner) findViewById(R.id.scope);
+		scope = (Spinner) findViewById(R.id.scope_spinner);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
 
-		analysisType = (Spinner) findViewById(R.id.analysis_type);
+		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		setCurrentDateOnView();
 
 		startDatePickerDialog = new DatePickerDialog(this,

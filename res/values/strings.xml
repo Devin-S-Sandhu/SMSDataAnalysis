@@ -9,12 +9,14 @@
     <string name="dataAnalysis_text">Data Analysis</string>
     <string name="friendBattle_text">Friend Battle</string>
     <string name="analysis_type_text">Type of Analysis</string>
+    <string name="analysis_type_title">Type of Analysis</string>
     <string name="scope_text">Scope of Analysis</string>
+    <string name="scope_title">Scope</string>
     <string name="analyze_text">Analyze</string>
-    <string name="from_text">Start Date:</string>
-    <string name="to_text">End Date:</string>
+    <string name="from_text">Start Date</string>
+    <string name="to_text">End Date</string>
     <string name="contacts_text">Contacts</string>
-    <string name="select_contact_hint">select contacts (default all)</string>
+    <string name="select_contact_hint">default is all contacts</string>
     <string name="friend_one">Friend One:</string>
     <string name="friend_two">Friend Two:</string>
     <string name="add_contact">Add Contact</string>
@@ -24,5 +26,6 @@
     <string name="time_span">Time Span: </string>
     <string name="spinner_message">Analyzing&#8230;</string>
     <string name="default_num_results">10</string>
+    <string name="select_contact_title">Select Contacts</string>
 
 </resources>
