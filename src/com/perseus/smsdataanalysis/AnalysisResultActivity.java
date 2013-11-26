@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -127,7 +128,6 @@ public class AnalysisResultActivity extends Activity {
 		@Override
 		protected void onPostExecute(
 				ArrayList<Analyzer.Pair<String, Integer>> result) {
-			mProgressDialog.dismiss();
 			Log.d(LOG_TAG, result.toString());
 			queryResult = result;
 
@@ -143,6 +143,7 @@ public class AnalysisResultActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "The result is empty",
 						Toast.LENGTH_SHORT).show();
 			}
+			mProgressDialog.dismiss();
 		}
 
 	}
@@ -351,7 +352,7 @@ public class AnalysisResultActivity extends Activity {
 		// If we're only plotting one value we need to do this so it shows up
 		if (plot.getSeriesSet().size() == 1)
 			plot.setDomainBoundaries(0, 2, BoundaryMode.FIXED);
-		
+
 		plot.setRangeTopMin(0);
 
 		plot.redraw();
