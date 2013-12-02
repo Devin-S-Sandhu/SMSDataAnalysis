@@ -5,20 +5,18 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,14 +68,15 @@ public class AnalysisMenuActivity extends Activity {
 				end_year, end_month, end_day);
 
 		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
-				android.R.layout.simple_list_item_1, SmsUtil.getContacts(
-					this, false));
+				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this,
+						false));
 		selectContact.setAdapter(adapter);
 		selectContact.setText("");
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("onActivityResult", "requestCode: " +requestCode + " resultCode: " + resultCode + "data: " + data);
+		Log.d("onActivityResult", "requestCode: " + requestCode
+				+ " resultCode: " + resultCode + "data: " + data);
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
@@ -111,12 +110,13 @@ public class AnalysisMenuActivity extends Activity {
 						String nameContact = c
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-						StringBuilder result = new StringBuilder(nameContact).append(" <")
-								.append(cNumber).append(">,");
+						StringBuilder result = new StringBuilder(nameContact)
+								.append(" <").append(cNumber).append(">,");
 
-						SmsUtil.selectedContact.put(cNumber,nameContact);
+						SmsUtil.selectedContact.put(cNumber, nameContact);
 						selectContact.updateQuickContactList();
-						selectContact.setSelection(selectContact.getText().length());
+						selectContact.setSelection(selectContact.getText()
+								.length());
 						selectContact.replaceText(result);
 						// selectContact.setWidth(500);
 					}
@@ -251,6 +251,10 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	public void analyze(View view) {
+		//hides the keyboard
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(selectContact.getWindowToken(), 0);
+		
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
@@ -267,5 +271,4 @@ public class AnalysisMenuActivity extends Activity {
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
-	
 }
