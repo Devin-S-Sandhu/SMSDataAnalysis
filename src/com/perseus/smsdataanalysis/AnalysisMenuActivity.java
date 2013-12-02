@@ -73,9 +73,11 @@ public class AnalysisMenuActivity extends Activity {
 				android.R.layout.simple_list_item_1, SmsUtil.getContacts(
 					this, false));
 		selectContact.setAdapter(adapter);
+		selectContact.setText("");
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d("onActivityResult", "requestCode: " +requestCode + " resultCode: " + resultCode + "data: " + data);
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
@@ -109,9 +111,12 @@ public class AnalysisMenuActivity extends Activity {
 						String nameContact = c
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-
-						selectContact.append(new StringBuilder(nameContact).append(" <")
-								.append(cNumber).append(">").append(","));
+						//selectContact.removeTextChangedListener();
+						StringBuilder result = new StringBuilder(nameContact).append(" <")
+								.append(cNumber).append(">,");
+						selectContact.replaceText(result);
+						//selectContact.addTextChangedListener();
+						//selectContact.setSelection(selectContact.getText().length());
 						// selectContact.setWidth(500);
 					}
 				}
