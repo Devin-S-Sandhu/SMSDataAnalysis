@@ -1,237 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tableLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <TableRow
-        android:id="@+id/tableRow1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/analysis_type_title"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:text="@string/analysis_type_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/scope_title"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/scope_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <Spinner
-            android:id="@+id/analysis_type_spinner"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:entries="@array/analaysis_type_arrays"
-            android:prompt="@string/analysis_type_text"
-            android:spinnerMode="dialog" />
-
-        <Spinner
-            android:id="@+id/scope_spinner"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:entries="@array/scope_array"
-            android:prompt="@string/scope_text"
-            android:spinnerMode="dialog" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp" >
-
-        <View
-            android:id="@+id/firstDivider"
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/start_date_label"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/from_text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/end_date_label"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/to_text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp" >
-
-        <TextView
-            android:id="@+id/start_date_display"
-            style="@android:style/Widget.DeviceDefault.Spinner"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:onClick="pickStartDate"
-            android:text="" />
-
-        <TextView
-            android:id="@+id/end_date_display"
-            style="@android:style/Widget.DeviceDefault.Spinner"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:onClick="pickEndDate"
-            android:text="" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp" >
-
-        <View
-            android:id="@+id/secondDivider"
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/select_contact_title"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/select_contact_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <com.perseus.smsdataanalysis.CustomMultiAutoCompleteTextView
-            android:id="@+id/select_contact"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="2"
-            android:hint="@string/select_contact_hint"/>
-
-        <Button
-            android:id="@+id/btnSelect_contact"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:onClick="doLaunchContactPicker"
-            android:text="@string/contacts_text" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp" >
-
-        <View
-            android:id="@+id/thirdDivider"
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow10"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <View
-            android:layout_width="0dp"
-            android:layout_weight="1" />
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
 
-        <Button
-            android:id="@+id/btnAnalyze"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:onClick="analyze"
-            android:text="@string/analyze_text" />
+            <TextView
+                android:id="@+id/analysis_type_title"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:text="@string/analysis_type_title"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_weight="1" />
-    </TableRow>
+            <TextView
+                android:id="@+id/scope_title"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/scope_title"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </TableRow>
 
-    <TableRow
-        android:id="@+id/tableRow11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
 
-        <TextView
-            android:id="@+id/debug1"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="" />
-    </TableRow>
+            <Spinner
+                android:id="@+id/analysis_type_spinner"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:entries="@array/analaysis_type_arrays"
+                android:prompt="@string/analysis_type_text"
+                android:spinnerMode="dialog" />
 
-    <TableRow
-        android:id="@+id/tableRow12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
+            <Spinner
+                android:id="@+id/scope_spinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:entries="@array/scope_array"
+                android:prompt="@string/scope_text"
+                android:spinnerMode="dialog" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/debug2"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="" />
-    </TableRow>
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
 
-    <TableRow
-        android:id="@+id/tableRow13"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
+            <View
+                android:id="@+id/firstDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/darker_gray" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/debug3"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="" />
-    </TableRow>
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
 
-    <TableRow
-        android:id="@+id/tableRow14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </TableRow>
+            <TextView
+                android:id="@+id/start_date_label"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/from_text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-</TableLayout>
+            <TextView
+                android:id="@+id/end_date_label"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/to_text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/start_date_display"
+                style="@android:style/Widget.DeviceDefault.Spinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="pickStartDate"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/end_date_display"
+                style="@android:style/Widget.DeviceDefault.Spinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="pickEndDate"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <View
+                android:id="@+id/secondDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/darker_gray" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/select_contact_title"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/select_contact_title"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+
+            <Button
+                android:id="@+id/btnSelect_contact"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:onClick="doLaunchContactPicker"
+                android:text="@string/contacts_text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <com.perseus.smsdataanalysis.CustomMultiAutoCompleteTextView
+                android:id="@+id/select_contact"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:hint="@string/select_contact_hint"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <View
+                android:id="@+id/thirdDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/darker_gray" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnAnalyze"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:onClick="analyze"
+                android:text="@string/analyze_text" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/debug1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/debug2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/debug3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </TableRow>
+    </TableLayout>
+
+</ScrollView>

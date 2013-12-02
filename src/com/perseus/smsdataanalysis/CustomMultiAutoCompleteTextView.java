@@ -204,15 +204,13 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 
 				if (!TextUtils.isEmpty(deletedContact.trim()))
 					deleteFromHashMap(deletedContact);
-
-				CustomMultiAutoCompleteTextView.this.setSelection(CustomMultiAutoCompleteTextView.this.getText().length());
 			}
 		}
 	};
 
 	public void addOrCheckSpannable(CharSequence s, int startIndex) {
 		Log.d("addOrCheckSpannable", "s: " + s + " startIndex: " + startIndex);
-		
+
 		boolean checkSpannable = false;
 		String overallString;
 		if (s == null) {
@@ -228,8 +226,9 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			overallString = s.toString();
 			startIndex = startIndex - 1;
 		}
-		Log.d("addOrCheckSpannable", "overallString: " + overallString + " startIndex: " + startIndex);
-		
+		Log.d("addOrCheckSpannable", "overallString: " + overallString
+				+ " startIndex: " + startIndex);
+
 		int spanEnd = 0;
 		for (int i = startIndex - 1; i >= 0; i--) {
 			Character c = overallString.charAt(i);
@@ -239,14 +238,15 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			}
 		}
 		Log.d("addOrCheckSpannable", "spanEnd: " + spanEnd);
-		
+
 		SpannableStringBuilder ssb = new SpannableStringBuilder(s);
 		int cursorCurrentPoint = this.getSelectionEnd();
 		boolean addedFromFirst = cursorCurrentPoint < overallString.length();
 
 		ClickableSpan[] spans = ssb.getSpans(0,
 				addedFromFirst ? spanEnd : ssb.length(), ClickableSpan.class);
-		Log.d("addOrCheckSpannable", "spans: " + spans.toString() + " spans.length: " + spans.length);
+		Log.d("addOrCheckSpannable", "spans: " + spans.toString()
+				+ " spans.length: " + spans.length);
 
 		boolean someUnknownChange = false;
 		if (spans.length > 0) {
@@ -282,7 +282,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 
 		if (startIndex > -1 && spanEnd > -1) {
 			Log.i("addOrCheckSpannable", "startIndex > -1 && spanEnd > -1");
-			
+
 			if (checkSpannable) {
 				Log.i("addOrCheckSpannable", "checkSpannable");
 				ClickableSpan[] span = someUnknownChange ? ssb.getSpans(
@@ -302,7 +302,8 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 				// this is to checked whether the user deletes comma and adds
 				// again
 				if ((Math.abs(spanEnd - 1 - startIndex) > 1)) {
-					Log.i("addOrCheckSpannable", "(Math.abs(spanEnd - 1 - startIndex) > 1");
+					Log.i("addOrCheckSpannable",
+							"(Math.abs(spanEnd - 1 - startIndex) > 1");
 					String userInputString = someUnknownChange ? overallString
 							.substring(spanEnd - 1, startIndex - 1)
 							: overallString.substring(spanEnd, startIndex);
@@ -319,7 +320,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 
 						if (checkValidation) {
 							Log.i("addOrCheckSpannable", "checkValidation");
-							
+
 							if (PhoneNumberUtils
 									.isGlobalPhoneNumber(userInputString)) {
 
@@ -482,6 +483,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 						CustomMultiAutoCompleteTextView.this
 								.setMovementMethod(LinkMovementMethod
 										.getInstance());
+						setSelection(getText().length());
 					}
 				}, 50);
 
@@ -490,7 +492,6 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 	}
 
 	private void deleteString(int start, int end) {
-		int[] startEnd = getSelectionStartAndEnd();
 		isTextDeletedFromTouch = true;
 		isTextAdditionInProgress = true;
 
@@ -517,6 +518,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 						CustomMultiAutoCompleteTextView.this
 								.setMovementMethod(LinkMovementMethod
 										.getInstance());
+						setSelection(getText().length());
 					}
 				}, 50);
 
@@ -610,5 +612,21 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			Rect previouslyFocusedRect) {
 		addOrCheckSpannable(null, 0);
 		super.onFocusChanged(focused, direction, previouslyFocusedRect);
+	}
+
+	@Override
+	protected void onSelectionChanged(int selStart, int selEnd) {
+		Editable currText = getText();
+		Log.d("onSelectionChanged", "selStart: " + selStart + " selEnd: "
+				+ selEnd);
+		if(currText.length() > 0 && selStart >1)
+			Log.d("onSelectionChanged", "charAt(selStart-1): " + currText.charAt(selStart-1));
+		
+		super.onSelectionChanged(selStart, selEnd);
+		if (currText.length() > 0 && selStart > 0 && currText.length() > selStart && currText.charAt(selStart) == ',')
+		{
+			Log.i("onSelectionChanged", "move selection forward");
+			setSelection(selStart+1);
+		}
 	}
 }

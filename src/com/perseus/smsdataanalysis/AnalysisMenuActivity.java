@@ -113,6 +113,9 @@ public class AnalysisMenuActivity extends Activity {
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 						StringBuilder result = new StringBuilder(nameContact).append(" <")
 								.append(cNumber).append(">,");
+
+						SmsUtil.selectedContact.put(cNumber,nameContact);
+						selectContact.updateQuickContactList();
 						selectContact.setSelection(selectContact.getText().length());
 						selectContact.replaceText(result);
 						// selectContact.setWidth(500);
