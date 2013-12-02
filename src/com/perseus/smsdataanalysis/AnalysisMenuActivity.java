@@ -111,12 +111,10 @@ public class AnalysisMenuActivity extends Activity {
 						String nameContact = c
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-						//selectContact.removeTextChangedListener();
 						StringBuilder result = new StringBuilder(nameContact).append(" <")
 								.append(cNumber).append(">,");
+						selectContact.setSelection(selectContact.getText().length());
 						selectContact.replaceText(result);
-						//selectContact.addTextChangedListener();
-						//selectContact.setSelection(selectContact.getText().length());
 						// selectContact.setWidth(500);
 					}
 				}

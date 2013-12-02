@@ -101,6 +101,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 	 */
 	@Override
 	protected void replaceText(CharSequence text) {
+		Log.d("replaceText", "text: " + text);
 		checkValidation = false;
 		super.replaceText(text);
 	}
@@ -204,6 +205,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 				if (!TextUtils.isEmpty(deletedContact.trim()))
 					deleteFromHashMap(deletedContact);
 
+				CustomMultiAutoCompleteTextView.this.setSelection(CustomMultiAutoCompleteTextView.this.getText().length());
 			}
 		}
 	};
@@ -489,8 +491,6 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 
 	private void deleteString(int start, int end) {
 		int[] startEnd = getSelectionStartAndEnd();
-		int i = startEnd[0];
-		int j = startEnd[1];
 		isTextDeletedFromTouch = true;
 		isTextAdditionInProgress = true;
 
@@ -610,15 +610,5 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			Rect previouslyFocusedRect) {
 		addOrCheckSpannable(null, 0);
 		super.onFocusChanged(focused, direction, previouslyFocusedRect);
-	}
-
-	public void removeTextChangedListener() {
-	    this.removeTextChangedListener(textWatcher);
-		
-	}
-
-	public void addTextChangedListener() {
-		this.addTextChangedListener(textWatcher);
-		
 	}
 }
