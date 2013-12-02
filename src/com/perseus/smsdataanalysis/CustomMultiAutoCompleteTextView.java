@@ -1,3 +1,10 @@
+/*  
+ * From https://github.com/krishnalalstha/Spannable
+ * By Krishna Lal Shrestha
+ * Modified by Po-Chen Yang
+ * 
+*/
+
 package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
@@ -104,20 +111,25 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			Log.d("onTextChanged" , "s: " +s + " start: " + start + " before: " + before + " count: " +count);
 			//phoneNum.getText().setSpan(new ForegroundColorSpan(Color.BLACK), before, before, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			String addedString = s.toString();
 			if (!isTextAdditionInProgress) {
+				Log.i("onTextChanged" , "!isTextAdditionInProgress");
 				if (stringLength < addedString.length()) {
+					Log.i("onTextChanged" , "stringLength < addedString.length()");
 					// something is added
 					
 					if (!TextUtils.isEmpty(addedString.trim())) {
+						Log.i("onTextChanged" , "!TextUtils.isEmpty(addedString.trim())");
 						int startIndex = isContactAddedFromDb ? addedString
 								.length() : CustomMultiAutoCompleteTextView.this.getSelectionEnd();
 						startIndex = startIndex < 1 ? 1 : startIndex;
-						String charAtStartIndex = Character
-								.toString(addedString
-										.charAt(startIndex - 1));
+						String charAtStartIndex = Character.toString(addedString.charAt(startIndex - 1));
+						Log.d("onTextChanged" , "charAtStartIndex: " +charAtStartIndex);
+						
 						if (charAtStartIndex.equals(",")) {
+							Log.i("onTextChanged" , "charAtStartIndex.equals(\",\")");
 							isTextAdditionInProgress = true;
 							addOrCheckSpannable(s, startIndex);
 						}
@@ -132,6 +144,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
+			Log.d("beforeTextChanged" , "s: " +s + " start: " + start + " count: " +count + " after: " +after);
 			beforeChangeIndex = CustomMultiAutoCompleteTextView.this.getSelectionStart();
 			changeString = s.toString();
 			
@@ -139,14 +152,14 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			Log.d("text" , CustomMultiAutoCompleteTextView.this.getText().toString());
+			Log.d("afterTextChanged" , CustomMultiAutoCompleteTextView.this.getText().toString());
 			afterChangeIndex = CustomMultiAutoCompleteTextView.this.getSelectionEnd();
 			if (!isTextDeletedFromTouch
 					&& s.toString().length() < changeString.length() && !isTextAdditionInProgress) {
 				String deletedString = "";
 				String deletedContact = "";
-				Log.d("afterChangeIndex", Integer.toString(afterChangeIndex));
-				Log.d("beforeChangeIndex", Integer.toString(beforeChangeIndex));
+				Log.d("afterTextChanged", "afterChangeIndex: " + Integer.toString(afterChangeIndex));
+				Log.d("afterTextChanged", "beforeChangeIndex"+Integer.toString(beforeChangeIndex));
 				deletedString = changeString.substring(
 						afterChangeIndex, beforeChangeIndex);
 				if (deletedString.length() > 0
@@ -154,36 +167,23 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 				{
 					String currentText = CustomMultiAutoCompleteTextView.this.getText().toString();
 					int selectionStart = CustomMultiAutoCompleteTextView.this.getSelectionStart();
-					Log.d("currentText", currentText);
-					Log.d("selectionStart", Integer.toString(selectionStart));
+					Log.d("afterTextChanged", "currentText: " +currentText);
+					Log.d("afterTextChanged", "selectionStart: "+Integer.toString(selectionStart));
 					deletedString = currentText.substring(0, selectionStart);
-					Log.d("deletedString", deletedString);
+					Log.d("afterTextChanged", "deletedString: "+deletedString);
 					int prev = deletedString.lastIndexOf(",");
-					Log.d("prev", Integer.toString(prev));
+					Log.d("afterTextChanged", "prev: "+ Integer.toString(prev));
 					deletedString = deletedString.substring(prev+1);
 					deletedContact = deletedString.split(" <")[0];
-					Log.d("deletedString", deletedString);
-					
-					if(prev < 1)
-					{
-						Log.d("prev", "prev less than 1");
-						CustomMultiAutoCompleteTextView.this.removeTextChangedListener(textWatcher);
-						CustomMultiAutoCompleteTextView.this.setText("");
-						CustomMultiAutoCompleteTextView.this.addTextChangedListener(textWatcher);
-					}
-					else
-					{
-						CustomMultiAutoCompleteTextView.this.removeTextChangedListener(textWatcher);
-						CustomMultiAutoCompleteTextView.this.setText(currentText.substring(0,prev));
-						CustomMultiAutoCompleteTextView.this.addTextChangedListener(textWatcher);
-					}
+					Log.d("afterTextChanged", "deletedString: "+deletedString);
+					deleteString(prev+1, prev+deletedString.length()+1);
+					Log.d("afterTextChanged", "prev: " + prev + " deletedString.length():" + deletedString.length());
 				}
 
 				if (!TextUtils.isEmpty(deletedContact.trim()))
 					deleteFromHashMap(deletedContact);
 
 			}
-			//CustomMultiAutoCompleteTextView.this.getText().setSpan(new ForegroundColorSpan(Color.BLACK), 0, s.toString().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);	
 		}
 	};
 	
@@ -408,10 +408,6 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		return builder;
 	}
 	
-	
-	
-	
-	
 	private void deleteString(){
 		int[] startEnd = getSelectionStartAndEnd();
 		int i = startEnd[0];
@@ -460,8 +456,39 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		}, 10);
 	}
 	
-	
-	
+	private void deleteString(int start, int end){
+		int[] startEnd = getSelectionStartAndEnd();
+		int i = startEnd[0];
+		int j = startEnd[1];
+		isTextDeletedFromTouch = true;
+		isTextAdditionInProgress = true;
+		
+		final SpannableStringBuilder sb = new SpannableStringBuilder(this.getText()
+			);
+		Log.d("deleteString", "sb: " + sb.toString());
+	    sb.replace(start, end, "");
+		Log.d("deleteString", "sb after replace: " + sb.toString());
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				CustomMultiAutoCompleteTextView.this.setText(sb);
+				new Handler().postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						
+						isTextAdditionInProgress = false;
+						stringLength = CustomMultiAutoCompleteTextView.this.getText().toString().length();
+						isTextDeletedFromTouch = false;
+						//Log.i("I am replacing text","I am replacing text 4");
+						CustomMultiAutoCompleteTextView.this.setMovementMethod(LinkMovementMethod.getInstance());
+					}
+				},50);
+				
+			}
+		}, 10);
+	}
 	
 	/**
 	 * @param message
