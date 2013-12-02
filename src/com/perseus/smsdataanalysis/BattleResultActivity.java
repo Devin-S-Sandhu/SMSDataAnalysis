@@ -168,13 +168,13 @@ public class BattleResultActivity extends Activity {
 			ImageView winnerPhoto = ((ImageView) findViewById(R.id.winner_photo));
 			if(contactOneWins > contactTwoWins) {
 				winner = contactOneName + " Wins!";
-				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactOneNumber).addThumbnail();
-				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
+				//new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactOneNumber).addThumbnail();
+				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
 			}
 			else if(contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
-				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactTwoNumber).addThumbnail();
-				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
+				//new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactTwoNumber).addThumbnail();
+				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
 			}
 			winnerLabel.setText(winner);
 			
