@@ -21,6 +21,7 @@ public class BattleMenuActivity extends Activity {
     
 
     private String contactOne, contactTwo;
+    private String contactOneNumber, contactTwoNumber;
     private long contactOneId, contactTwoId;
     private long contactOnePhotoId, contactTwoPhotoId;
     
@@ -36,6 +37,7 @@ public class BattleMenuActivity extends Activity {
 		this.setTitle("Friend Battle Menu");
 		
 		contactOne = contactTwo = "";
+		contactOneNumber = contactTwoNumber = "";
 		contactOneId = contactTwoId = 0;
 		contactOnePhotoId = contactTwoPhotoId = 0;
 		
@@ -59,6 +61,8 @@ public class BattleMenuActivity extends Activity {
 					BattleResultActivity.class);
 			intent.putExtra("contactOne", contactOne);
 			intent.putExtra("contactTwo", contactTwo);
+			intent.putExtra("contactOneNumber", contactOneNumber);
+			intent.putExtra("contactTwoNumber", contactTwoNumber);
 			intent.putExtra("contactOneId", contactOneId);
 			intent.putExtra("contactTwoId", contactTwoId);
 			intent.putExtra("contactOnePhotoId", contactOnePhotoId);
@@ -130,6 +134,7 @@ public class BattleMenuActivity extends Activity {
 							.append(cNumber).append(">").append(", ").toString();
 							
 							contactOneId = Long.parseLong(id);
+							contactOneNumber = cNumber;
 							if (photoId != null)
 								contactOnePhotoId = Long.parseLong(photoId);
 							
@@ -145,6 +150,7 @@ public class BattleMenuActivity extends Activity {
 							.append(cNumber).append(">").append(", ").toString();
 							
 							contactTwoId = Long.parseLong(id);
+							contactTwoNumber = cNumber;
 							if (photoId != null)
 								contactTwoPhotoId = Long.parseLong(photoId);
 							

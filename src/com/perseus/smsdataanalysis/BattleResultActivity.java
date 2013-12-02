@@ -37,6 +37,8 @@ public class BattleResultActivity extends Activity {
     
     private Date startDate;
     private Date endDate;
+    private String contactOneNumber;
+    private String contactTwoNumber;
     private long contactOneId;
     private long contactTwoId;
     private long contactOnePhotoId;
@@ -83,6 +85,8 @@ public class BattleResultActivity extends Activity {
 		.append(intent.getStringExtra("contactTwo")).toString();
 		Log.d(LOG_TAG, contacts);
 		
+		contactOneNumber = intent.getStringExtra("contactOneNumber");
+		contactTwoNumber = intent.getStringExtra("contactTwoNumber");
 		contactOneId = intent.getLongExtra("contactOneId", 0);
 		contactTwoId = intent.getLongExtra("contactTwoId", 0);
 		contactOnePhotoId = intent.getLongExtra("contactOnePhotoId", 0);
@@ -164,11 +168,13 @@ public class BattleResultActivity extends Activity {
 			ImageView winnerPhoto = ((ImageView) findViewById(R.id.winner_photo));
 			if(contactOneWins > contactTwoWins) {
 				winner = contactOneName + " Wins!";
-				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
+				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactOneNumber).addThumbnail();
+				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
 			}
 			else if(contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
-				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
+				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactTwoNumber).addThumbnail();
+				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
 			}
 			winnerLabel.setText(winner);
 			
