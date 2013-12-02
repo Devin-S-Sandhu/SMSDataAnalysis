@@ -4,22 +4,167 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
+    <ImageView 
+        android:id="@+id/winner_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/winner_photo_desc" />
+        
     <TextView 
         android:id="@+id/winner_label"
         android:layout_width="match_parent" 
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:textSize="24sp" />
+    
+    <TextView 
+        android:text="@string/results_text"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:textSize="20sp" />
     
-    <TextView 
-        android:id="@+id/friend_one_info"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:textSize="12sp" />
     
-    <TextView 
-        android:id="@+id/friend_two_info"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:textSize="12sp" />
+    <TableLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        	<TableRow 
+        	    android:layout_width="match_parent" 
+        	    android:layout_height="wrap_content" >
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:text="@string/analysis_type_title"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg"
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_one_name"
+        	        android:text="@string/contact_one"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_two_name"
+        	        android:text="@string/contact_two"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	        
+        	</TableRow>
+        	
+        	<TableRow 
+        	    android:layout_width="match_parent" 
+        	    android:layout_height="wrap_content" >
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:text="@string/messages_received_text"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_one_messages_received"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_two_messages_received"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	        
+        	</TableRow>
+        	
+        	<TableRow 
+        	    android:layout_width="match_parent" 
+        	    android:layout_height="wrap_content" >
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:text="@string/messages_sent_text"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_one_messages_sent"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_two_messages_sent"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	        
+        	</TableRow>
+        
+    </TableLayout>
+    
+    <TableRow 
+    	android:layout_width="match_parent" 
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginTop="5dp" >
+   	    
+   	    <TextView 
+   	        android:background="@drawable/cell_shape_light_bg" 
+   	        android:padding="1dp"
+   	        android:textSize="12sp"
+   	        android:text="@string/wins_text"
+   	        android:layout_width="0dp"
+   	        android:layout_height="wrap_content"
+   	        android:layout_weight="1" />
+   	    
+   	    <TextView 
+   	        android:background="@drawable/cell_shape_dark_bg"
+   	        android:padding="1dp"
+   	        android:textSize="12sp"
+   	        android:id="@+id/contact_one_wins"
+   	        android:layout_width="0dp"
+   	        android:layout_height="wrap_content"
+   	        android:layout_weight="1" />
+   	    
+   	    <TextView 
+   	        android:background="@drawable/cell_shape_dark_bg" 
+   	        android:padding="1dp"
+   	        android:textSize="12sp"
+   	        android:id="@+id/contact_two_wins"
+   	        android:layout_width="0dp"
+   	        android:layout_height="wrap_content"
+   	        android:layout_weight="1" />
+   	        
+   	</TableRow>
         
 </LinearLayout>

@@ -21,6 +21,8 @@ public class BattleMenuActivity extends Activity {
     
 
     private String contactOne, contactTwo;
+    private long contactOneId, contactTwoId;
+    private long contactOnePhotoId, contactTwoPhotoId;
     private boolean battleFlag = false;
 
 	@Override
@@ -32,6 +34,8 @@ public class BattleMenuActivity extends Activity {
 		this.setTitle("Friend Battle Menu");
 		
 		contactOne = contactTwo = "";
+		contactOneId = contactTwoId = 0;
+		contactOnePhotoId = contactTwoPhotoId = 0;
 		
 		TextView label = (TextView) findViewById(R.id.friend_one_label);
 		label.setText(R.string.friend_one);
@@ -70,6 +74,10 @@ public class BattleMenuActivity extends Activity {
 					BattleResultActivity.class);
 			intent.putExtra("contactOne", contactOne);
 			intent.putExtra("contactTwo", contactTwo);
+			intent.putExtra("contactOneId", contactOneId);
+			intent.putExtra("contactTwoId", contactTwoId);
+			intent.putExtra("contactOnePhotoId", contactOnePhotoId);
+			intent.putExtra("contactTwoPhotoId", contactTwoPhotoId);
 			intent.putExtra("timeSpan", ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString());
 			
 			battleFlag = true;
@@ -98,6 +106,10 @@ public class BattleMenuActivity extends Activity {
 					String id = c
 							.getString(c
 									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+					
+					String photoId = c
+							.getString(c
+									.getColumnIndexOrThrow(ContactsContract.Contacts.PHOTO_ID));
 
 					String hasPhone = c
 							.getString(c
@@ -125,6 +137,10 @@ public class BattleMenuActivity extends Activity {
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
 							
+							contactOneId = Long.parseLong(id);
+							if (photoId != null)
+								contactOnePhotoId = Long.parseLong(photoId);
+							
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
 							label.setText(label.getText() + " " + nameContact);
 						}
@@ -132,6 +148,10 @@ public class BattleMenuActivity extends Activity {
 							contactTwo = new StringBuilder()
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
+							
+							contactTwoId = Long.parseLong(id);
+							if (photoId != null)
+								contactTwoPhotoId = Long.parseLong(photoId);
 							
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
 							label.setText(label.getText() + " " + nameContact);

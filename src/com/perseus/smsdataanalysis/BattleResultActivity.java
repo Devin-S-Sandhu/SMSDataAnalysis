@@ -1,20 +1,26 @@
 package com.perseus.smsdataanalysis;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map.Entry;
-
-import com.perseus.smsdataanalysis.Analyzer.Pair;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class BattleResultActivity extends Activity {
@@ -27,8 +33,14 @@ public class BattleResultActivity extends Activity {
     private HashMap<String, Integer> timeSpans;
     private String timeSpan;
     
+    private String[] analysisTypes;
+    
     private Date startDate;
     private Date endDate;
+    private long contactOneId;
+    private long contactTwoId;
+    private long contactOnePhotoId;
+    private long contactTwoPhotoId;
     
     private Analyzer mAnalyzer;
 
@@ -48,6 +60,8 @@ public class BattleResultActivity extends Activity {
 		}
 		timeSpan = intent.getStringExtra("timeSpan");
 		
+		analysisTypes = getApplicationContext().getResources().getStringArray(R.array.analaysis_type_arrays);
+		
 		endDate = new Date(CURR_YEAR, CURR_MONTH, CURR_DAY);
 		Calendar c = Calendar.getInstance();
 		c.setTime(endDate);
@@ -64,15 +78,19 @@ public class BattleResultActivity extends Activity {
 		}
 		startDate = c.getTime();
 		
-		// TODO use value in arrays.xml for analysis type
 		String contacts = new StringBuilder()
 		.append(intent.getStringExtra("contactOne"))
 		.append(intent.getStringExtra("contactTwo")).toString();
 		Log.d(LOG_TAG, contacts);
 		
+		contactOneId = intent.getLongExtra("contactOneId", 0);
+		contactTwoId = intent.getLongExtra("contactTwoId", 0);
+		contactOnePhotoId = intent.getLongExtra("contactOnePhotoId", 0);
+		contactTwoPhotoId = intent.getLongExtra("contactTwoPhotoId", 0);
+		
 		// create queries
 		Analyzer.Query query1 = mAnalyzer.new Query(
-				"SMS Frequency",
+				analysisTypes[1],
 				"Received",
 				startDate.getMonth() + "-" +
 				startDate.getDay() + "-" +
@@ -83,7 +101,7 @@ public class BattleResultActivity extends Activity {
 				contacts);
 		
 		Analyzer.Query query2 = mAnalyzer.new Query(
-				"SMS Frequency",
+				analysisTypes[1],
 				"Sent",
 				startDate.getMonth() + "-" +
 				startDate.getDay() + "-" +
@@ -143,21 +161,78 @@ public class BattleResultActivity extends Activity {
 			
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
 			String winner = "It's a tie!";
-			if(contactOneWins > contactTwoWins)
+			ImageView winnerPhoto = ((ImageView) findViewById(R.id.winner_photo));
+			if(contactOneWins > contactTwoWins) {
 				winner = contactOneName + " Wins!";
-			else if(contactTwoWins > contactOneWins)
+				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
+			}
+			else if(contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
+				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
+			}
 			winnerLabel.setText(winner);
 			
-			((TextView) findViewById(R.id.friend_one_info)).setText(contactOneName + ": " + 
-					contactOneWins + " wins");
-			((TextView) findViewById(R.id.friend_two_info)).setText(contactTwoName + ": " + 
-					contactTwoWins + " wins");
+			((TextView) findViewById(R.id.contact_one_name)).setText(contactOneName);
+			((TextView) findViewById(R.id.contact_two_name)).setText(contactTwoName);
+			((TextView) findViewById(R.id.contact_one_messages_received)).setText("" +
+					result.get(0).get(0).getElement1());
+			((TextView) findViewById(R.id.contact_two_messages_received)).setText("" +
+					result.get(0).get(1).getElement1());
+			((TextView) findViewById(R.id.contact_one_messages_sent)).setText("" +
+					result.get(1).get(0).getElement1());
+			((TextView) findViewById(R.id.contact_two_messages_sent)).setText("" +
+					result.get(1).get(1).getElement1());
+			
+			((TextView) findViewById(R.id.contact_one_wins)).setText("" + contactOneWins);
+			((TextView) findViewById(R.id.contact_two_wins)).setText("" + contactTwoWins);
 			
 			mProgressDialog.dismiss();
 		}
 		
 	}
+	
+	public static Bitmap loadContactPhoto(ContentResolver cr, long  id,long photo_id) 
+	{
+
+	    Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+	    InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
+	    if (input != null) 
+	    {
+	        return BitmapFactory.decodeStream(input);
+	    }
+	    else
+	    {
+	        Log.d("PHOTO","first try failed to load photo");
+
+	    }
+
+	    byte[] photoBytes = null;
+
+	    Uri photoUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, photo_id);
+
+	    Cursor c = cr.query(photoUri, new String[] {ContactsContract.CommonDataKinds.Photo.PHOTO}, null, null, null);
+
+	    try 
+	    {
+	        if (c.moveToFirst()) 
+	            photoBytes = c.getBlob(0);
+
+	    } catch (Exception e) {
+	        // TODO: handle exception
+	        e.printStackTrace();
+
+	    } finally {
+
+	        c.close();
+	    }           
+
+	    if (photoBytes != null)
+	        return BitmapFactory.decodeByteArray(photoBytes,0,photoBytes.length);
+	    else
+	        Log.d("PHOTO","second try also failed");
+	    return null;
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
