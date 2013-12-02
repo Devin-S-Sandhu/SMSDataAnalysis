@@ -17,12 +17,10 @@
     <string name="to_text">End Date</string>
     <string name="contacts_text">Contacts</string>
     <string name="select_contact_hint">All Contacts</string>
-    <string name="friend_one">Friend One:</string>
-    <string name="friend_two">Friend Two:</string>
     <string name="add_contact">Add Contact</string>
     <string name="battle_text">Battle!</string>
     <string name="title_activity_battle_result">Battle Result</string>
-    <string name="time_span">Time Span: </string>
+    <string name="time_span">Time Span</string>
     <string name="spinner_message">Analyzing&#8230;</string>
     <string name="default_num_results">10</string>
     <string name="select_contact_title">Select Contacts</string>

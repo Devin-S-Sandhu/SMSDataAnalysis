@@ -23,7 +23,9 @@ public class BattleMenuActivity extends Activity {
     private String contactOne, contactTwo;
     private long contactOneId, contactTwoId;
     private long contactOnePhotoId, contactTwoPhotoId;
-    private boolean battleFlag = false;
+    
+    private boolean pickingContactOne = false;
+    private boolean pickingContactTwo = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,27 +40,10 @@ public class BattleMenuActivity extends Activity {
 		contactOnePhotoId = contactTwoPhotoId = 0;
 		
 		TextView label = (TextView) findViewById(R.id.friend_one_label);
-		label.setText(R.string.friend_one);
+		label.setText("");
 		
 		label = (TextView) findViewById(R.id.friend_two_label);
-		label.setText(R.string.friend_two);
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (battleFlag) {
-			contactOne = contactTwo = "";
-			
-			TextView label = (TextView) findViewById(R.id.friend_one_label);
-			label.setText(R.string.friend_one);
-			
-			label = (TextView) findViewById(R.id.friend_two_label);
-			label.setText(R.string.friend_two);
-			
-			battleFlag = false;
-		}
+		label.setText("");
 	}
 
 	@Override
@@ -80,8 +65,6 @@ public class BattleMenuActivity extends Activity {
 			intent.putExtra("contactTwoPhotoId", contactTwoPhotoId);
 			intent.putExtra("timeSpan", ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString());
 			
-			battleFlag = true;
-			
 			startActivity(intent);
 		}
 		else {
@@ -90,6 +73,15 @@ public class BattleMenuActivity extends Activity {
 	}
 	
 	public void doLaunchContactPicker(View view) {
+		if (view.getId() == R.id.contact_one_button) {
+			pickingContactOne = true;
+			pickingContactTwo = false;
+		}
+		else if (view.getId() == R.id.contact_two_button) {
+			pickingContactOne = false;
+			pickingContactTwo = true;
+		}
+		
 		Intent intent = new Intent(Intent.ACTION_PICK,
 				ContactsContract.Contacts.CONTENT_URI);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
@@ -132,7 +124,7 @@ public class BattleMenuActivity extends Activity {
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 
-						if (contactOne.isEmpty()) {
+						if (pickingContactOne) {
 							contactOne = new StringBuilder()
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
@@ -142,9 +134,12 @@ public class BattleMenuActivity extends Activity {
 								contactOnePhotoId = Long.parseLong(photoId);
 							
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
-							label.setText(label.getText() + " " + nameContact);
+							label.setText(nameContact);
+							
+							pickingContactOne = false;
+							pickingContactTwo = false;
 						}
-						else if (contactTwo.isEmpty()) {
+						else if (pickingContactTwo) {
 							contactTwo = new StringBuilder()
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
@@ -154,7 +149,10 @@ public class BattleMenuActivity extends Activity {
 								contactTwoPhotoId = Long.parseLong(photoId);
 							
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
-							label.setText(label.getText() + " " + nameContact);
+							label.setText(nameContact);
+							
+							pickingContactOne = false;
+							pickingContactTwo = false;
 						}
 					}
 				}
