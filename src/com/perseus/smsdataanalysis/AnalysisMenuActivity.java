@@ -68,18 +68,11 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-		//Cursor cursor = getContentResolver().query(
-		//		ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-		//		PEOPLE_PROJECTION, null, null, null);
-		//ContactListAdapter adapter = new ContactListAdapter(this, cursor);
 
 		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
 				android.R.layout.simple_list_item_1, SmsUtil.getContacts(
 					this, false));
 		selectContact.setAdapter(adapter);
-		//selectContact
-		//		.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-		selectContact.setHorizontalScrollBarEnabled(true);
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -117,10 +110,8 @@ public class AnalysisMenuActivity extends Activity {
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 
-						selectContact.setText(new StringBuilder()
-								.append(selectContact.getText().toString())
-								.append(nameContact).append(" <")
-								.append(cNumber).append(">").append(", "));
+						selectContact.append(new StringBuilder(nameContact).append(" <")
+								.append(cNumber).append(">").append(","));
 						// selectContact.setWidth(500);
 					}
 				}

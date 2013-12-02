@@ -1,3 +1,9 @@
+/*  
+ * From https://github.com/krishnalalstha/Spannable
+ * By Krishna Lal Shrestha
+ * Modified by Po-Chen Yang
+ * 
+*/
 package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
