@@ -38,7 +38,6 @@ Incomplete Features from Prototype:
   Several visualizations
     Line graph
     Scoreboard
-  (We've got more ideas, we just didn't list them on the prototype)
 
 Other Features Completed:
   Autocompleting contact names in Data Analysis Menu

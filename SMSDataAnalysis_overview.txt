@@ -2,9 +2,46 @@ Devin Sandhu DSS2255
 Sam Speck SXS59
 Po-Chen Yang PC22369
 
+Features Completed:
+  Several analysis types
+    Most frequently used words
+    Most frequently texted contacts
+    Average longest length of message
+    Average shortest length of message
+    Average longest interval between messages 
+    Average shortest interval between messages 
+  Constraining analyses by a time range
+  Constraining analyses to a list of contacts
+  Constraining analyses to sent, received, or all messages
+  Visualization of data using a bar graph and pie chart
+  
+Incomplete Features:
+  One analysis types:
+    Time between texts (time to respond)
+  Several visualizations::
+    Line graph
+    Scoreboard
+    
+Other Features Completed:
+  Added option to show a text dump
+  Added image buttons for the main menu 
+  Autocompleting contact names in Data Analysis Menu
+  
+Code Referenced:
+  Android Plot Graphing Library
+    Our graphing library from http://androidplot.com/
+  CustomMultiAutoCompleteTextView.java
+  ContactPickerAdapter.java
+  SmsUtil.java
+  Contact.java
+    Code for the autocompleting contact name from https://github.com/krishnalalstha/Spannable
+  ContactPhotoHelper.java
+    Code for grabbing the contact photos for friend battle from http://stackoverflow.com/questions/2383580/how-do-i-load-a-contact-photo
 
-
-2. a list of features / use cases you completed
-3. a list of features / use cases from your application prototype (assignment 3) 
-that you did not completed
-4. a list of features / use cases you added that were not part of the application prototype
+Code Completed Ourselves:
+  AnalysisMenuActivity.java
+  AnalysisResultActivity.java
+  Analyzer.java
+  BattleMenuActivity.java
+  BattleResultActivity.java
+  MainActivity.java
