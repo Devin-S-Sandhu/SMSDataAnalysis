@@ -81,6 +81,9 @@ public class BattleResultActivity extends Activity {
 		}
 		startDate = c.getTime();
 
+		Log.d(LOG_TAG, "start date: " + startDate.toString());
+		Log.d(LOG_TAG, "end date: " + endDate.toString());
+
 		contactOneName = intent.getStringExtra("contactOneName");
 		contactTwoName = intent.getStringExtra("contactTwoName");
 		contactOneNumber = intent.getStringExtra("contactOneNumber");
@@ -91,28 +94,27 @@ public class BattleResultActivity extends Activity {
 				.append(contactTwoName).append(" <").append(contactTwoNumber)
 				.append(">").toString();
 
-		Log.d(LOG_TAG, contacts);
+		String start = (startDate.getMonth() + 1) + "-" + startDate.getDay()
+				+ "-" + startDate.getYear();
+
+		String end = (endDate.getMonth() + 1) + "-" + endDate.getDay() + "-"
+				+ endDate.getYear();
+
+		Log.d(LOG_TAG, "### " + start);
+		Log.d(LOG_TAG, "### " + end);
 
 		// create queries
 		Analyzer.Query query1 = mAnalyzer.new Query(analysisTypes[1],
-				"Received", startDate.getMonth() + "-" + startDate.getDay()
-						+ "-" + startDate.getYear(), endDate.getMonth() + "-"
-						+ endDate.getDay() + "-" + endDate.getYear(), contacts);
+				"Received", start, end, contacts);
 
 		Analyzer.Query query2 = mAnalyzer.new Query(analysisTypes[1], "Sent",
-				startDate.getMonth() + "-" + startDate.getDay() + "-"
-						+ startDate.getYear(), endDate.getMonth() + "-"
-						+ endDate.getDay() + "-" + endDate.getYear(), contacts);
+				start, end, contacts);
 
 		Analyzer.Query query3 = mAnalyzer.new Query(analysisTypes[5],
-				"Received", startDate.getMonth() + "-" + startDate.getDay()
-						+ "-" + startDate.getYear(), endDate.getMonth() + "-"
-						+ endDate.getDay() + "-" + endDate.getYear(), contacts);
+				"Received", start, end, contacts);
 
 		Analyzer.Query query4 = mAnalyzer.new Query(analysisTypes[5], "Sent",
-				startDate.getMonth() + "-" + startDate.getDay() + "-"
-						+ startDate.getYear(), endDate.getMonth() + "-"
-						+ endDate.getDay() + "-" + endDate.getYear(), contacts);
+				start, end, contacts);
 
 		new BattleTask().execute(query1, query2, query3, query4);
 	}
