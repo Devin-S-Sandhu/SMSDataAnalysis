@@ -8,6 +8,7 @@
         android:id="@+id/winner_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/winner_photo_desc" />
         
     <TextView 
@@ -125,6 +126,72 @@
         	        android:padding="1dp"
         	        android:textSize="12sp"
         	        android:id="@+id/contact_two_messages_sent"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	        
+        	</TableRow>
+        	
+        	<TableRow 
+        	    android:layout_width="match_parent" 
+        	    android:layout_height="wrap_content" >
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:text="@string/interval_received_text"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_one_interval_received"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_two_interval_received"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	        
+        	</TableRow>
+        	
+        	<TableRow 
+        	    android:layout_width="match_parent" 
+        	    android:layout_height="wrap_content" >
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_light_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:text="@string/interval_sent_text"
+        	        android:layout_width="0dp"
+        	        android:layout_height="wrap_content"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_one_interval_sent"
+        	        android:layout_width="0dp"
+        	        android:layout_height="match_parent"
+        	        android:layout_weight="1" />
+        	    
+        	    <TextView 
+        	        android:background="@drawable/cell_shape_dark_bg" 
+        	        android:padding="1dp"
+        	        android:textSize="12sp"
+        	        android:id="@+id/contact_two_interval_sent"
         	        android:layout_width="0dp"
         	        android:layout_height="match_parent"
         	        android:layout_weight="1" />
