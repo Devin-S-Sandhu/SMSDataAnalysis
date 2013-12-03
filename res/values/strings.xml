@@ -33,5 +33,6 @@
     <string name="interval_sent_text">Interval Sent</string>
     <string name="results_text">Results:</string>
     <string name="wins_text">Wins</string>
+    <string name="info_dump_text">Show all results</string>
 
 </resources>
