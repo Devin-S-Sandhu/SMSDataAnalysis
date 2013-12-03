@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -324,6 +323,7 @@ public class Analyzer {
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
 		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
 				endDate, contactsList, null);
+		Log.d(LOG_TAG, "!!! " + cursor.getCount());
 
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		String name;
@@ -450,7 +450,6 @@ public class Analyzer {
 
 				oldAddress = curAddress;
 				oldDate = curDate;
-
 				cursor.moveToNext();
 			}
 		}

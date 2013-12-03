@@ -36,6 +36,7 @@
         androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
 
     <LinearLayout
+        android:id="@+id/infoDumpLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

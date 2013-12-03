@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tableLayout1"
+    android:id="@+id/scrollView1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -10,7 +10,6 @@
         android:layout_height="wrap_content" >
 
         <TableRow
-            android:id="@+id/tableRow1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -31,7 +30,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -54,7 +52,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp" >
@@ -67,7 +64,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -88,7 +84,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp" >
@@ -113,7 +108,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp" >
@@ -126,7 +120,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -137,7 +130,6 @@
                 android:layout_weight="1"
                 android:text="@string/select_contact_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-            
 
             <Button
                 android:id="@+id/btnSelect_contact"
@@ -148,7 +140,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dip" >
@@ -157,11 +148,10 @@
                 android:id="@+id/select_contact"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:hint="@string/select_contact_hint"/>
+                android:hint="@string/select_contact_hint" />
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp" >
@@ -174,7 +164,31 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <CheckBox
+                android:id="@+id/checkBoxInfoDump"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_dump_text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <View
+                android:id="@+id/fourthDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/darker_gray" />
+        </TableRow>
+
+        <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
@@ -193,51 +207,5 @@
                 android:layout_width="0dp"
                 android:layout_weight="1" />
         </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dip" >
-
-            <TextView
-                android:id="@+id/debug1"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dip" >
-
-            <TextView
-                android:id="@+id/debug2"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dip" >
-
-            <TextView
-                android:id="@+id/debug3"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
     </TableLayout>
-
 </ScrollView>

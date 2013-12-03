@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -192,31 +193,28 @@ public class AnalysisResultActivity extends Activity {
 				v = inf.inflate(R.layout.listview_analysis_result_item, parent,
 						false);
 			}
+			boolean dumpInfo = intent.getBooleanExtra("info_dump", true);
+			String type = intent.getStringExtra("type") + " "
+					+ intent.getStringExtra("scope");
+			if (dumpInfo) {
+				analysisType = (TextView) v.findViewById(R.id.analysis_type);
+				startDate = (TextView) v.findViewById(R.id.start_date);
+				endDate = (TextView) v.findViewById(R.id.end_date);
+				contacts = (TextView) v.findViewById(R.id.contacts);
+				result = (TextView) v.findViewById(R.id.text_result);
 
-			analysisType = (TextView) v.findViewById(R.id.analysis_type);
-			startDate = (TextView) v.findViewById(R.id.start_date);
-			endDate = (TextView) v.findViewById(R.id.end_date);
-			contacts = (TextView) v.findViewById(R.id.contacts);
-			result = (TextView) v.findViewById(R.id.text_result);
-
-			String type = intent.getStringExtra("type");
-			analysisType.setText(type);
-			startDate.setText(intent.getStringExtra("start_date"));
-			endDate.setText(intent.getStringExtra("end_date"));
-			contacts.setText(intent.getStringExtra("contacts"));
-			boolean first = true;
-			StringBuilder builder = new StringBuilder();
-			for (Analyzer.Pair<String, Integer> p : queryResult) {
-				if (!first)
-					builder.append("\n");
-				else
-					first = false;
-
-				builder.append(p.getElement1());
-				builder.append(" : ");
-				builder.append(p.getElement0());
+				analysisType.setText(type);
+				startDate.setText("Start Date: "
+						+ intent.getStringExtra("start_date"));
+				endDate.setText("End Date: "
+						+ intent.getStringExtra("end_date"));
+				contacts.setText("Contacts: "
+						+ (intent.getStringExtra("contacts").equals("") ? "Analyzed all contacts"
+								: intent.getStringExtra("contacts")));
+				result.setText(textDump());
 			}
-			result.setText(textDump());
+			else
+				((LinearLayout)v.findViewById(R.id.infoDumpLayout)).removeAllViews();
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);

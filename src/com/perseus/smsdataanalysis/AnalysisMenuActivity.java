@@ -1,5 +1,6 @@
 package com.perseus.smsdataanalysis;
 
+import java.io.ObjectOutputStream.PutField;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ public class AnalysisMenuActivity extends Activity {
 	private Spinner analysisType;
 	private Spinner scope;
 	private TextView startDate, endDate;
+	private CheckBox infoDump;
 	private CustomMultiAutoCompleteTextView selectContact;
 
 	private int start_year, end_year;
@@ -58,7 +61,7 @@ public class AnalysisMenuActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
-
+		infoDump = (CheckBox)findViewById(R.id.checkBoxInfoDump);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		setCurrentDateOnView();
 
@@ -257,6 +260,7 @@ public class AnalysisMenuActivity extends Activity {
 		
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
+		myIntent.putExtra("info_dump", infoDump.isChecked());
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
 		myIntent.putExtra("scope", scope.getSelectedItem().toString());
 		myIntent.putExtra("start_date", startDate.getText().toString());
