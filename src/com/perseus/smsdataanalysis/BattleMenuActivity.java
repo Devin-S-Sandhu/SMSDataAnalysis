@@ -22,8 +22,7 @@ public class BattleMenuActivity extends Activity {
 
     private String contactOne, contactTwo;
     private String contactOneNumber, contactTwoNumber;
-    private long contactOneId, contactTwoId;
-    private long contactOnePhotoId, contactTwoPhotoId;
+    private String contactOneName, contactTwoName;
     
     private boolean pickingContactOne = false;
     private boolean pickingContactTwo = false;
@@ -38,8 +37,6 @@ public class BattleMenuActivity extends Activity {
 		
 		contactOne = contactTwo = "";
 		contactOneNumber = contactTwoNumber = "";
-		contactOneId = contactTwoId = 0;
-		contactOnePhotoId = contactTwoPhotoId = 0;
 		
 		TextView label = (TextView) findViewById(R.id.friend_one_label);
 		label.setText("");
@@ -63,10 +60,8 @@ public class BattleMenuActivity extends Activity {
 			intent.putExtra("contactTwo", contactTwo);
 			intent.putExtra("contactOneNumber", contactOneNumber);
 			intent.putExtra("contactTwoNumber", contactTwoNumber);
-			intent.putExtra("contactOneId", contactOneId);
-			intent.putExtra("contactTwoId", contactTwoId);
-			intent.putExtra("contactOnePhotoId", contactOnePhotoId);
-			intent.putExtra("contactTwoPhotoId", contactTwoPhotoId);
+			intent.putExtra("contactOneName", contactOneName);
+			intent.putExtra("contactTwoName", contactTwoName);
 			intent.putExtra("timeSpan", ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString());
 			
 			startActivity(intent);
@@ -102,10 +97,6 @@ public class BattleMenuActivity extends Activity {
 					String id = c
 							.getString(c
 									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-					
-					String photoId = c
-							.getString(c
-									.getColumnIndexOrThrow(ContactsContract.Contacts.PHOTO_ID));
 
 					String hasPhone = c
 							.getString(c
@@ -133,10 +124,8 @@ public class BattleMenuActivity extends Activity {
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
 							
-							contactOneId = Long.parseLong(id);
 							contactOneNumber = cNumber;
-							if (photoId != null)
-								contactOnePhotoId = Long.parseLong(photoId);
+							contactOneName = nameContact;
 							
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
 							label.setText(nameContact);
@@ -149,10 +138,8 @@ public class BattleMenuActivity extends Activity {
 							.append(nameContact).append(" <")
 							.append(cNumber).append(">").append(", ").toString();
 							
-							contactTwoId = Long.parseLong(id);
 							contactTwoNumber = cNumber;
-							if (photoId != null)
-								contactTwoPhotoId = Long.parseLong(photoId);
+							contactTwoName = nameContact;
 							
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
 							label.setText(nameContact);

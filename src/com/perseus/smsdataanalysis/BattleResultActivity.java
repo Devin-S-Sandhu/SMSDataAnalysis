@@ -37,12 +37,11 @@ public class BattleResultActivity extends Activity {
     
     private Date startDate;
     private Date endDate;
+    
+    private String contactOneName;
+    private String contactTwoName;
     private String contactOneNumber;
     private String contactTwoNumber;
-    private long contactOneId;
-    private long contactTwoId;
-    private long contactOnePhotoId;
-    private long contactTwoPhotoId;
     
     private Analyzer mAnalyzer;
 
@@ -80,17 +79,18 @@ public class BattleResultActivity extends Activity {
 		}
 		startDate = c.getTime();
 		
-		String contacts = new StringBuilder()
-		.append(intent.getStringExtra("contactOne"))
-		.append(intent.getStringExtra("contactTwo")).toString();
-		Log.d(LOG_TAG, contacts);
-		
+		contactOneName = intent.getStringExtra("contactOneName");
+		contactTwoName = intent.getStringExtra("contactTwoName");
 		contactOneNumber = intent.getStringExtra("contactOneNumber");
 		contactTwoNumber = intent.getStringExtra("contactTwoNumber");
-		contactOneId = intent.getLongExtra("contactOneId", 0);
-		contactTwoId = intent.getLongExtra("contactTwoId", 0);
-		contactOnePhotoId = intent.getLongExtra("contactOnePhotoId", 0);
-		contactTwoPhotoId = intent.getLongExtra("contactTwoPhotoId", 0);
+		
+		String contacts = new StringBuilder()
+		.append(contactOneName).append(" <")
+		.append(contactOneNumber).append(">").append(", ")
+		.append(contactTwoName).append(" <")
+		.append(contactTwoNumber).append(">").toString();
+		
+		Log.d(LOG_TAG, contacts);
 		
 		// create queries
 		Analyzer.Query query1 = mAnalyzer.new Query(
@@ -115,7 +115,29 @@ public class BattleResultActivity extends Activity {
 				endDate.getYear(),
 				contacts);
 		
-		new BattleTask().execute(query1, query2);
+		Analyzer.Query query3 = mAnalyzer.new Query(
+				analysisTypes[5],
+				"Received",
+				startDate.getMonth() + "-" +
+				startDate.getDay() + "-" +
+				startDate.getYear(),
+				endDate.getMonth() + "-" +
+				endDate.getDay() + "-" +
+				endDate.getYear(),
+				contacts);
+		
+		Analyzer.Query query4 = mAnalyzer.new Query(
+				analysisTypes[5],
+				"Sent",
+				startDate.getMonth() + "-" +
+				startDate.getDay() + "-" +
+				startDate.getYear(),
+				endDate.getMonth() + "-" +
+				endDate.getDay() + "-" +
+				endDate.getYear(),
+				contacts);
+		
+		new BattleTask().execute(query1, query2, query3, query4);
 	}
 	
 	private class BattleTask extends AsyncTask<Analyzer.Query, Void, ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>> {
@@ -139,14 +161,15 @@ public class BattleResultActivity extends Activity {
 			ArrayList<ArrayList<Analyzer.Pair<String, Integer>>> result = new ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>();
 			result.add(mAnalyzer.doQuery(params[0]));
 			result.add(mAnalyzer.doQuery(params[1]));
+			result.add(mAnalyzer.doQuery(params[2]));
+			result.add(mAnalyzer.doQuery(params[3]));
 			return result;
 		}
 		
 		@Override
 		protected void onPostExecute(ArrayList<ArrayList<Analyzer.Pair<String, Integer>>> result) {
-			Analyzer.Pair<String, Integer> contactOneData, contactTwoData;
-			String contactOneName = result.get(0).get(0).getElement0(), contactTwoName = result.get(0).get(1).getElement0();
 			int contactOneWins = 0, contactTwoWins = 0;
+			ArrayList<ArrayList<Integer>> dataToDisplay = new ArrayList<ArrayList<Integer>>();
 			
 			for (ArrayList<Analyzer.Pair<String, Integer>> queryResult : result) {
 				if (queryResult.size() < 2) {
@@ -154,13 +177,24 @@ public class BattleResultActivity extends Activity {
 					return;
 				}
 				
-				contactOneData = queryResult.get(0);
-				contactTwoData = queryResult.get(1);
+				ArrayList<Integer> row = new ArrayList<Integer>();
 				
-				if (contactOneData.getElement1() > contactTwoData.getElement1())
+				if(queryResult.get(0).getElement1() == queryResult.get(1).getElement1()) {
+					row.add(queryResult.get(0).getElement1());
+					row.add(queryResult.get(1).getElement1());
+				}
+				else if (queryResult.get(0).getElement0().equals(contactOneName)) {
 					contactOneWins++;
-				else if (contactTwoData.getElement1() > contactOneData.getElement1())
+					row.add(queryResult.get(0).getElement1());
+					row.add(queryResult.get(1).getElement1());
+				}
+				else {
 					contactTwoWins++;
+					row.add(queryResult.get(1).getElement1());
+					row.add(queryResult.get(0).getElement1());
+				}
+				
+				dataToDisplay.add(row);
 			}
 			
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
@@ -168,26 +202,38 @@ public class BattleResultActivity extends Activity {
 			ImageView winnerPhoto = ((ImageView) findViewById(R.id.winner_photo));
 			if(contactOneWins > contactTwoWins) {
 				winner = contactOneName + " Wins!";
-				//new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactOneNumber).addThumbnail();
-				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
+				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactOneNumber).addThumbnail();
+				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactOneId, contactOnePhotoId));
 			}
 			else if(contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
-				//new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactTwoNumber).addThumbnail();
-				winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
+				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto, contactTwoNumber).addThumbnail();
+				//winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(), contactTwoId, contactTwoPhotoId));
 			}
 			winnerLabel.setText(winner);
 			
 			((TextView) findViewById(R.id.contact_one_name)).setText(contactOneName);
 			((TextView) findViewById(R.id.contact_two_name)).setText(contactTwoName);
+			
 			((TextView) findViewById(R.id.contact_one_messages_received)).setText("" +
-					result.get(0).get(0).getElement1());
+					dataToDisplay.get(0).get(0));
 			((TextView) findViewById(R.id.contact_two_messages_received)).setText("" +
-					result.get(0).get(1).getElement1());
+					dataToDisplay.get(0).get(1));
+			
 			((TextView) findViewById(R.id.contact_one_messages_sent)).setText("" +
-					result.get(1).get(0).getElement1());
+					dataToDisplay.get(1).get(0));
 			((TextView) findViewById(R.id.contact_two_messages_sent)).setText("" +
-					result.get(1).get(1).getElement1());
+					dataToDisplay.get(1).get(1));
+			
+			((TextView) findViewById(R.id.contact_one_interval_received)).setText("" +
+					dataToDisplay.get(2).get(0) + " hours");
+			((TextView) findViewById(R.id.contact_two_interval_received)).setText("" +
+					dataToDisplay.get(2).get(1) + " hours");
+			
+			((TextView) findViewById(R.id.contact_one_interval_sent)).setText("" +
+					dataToDisplay.get(3).get(0) + " hours");
+			((TextView) findViewById(R.id.contact_two_interval_sent)).setText("" +
+					dataToDisplay.get(3).get(1) + " hours");
 			
 			((TextView) findViewById(R.id.contact_one_wins)).setText("" + contactOneWins);
 			((TextView) findViewById(R.id.contact_two_wins)).setText("" + contactTwoWins);

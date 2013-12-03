@@ -29,6 +29,8 @@
     <string name="contact_two">Contact Two</string>
     <string name="messages_received_text">Messages Received</string>
     <string name="messages_sent_text">Messages Sent</string>
+    <string name="interval_received_text">Interval Received</string>
+    <string name="interval_sent_text">Interval Sent</string>
     <string name="results_text">Results:</string>
     <string name="wins_text">Wins</string>
     <string name="info_dump_text">Show all results</string>

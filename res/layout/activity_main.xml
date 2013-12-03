@@ -5,21 +5,51 @@
     android:layout_gravity="center_vertical"
     android:orientation="vertical" >
 
-    <Button
+    <ImageButton
         android:id="@+id/analysisMenu"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/dataAnalysis_text"
         android:onClick="startAnalysisActivity"
-        android:text="@string/dataAnalysis_text" />
+        android:src="@drawable/analytics" />
 
-    <Button
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="startAnalysisActivity"
+        android:text="@string/dataAnalysis_text"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <ImageButton
         android:id="@+id/battleMenu"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/friendBattle_text"
         android:onClick="startBattleActivity"
-        android:text="@string/friendBattle_text" />
+        android:src="@drawable/battle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="startBattleActivity"
+        android:text="@string/friendBattle_text"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
 </LinearLayout>
