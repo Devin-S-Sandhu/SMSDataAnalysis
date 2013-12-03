@@ -14,7 +14,10 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
@@ -25,7 +28,7 @@ public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
 	private Spinner scope;
-	private TextView startDate, endDate;
+	private TextView startDate, endDate, analysisDescriptionView;
 	private CheckBox infoDump;
 	private CustomMultiAutoCompleteTextView selectContact;
 
@@ -61,7 +64,28 @@ public class AnalysisMenuActivity extends Activity {
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
 		infoDump = (CheckBox) findViewById(R.id.checkBoxInfoDump);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
+		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
 		setCurrentDateOnView();
+
+		analysisType.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			private String[] analysisDescriptions = AnalysisMenuActivity.this
+					.getResources().getStringArray(
+							R.array.analysis_description_array);
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				analysisDescriptionView.setText(analysisDescriptions[arg2]);
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				analysisDescriptionView.setText(analysisDescriptions[0]);
+			}
+		});
 
 		startDatePickerDialog = new DatePickerDialog(this,
 				startDatePickerListener, start_year, start_month, start_day);

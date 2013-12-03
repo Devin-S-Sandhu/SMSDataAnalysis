@@ -25,6 +25,7 @@ Incomplete Features:
 Other Features Completed:
   Added option to show a text dump
   Added image buttons for the main menu 
+  Descriptions of the analyses
   Autocompleting contact names in Data Analysis Menu
   
 Code Referenced:

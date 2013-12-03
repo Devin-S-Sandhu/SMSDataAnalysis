@@ -10,12 +10,12 @@
         <item>SMS Shortest Interval</item>
     </string-array>
     <string-array name="analysis_description_array">
-        <item>Word Frequency</item>
-        <item>SMS Frequency</item>
-        <item>SMS Longest Length</item>
-        <item>SMS Shortest Length</item>
-        <item>SMS Longest Interval</item>
-        <item>SMS Shortest Interval</item>
+        <item>Finds the words that appear the most often in your messages.</item>
+        <item>Finds the contacts that appear the most in your messages.</item>
+        <item>Finds the contacts with the longest average length messages.</item>
+        <item>Finds the contacts with the shortest average length messages.</item>
+        <item>Finds the contacts with the longest time between messages.</item>
+        <item>Finds the contacts with the shortest time between messages.</item>
     </string-array>
     <string-array name="scope_array">
         <item>All</item>
