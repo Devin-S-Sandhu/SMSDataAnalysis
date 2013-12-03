@@ -45,10 +45,6 @@
             android:name="com.perseus.smsdataanalysis.BattleResultActivity"
             android:label="@string/title_activity_battle_result" >
         </activity>
-        <activity
-            android:name=".Settings"
-            android:label="Settings" >
-        </activity>
     </application>
 
 </manifest>

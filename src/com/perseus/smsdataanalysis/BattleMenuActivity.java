@@ -14,18 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class BattleMenuActivity extends Activity {
-    public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    private final static String LOG_TAG = "MyFirstApp_tag";
-    
-    private final static int CONTACT_PICKER_RESULT = 0;
-    
+	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+	private final static String LOG_TAG = "MyFirstApp_tag";
 
-    private String contactOne, contactTwo;
-    private String contactOneNumber, contactTwoNumber;
-    private String contactOneName, contactTwoName;
-    
-    private boolean pickingContactOne = false;
-    private boolean pickingContactTwo = false;
+	private final static int CONTACT_PICKER_RESULT = 0;
+
+	private String contactOne, contactTwo;
+	private String contactOneNumber, contactTwoNumber;
+	private String contactOneName, contactTwoName;
+
+	private boolean pickingContactOne = false;
+	private boolean pickingContactTwo = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,27 +33,20 @@ public class BattleMenuActivity extends Activity {
 		Log.v(LOG_TAG, "A verbose message");
 
 		this.setTitle("Friend Battle Menu");
-		
+
 		contactOne = contactTwo = "";
 		contactOneNumber = contactTwoNumber = "";
-		
+
 		TextView label = (TextView) findViewById(R.id.friend_one_label);
 		label.setText("");
-		
+
 		label = (TextView) findViewById(R.id.friend_two_label);
 		label.setText("");
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
 	public void doBattle(View view) {
 		if (!contactOne.isEmpty() && !contactTwo.isEmpty()) {
-			Intent intent = new Intent(BattleMenuActivity.this, 
+			Intent intent = new Intent(BattleMenuActivity.this,
 					BattleResultActivity.class);
 			intent.putExtra("contactOne", contactOne);
 			intent.putExtra("contactTwo", contactTwo);
@@ -62,30 +54,31 @@ public class BattleMenuActivity extends Activity {
 			intent.putExtra("contactTwoNumber", contactTwoNumber);
 			intent.putExtra("contactOneName", contactOneName);
 			intent.putExtra("contactTwoName", contactTwoName);
-			intent.putExtra("timeSpan", ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString());
-			
+			intent.putExtra("timeSpan",
+					((Spinner) findViewById(R.id.time_span)).getSelectedItem()
+							.toString());
+
 			startActivity(intent);
-		}
-		else {
-			Toast.makeText(getApplicationContext(), "Select two contacts!", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getApplicationContext(), "Select two contacts!",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	public void doLaunchContactPicker(View view) {
 		if (view.getId() == R.id.contact_one_button) {
 			pickingContactOne = true;
 			pickingContactTwo = false;
-		}
-		else if (view.getId() == R.id.contact_two_button) {
+		} else if (view.getId() == R.id.contact_two_button) {
 			pickingContactOne = false;
 			pickingContactTwo = true;
 		}
-		
+
 		Intent intent = new Intent(Intent.ACTION_PICK,
 				ContactsContract.Contacts.CONTENT_URI);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
-	
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
@@ -121,29 +114,30 @@ public class BattleMenuActivity extends Activity {
 
 						if (pickingContactOne) {
 							contactOne = new StringBuilder()
-							.append(nameContact).append(" <")
-							.append(cNumber).append(">").append(", ").toString();
-							
+									.append(nameContact).append(" <")
+									.append(cNumber).append(">").append(", ")
+									.toString();
+
 							contactOneNumber = cNumber;
 							contactOneName = nameContact;
-							
+
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
 							label.setText(nameContact);
-							
+
 							pickingContactOne = false;
 							pickingContactTwo = false;
-						}
-						else if (pickingContactTwo) {
+						} else if (pickingContactTwo) {
 							contactTwo = new StringBuilder()
-							.append(nameContact).append(" <")
-							.append(cNumber).append(">").append(", ").toString();
-							
+									.append(nameContact).append(" <")
+									.append(cNumber).append(">").append(", ")
+									.toString();
+
 							contactTwoNumber = cNumber;
 							contactTwoName = nameContact;
-							
+
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
 							label.setText(nameContact);
-							
+
 							pickingContactOne = false;
 							pickingContactTwo = false;
 						}
