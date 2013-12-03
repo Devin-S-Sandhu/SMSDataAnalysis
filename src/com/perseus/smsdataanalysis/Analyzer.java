@@ -130,7 +130,6 @@ public class Analyzer {
 		scopes.put(analysisScopes[0], "");
 		scopes.put(analysisScopes[1], "sent");
 		scopes.put(analysisScopes[2], "inbox");
-		Log.d(LOG_TAG, "!!! "+ types.toString());
 
 	}
 
@@ -250,7 +249,7 @@ public class Analyzer {
 				// handles country code issues, but makes the matching a lot
 				// fuzzier which may have unintended consequences
 				selection.append(" LIKE '%");
-				Log.d(LOG_TAG, "!!! " + contact);
+				Log.d(LOG_TAG, contact);
 				selection.append(contact);
 				selection.append("'");
 				first = false;
@@ -323,7 +322,7 @@ public class Analyzer {
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
 		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
 				endDate, contactsList, null);
-		Log.d(LOG_TAG, "!!! " + cursor.getCount());
+		Log.d(LOG_TAG, "smsfreqcount: " + cursor.getCount());
 
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		String name;
@@ -353,6 +352,7 @@ public class Analyzer {
 				cursor.moveToNext();
 			}
 		}
+		Log.d(LOG_TAG, "### " + freq.toString());
 
 		return formatResult(freq, true);
 	}
