@@ -179,16 +179,18 @@ public class BattleResultActivity extends Activity {
 				
 				ArrayList<Integer> row = new ArrayList<Integer>();
 				
+				String winnerName = queryResult.get(0).getElement0().trim();
+				
 				if(queryResult.get(0).getElement1() == queryResult.get(1).getElement1()) {
 					row.add(queryResult.get(0).getElement1());
 					row.add(queryResult.get(1).getElement1());
 				}
-				else if (queryResult.get(0).getElement0().equals(contactOneName)) {
+				else if (winnerName.equals(contactOneName)) {
 					contactOneWins++;
 					row.add(queryResult.get(0).getElement1());
 					row.add(queryResult.get(1).getElement1());
 				}
-				else {
+				else if (winnerName.equals(contactTwoName)) {
 					contactTwoWins++;
 					row.add(queryResult.get(1).getElement1());
 					row.add(queryResult.get(0).getElement1());
