@@ -194,8 +194,7 @@ public class AnalysisResultActivity extends Activity {
 						false);
 			}
 			boolean dumpInfo = intent.getBooleanExtra("info_dump", true);
-			String type = intent.getStringExtra("type") + " "
-					+ intent.getStringExtra("scope");
+			String type = intent.getStringExtra("type");
 			if (dumpInfo) {
 				analysisType = (TextView) v.findViewById(R.id.analysis_type);
 				startDate = (TextView) v.findViewById(R.id.start_date);
@@ -203,7 +202,8 @@ public class AnalysisResultActivity extends Activity {
 				contacts = (TextView) v.findViewById(R.id.contacts);
 				result = (TextView) v.findViewById(R.id.text_result);
 
-				analysisType.setText(type);
+				analysisType.setText(type + " "
+						+ intent.getStringExtra("scope"));
 				startDate.setText("Start Date: "
 						+ intent.getStringExtra("start_date"));
 				endDate.setText("End Date: "
@@ -212,9 +212,9 @@ public class AnalysisResultActivity extends Activity {
 						+ (intent.getStringExtra("contacts").equals("") ? "Analyzed all contacts"
 								: intent.getStringExtra("contacts")));
 				result.setText(textDump());
-			}
-			else
-				((LinearLayout)v.findViewById(R.id.infoDumpLayout)).removeAllViews();
+			} else
+				((LinearLayout) v.findViewById(R.id.infoDumpLayout))
+						.removeAllViews();
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
@@ -328,7 +328,7 @@ public class AnalysisResultActivity extends Activity {
 			pie.getBackgroundPaint().setColor(Color.DKGRAY);
 			pie.getRenderer(PieRenderer.class).setDonutSize(0.25f,
 					DonutMode.PERCENT);
-
+			pie.setClickable(false);
 			updatePlot();
 
 			pie.setTitle(type + " Pie Chart Result");
