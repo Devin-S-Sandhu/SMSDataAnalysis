@@ -166,9 +166,9 @@ public class AnalysisResultActivity extends Activity {
 				else
 					first = false;
 
-				builder.append(p.getElement0());
-				builder.append(" = ");
 				builder.append(p.getElement1());
+				builder.append(" = ");
+				builder.append(p.getElement0());
 			}
 			Log.d(LOG_TAG, builder.toString());
 			return builder.toString();

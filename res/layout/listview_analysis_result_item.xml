@@ -69,8 +69,7 @@
         <TextView
             android:id="@+id/text_result"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-        </TextView>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </LinearLayout>
