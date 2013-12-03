@@ -1,6 +1,5 @@
 package com.perseus.smsdataanalysis;
 
-import java.io.ObjectOutputStream.PutField;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -61,7 +59,7 @@ public class AnalysisMenuActivity extends Activity {
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
-		infoDump = (CheckBox)findViewById(R.id.checkBoxInfoDump);
+		infoDump = (CheckBox) findViewById(R.id.checkBoxInfoDump);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		setCurrentDateOnView();
 
@@ -130,13 +128,6 @@ public class AnalysisMenuActivity extends Activity {
 			// gracefully handle failure
 			Log.w(LOG_TAG, "Warning: activity result not ok");
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 
 	// display current date
@@ -254,10 +245,10 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	public void analyze(View view) {
-		//hides the keyboard
+		// hides the keyboard
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(selectContact.getWindowToken(), 0);
-		
+
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
 		myIntent.putExtra("info_dump", infoDump.isChecked());
