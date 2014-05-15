@@ -1,6 +1,7 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -91,7 +92,7 @@ public class AnalysisMenuActivity extends Activity {
 				startDatePickerListener, start_year, start_month, start_day);
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
-
+		SmsUtil.selectedContact = new HashMap<String, String>();
 		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
 				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this,
 						false));
