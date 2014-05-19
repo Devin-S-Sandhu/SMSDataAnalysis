@@ -35,11 +35,20 @@ public class Settings extends PreferenceActivity {
 						return true;
 					}
 				});
-	    final CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("stopwords");
-	    checkboxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
+	    final CheckBoxPreference stopwordsPref = (CheckBoxPreference) findPreference("stopwords");
+	    stopwordsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
 	        public boolean onPreferenceChange(Preference preference, Object newValue) {
 	        	SharedPreferences.Editor ed = prefs.edit();
 				ed.putBoolean("stopwords", (Boolean)newValue);
+				ed.commit();       
+	            return true;
+	        }
+	    });
+	    final CheckBoxPreference dumpPref = (CheckBoxPreference) findPreference("info_dump");
+	    dumpPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
+	        public boolean onPreferenceChange(Preference preference, Object newValue) {
+	        	SharedPreferences.Editor ed = prefs.edit();
+				ed.putBoolean("info_dump", (Boolean)newValue);
 				ed.commit();       
 	            return true;
 	        }

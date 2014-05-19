@@ -162,30 +162,6 @@
                 android:hint="@string/select_contact_hint" />
         </TableRow>
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp" >
-
-            <View
-                android:id="@+id/thirdDivider"
-                android:layout_width="wrap_content"
-                android:layout_height="2dp"
-                android:background="@android:color/darker_gray" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp" >
-
-            <CheckBox
-                android:id="@+id/checkBoxInfoDump"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/info_dump_text"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-        </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"

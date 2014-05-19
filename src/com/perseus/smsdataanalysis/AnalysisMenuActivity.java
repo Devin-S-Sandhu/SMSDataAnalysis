@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,8 +31,8 @@ public class AnalysisMenuActivity extends Activity {
 	private Spinner analysisType;
 	private Spinner scope;
 	private TextView startDate, endDate, analysisDescriptionView;
-	private CheckBox infoDump;
 	private CustomMultiAutoCompleteTextView selectContact;
+	private SharedPreferences mPrefs;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -59,12 +59,13 @@ public class AnalysisMenuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_analysis_menu);
 
+		mPrefs = getSharedPreferences("ttt_prefs", MODE_PRIVATE);
+		
 		this.setTitle("Data Analysis Menu");
 		scope = (Spinner) findViewById(R.id.scope_spinner);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
-		infoDump = (CheckBox) findViewById(R.id.checkBoxInfoDump);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
 		setCurrentDateOnView();
@@ -295,7 +296,7 @@ public class AnalysisMenuActivity extends Activity {
 
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
-		myIntent.putExtra("info_dump", infoDump.isChecked());
+		myIntent.putExtra("info_dump", mPrefs.getBoolean("info_dump", false));
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
 		myIntent.putExtra("scope", scope.getSelectedItem().toString());
 		myIntent.putExtra("start_date", startDate.getText().toString());

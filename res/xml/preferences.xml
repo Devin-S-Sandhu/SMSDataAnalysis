@@ -10,6 +10,12 @@
         android:title="Number of Results" />
 
     <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="info_dump"
+        android:summary="Dump all of the messages and their counts"
+        android:title="Show all results" />
+
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="stopwords"
         android:summary="Exclude common words from the analysis result"
