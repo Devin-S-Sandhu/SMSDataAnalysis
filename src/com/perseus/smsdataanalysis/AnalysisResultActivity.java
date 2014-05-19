@@ -59,6 +59,9 @@ public class AnalysisResultActivity extends Activity {
 	private static final String NO_SELECTION_TXT = "Touch bar to select.";
 	private final Random generator = new Random();
 
+	private final int PLOT_LIMIT = 10;
+	private final int PLOT_WIDTH = 500;
+	
 	private TextView analysisType;
 	private TextView startDate;
 	private TextView endDate;
@@ -283,7 +286,7 @@ public class AnalysisResultActivity extends Activity {
 			}
 
 			int numSeg = queryResult.size();
-			numSeg = (numSeg > 10) ? 10 : numSeg;
+			numSeg = (numSeg > PLOT_LIMIT) ? PLOT_LIMIT : numSeg;
 			Segment segments[] = new Segment[numSeg];
 			SegmentFormatter sf[] = new SegmentFormatter[numSeg];
 
@@ -319,7 +322,7 @@ public class AnalysisResultActivity extends Activity {
 			pie.getRenderer(PieRenderer.class).setDonutSize(0.25f,
 					DonutMode.PERCENT);
 			pie.setClickable(false);
-			updatePlot();
+			updatePlot(PLOT_WIDTH/numSeg);
 
 			pie.setTitle(type + " Pie Chart Result");
 			plot.setTitle(type + " Bar Graph Result");
@@ -327,14 +330,14 @@ public class AnalysisResultActivity extends Activity {
 		}
 	}
 
-	private void updatePlot() {
+	private void updatePlot(int barWidth) {
 
 		// Setup the BarRenderer with our selected options
 		MyBarRenderer renderer = ((MyBarRenderer) plot
 				.getRenderer(MyBarRenderer.class));
 		renderer.setBarRenderStyle(BarRenderer.BarRenderStyle.values()[2]);
 		renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.values()[0]);
-		renderer.setBarWidth(50);
+		renderer.setBarWidth(barWidth);
 		renderer.setBarGap(1);
 
 		// If we're only plotting one value we need to do this so it shows up
