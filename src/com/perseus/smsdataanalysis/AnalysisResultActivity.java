@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ import com.androidplot.xy.XYSeries;
 import com.perseus.smsdataanalysis.Analyzer.Query;
 
 public class AnalysisResultActivity extends Activity {
-	private final static String LOG_TAG = "AnalysisResultActivity";
+	private static final String LOG_TAG = "AnalysisResultActivity";
 	private static final String NO_SELECTION_TXT = "Touch bar to select.";
 	private final Random generator = new Random();
 
@@ -101,8 +100,8 @@ public class AnalysisResultActivity extends Activity {
 	}
 
 	private class AnalysisTask
-			extends
-			AsyncTask<Analyzer.Query, Void, ArrayList<Analyzer.Pair<String, Integer>>> {
+	extends
+	AsyncTask<Analyzer.Query, Void, ArrayList<Analyzer.Pair<String, Integer>>> {
 		ProgressDialog mProgressDialog;
 
 		@Override
@@ -205,7 +204,7 @@ public class AnalysisResultActivity extends Activity {
 				result.setText(textDump());
 			} else
 				((LinearLayout) v.findViewById(R.id.infoDumpLayout))
-						.removeAllViews();
+				.removeAllViews();
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
@@ -217,7 +216,7 @@ public class AnalysisResultActivity extends Activity {
 					NO_SELECTION_TXT, new SizeMetrics(PixelUtils.dpToPix(100),
 							SizeLayoutType.ABSOLUTE, PixelUtils.dpToPix(100),
 							SizeLayoutType.ABSOLUTE),
-					TextOrientationType.HORIZONTAL);
+							TextOrientationType.HORIZONTAL);
 
 			selectionWidget.getLabelPaint().setTextSize(PixelUtils.dpToPix(16));
 

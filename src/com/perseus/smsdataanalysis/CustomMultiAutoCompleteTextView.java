@@ -252,9 +252,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		if (spans.length > 0) {
 			ClickableSpan underlineSpan = spans[spans.length - 1];
 			spanEnd = ssb.getSpanEnd(underlineSpan);
-			// int spanCheck = spanEnd+1;
 
-			ClickableSpan firstSpan = spans[0];
 			int k = 0;
 			for (int m = 0; m < spans.length; m++) {
 				ClickableSpan someSpan = spans[m];
