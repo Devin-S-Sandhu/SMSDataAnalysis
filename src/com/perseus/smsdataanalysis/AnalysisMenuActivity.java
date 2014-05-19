@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -99,6 +101,24 @@ public class AnalysisMenuActivity extends Activity {
 		selectContact.setText("");
 	}
 
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(LOG_TAG, "in onOptionsItemSelected selecting");
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivityForResult(new Intent(this, Settings.class), 0);
+			return true;
+		}
+		return false;
+	}
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d("onActivityResult", "requestCode: " + requestCode
 				+ " resultCode: " + resultCode + "data: " + data);

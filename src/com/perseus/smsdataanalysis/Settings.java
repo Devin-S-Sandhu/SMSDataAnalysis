@@ -1,15 +1,13 @@
 package com.perseus.smsdataanalysis;
 
-import java.util.Arrays;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-import android.util.Log;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 
 public class Settings extends PreferenceActivity {
-	private final int NUM_ENTRIES = 6;
 	private final String LOG_TAG = "settings";
 
 	@Override
@@ -22,13 +20,21 @@ public class Settings extends PreferenceActivity {
 				MODE_PRIVATE);
 
 		final ListPreference numResultsPref = (ListPreference) findPreference("num_results");
-		String[] entries = new String[NUM_ENTRIES];
-		for (int x = 0; x < NUM_ENTRIES; x++)
-			entries[x] = Integer.toString(5 + x);
-		Log.d(LOG_TAG, Arrays.toString(entries));
-		numResultsPref.setEntryValues(entries);
-		numResultsPref.setEntries(entries);
-		// TODO actually update the relevant value
+		String num_results = prefs.getString("num_results", Integer.toString(10));
+		numResultsPref.setSummary("Number of analysis results to display: " + num_results);
+		
+		numResultsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+					@Override
+					public boolean onPreferenceChange(Preference preference,
+							Object newValue) {
+						numResultsPref.setSummary("Number of analysis results to display: " + (CharSequence) newValue);
+						// Since we are handling the pref, we must save it
+						SharedPreferences.Editor ed = prefs.edit();
+						ed.putString("num_results", newValue.toString());
+						ed.commit();
+						return true;
+					}
+				});
 
 	}
 }
