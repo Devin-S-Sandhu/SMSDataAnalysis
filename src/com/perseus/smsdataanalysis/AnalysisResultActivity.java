@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +55,13 @@ import com.androidplot.xy.XYSeries;
 import com.perseus.smsdataanalysis.Analyzer.Query;
 
 public class AnalysisResultActivity extends Activity {
-	private final static String LOG_TAG = "AnalysisResultActivity";
+	private static final String LOG_TAG = "AnalysisResultActivity";
 	private static final String NO_SELECTION_TXT = "Touch bar to select.";
 	private final Random generator = new Random();
 
+	private final int PLOT_LIMIT = 10;
+	private final int PLOT_WIDTH = 500;
+	
 	private TextView analysisType;
 	private TextView startDate;
 	private TextView endDate;
@@ -101,8 +103,8 @@ public class AnalysisResultActivity extends Activity {
 	}
 
 	private class AnalysisTask
-			extends
-			AsyncTask<Analyzer.Query, Void, ArrayList<Analyzer.Pair<String, Integer>>> {
+	extends
+	AsyncTask<Analyzer.Query, Void, ArrayList<Analyzer.Pair<String, Integer>>> {
 		ProgressDialog mProgressDialog;
 
 		@Override
@@ -205,7 +207,7 @@ public class AnalysisResultActivity extends Activity {
 				result.setText(textDump());
 			} else
 				((LinearLayout) v.findViewById(R.id.infoDumpLayout))
-						.removeAllViews();
+				.removeAllViews();
 
 			selectionFormatter = new MyBarFormatter(Color.YELLOW, Color.WHITE);
 			pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
@@ -217,7 +219,7 @@ public class AnalysisResultActivity extends Activity {
 					NO_SELECTION_TXT, new SizeMetrics(PixelUtils.dpToPix(100),
 							SizeLayoutType.ABSOLUTE, PixelUtils.dpToPix(100),
 							SizeLayoutType.ABSOLUTE),
-					TextOrientationType.HORIZONTAL);
+							TextOrientationType.HORIZONTAL);
 
 			selectionWidget.getLabelPaint().setTextSize(PixelUtils.dpToPix(16));
 
@@ -284,7 +286,7 @@ public class AnalysisResultActivity extends Activity {
 			}
 
 			int numSeg = queryResult.size();
-			numSeg = (numSeg > 10) ? 10 : numSeg;
+			numSeg = (numSeg > PLOT_LIMIT) ? PLOT_LIMIT : numSeg;
 			Segment segments[] = new Segment[numSeg];
 			SegmentFormatter sf[] = new SegmentFormatter[numSeg];
 
@@ -298,9 +300,12 @@ public class AnalysisResultActivity extends Activity {
 				int count = curr.getElement1();
 				max = (count > max) ? count : max;
 				String label = curr.getElement0();
+
+				Log.d(LOG_TAG, "Ploting: " + label + ", count: " + count);
 				segments[i] = new Segment(label, count);
-				int color = Color.argb(255, generator.nextInt(256),
-						generator.nextInt(256), generator.nextInt(256));
+				int color = Color.argb(255,
+						generator.nextInt(125), generator.nextInt(125),
+						generator.nextInt(125));
 				sf[i] = new SegmentFormatter(color);
 				sf[i].getFillPaint().setMaskFilter(emf);
 
@@ -308,9 +313,7 @@ public class AnalysisResultActivity extends Activity {
 				XYSeries curSeries = new SimpleXYSeries(Arrays.asList(x),
 						Arrays.asList(count), label);
 
-				MyBarFormatter formatter = new MyBarFormatter(Color.argb(255,
-						generator.nextInt(256), generator.nextInt(256),
-						generator.nextInt(256)), Color.LTGRAY);
+				MyBarFormatter formatter = new MyBarFormatter(color, Color.LTGRAY);
 
 				plot.addSeries(curSeries, formatter);
 				pie.addSeries(segments[i], sf[i]);
@@ -320,7 +323,7 @@ public class AnalysisResultActivity extends Activity {
 			pie.getRenderer(PieRenderer.class).setDonutSize(0.25f,
 					DonutMode.PERCENT);
 			pie.setClickable(false);
-			updatePlot();
+			updatePlot(PLOT_WIDTH/numSeg);
 
 			pie.setTitle(type + " Pie Chart Result");
 			plot.setTitle(type + " Bar Graph Result");
@@ -328,14 +331,14 @@ public class AnalysisResultActivity extends Activity {
 		}
 	}
 
-	private void updatePlot() {
+	private void updatePlot(int barWidth) {
 
 		// Setup the BarRenderer with our selected options
 		MyBarRenderer renderer = ((MyBarRenderer) plot
 				.getRenderer(MyBarRenderer.class));
 		renderer.setBarRenderStyle(BarRenderer.BarRenderStyle.values()[2]);
 		renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.values()[0]);
-		renderer.setBarWidth(50);
+		renderer.setBarWidth(barWidth);
 		renderer.setBarGap(1);
 
 		// If we're only plotting one value we need to do this so it shows up
