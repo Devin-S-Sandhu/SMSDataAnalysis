@@ -371,6 +371,15 @@ public class Analyzer {
 			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
 				address = cursor.getString(1);
+				Log.d(LOG_TAG, messageLength +" "+address);
+				if(address == null || messageLength < 1)
+				{
+					Log.e(LOG_TAG, "Null D:");
+					//added by Po-Chen to ignore the data with null
+					cursor.moveToNext();
+					continue;
+				}
+				
 				// key is address, value is a pair
 				// pairs are freq, total length
 				if (smsLength.containsKey(address)) {
@@ -430,9 +439,16 @@ public class Analyzer {
 			oldDate = cursor.getLong(1);
 			cursor.moveToNext();
 			while (!cursor.isAfterLast()) {
-				// Log.d(LOG_TAG, cursor.getString(0) +" "+cursor.getLong(1));
+				Log.d(LOG_TAG, cursor.getString(0) +" "+cursor.getLong(1));
 				curAddress = cursor.getString(0);
 				curDate = cursor.getLong(1);
+				if(curAddress == null)
+				{
+					Log.e(LOG_TAG, "Null D:");
+					//added by Po-Chen to ignore the data with null
+					cursor.moveToNext();
+					continue;
+				}
 				// if we're still looking at messages to and from the same
 				// person then update the smsInterval
 				if (curAddress.equals(oldAddress)) {

@@ -300,6 +300,8 @@ public class AnalysisResultActivity extends Activity {
 				int count = curr.getElement1();
 				max = (count > max) ? count : max;
 				String label = curr.getElement0();
+
+				Log.d(LOG_TAG, "Ploting: " + label + ", count: " + count);
 				segments[i] = new Segment(label, count);
 				int color = Color.argb(255,
 						generator.nextInt(125), generator.nextInt(125),
