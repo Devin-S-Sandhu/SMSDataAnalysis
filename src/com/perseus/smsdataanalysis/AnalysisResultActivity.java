@@ -301,8 +301,9 @@ public class AnalysisResultActivity extends Activity {
 				max = (count > max) ? count : max;
 				String label = curr.getElement0();
 				segments[i] = new Segment(label, count);
-				int color = Color.argb(255, generator.nextInt(256),
-						generator.nextInt(256), generator.nextInt(256));
+				int color = Color.argb(255,
+						generator.nextInt(156), generator.nextInt(156),
+						generator.nextInt(156));
 				sf[i] = new SegmentFormatter(color);
 				sf[i].getFillPaint().setMaskFilter(emf);
 
@@ -310,9 +311,7 @@ public class AnalysisResultActivity extends Activity {
 				XYSeries curSeries = new SimpleXYSeries(Arrays.asList(x),
 						Arrays.asList(count), label);
 
-				MyBarFormatter formatter = new MyBarFormatter(Color.argb(255,
-						generator.nextInt(256), generator.nextInt(256),
-						generator.nextInt(256)), Color.LTGRAY);
+				MyBarFormatter formatter = new MyBarFormatter(color, Color.LTGRAY);
 
 				plot.addSeries(curSeries, formatter);
 				pie.addSeries(segments[i], sf[i]);
