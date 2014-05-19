@@ -94,8 +94,8 @@ public class AnalysisResultActivity extends Activity {
 		mPrefs = getSharedPreferences("ttt_prefs", MODE_PRIVATE);
 		plot_limit = Integer.parseInt(mPrefs.getString("num_results", "10"));
 		
-
 		mAnalyzer = new Analyzer(getApplicationContext());
+		mAnalyzer.enableStopwords(mPrefs.getBoolean("stopwords", true));
 		intent = getIntent();
 		Analyzer.Query query = mAnalyzer.new Query(
 				intent.getStringExtra("type"), intent.getStringExtra("scope"),

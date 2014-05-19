@@ -5,8 +5,14 @@
         android:defaultValue="10"
         android:entries="@array/num_result_array"
         android:entryValues="@array/num_result_array"
-        android:key="num_results" 
+        android:key="num_results"
         android:summary=""
-        android:title="Number of Results"/>
-    
+        android:title="Number of Results" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="stopwords"
+        android:summary="Exclude common words from the analysis result"
+        android:title="Stop words" />
+
 </PreferenceScreen>

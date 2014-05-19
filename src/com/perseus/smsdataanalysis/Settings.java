@@ -2,6 +2,7 @@ package com.perseus.smsdataanalysis;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference;
@@ -22,7 +23,6 @@ public class Settings extends PreferenceActivity {
 		final ListPreference numResultsPref = (ListPreference) findPreference("num_results");
 		String num_results = prefs.getString("num_results", Integer.toString(10));
 		numResultsPref.setSummary("Number of analysis results to display: " + num_results);
-		
 		numResultsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 					@Override
 					public boolean onPreferenceChange(Preference preference,
@@ -35,6 +35,15 @@ public class Settings extends PreferenceActivity {
 						return true;
 					}
 				});
+	    final CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("stopwords");
+	    checkboxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
+	        public boolean onPreferenceChange(Preference preference, Object newValue) {
+	        	SharedPreferences.Editor ed = prefs.edit();
+				ed.putBoolean("stopwords", (Boolean)newValue);
+				ed.commit();       
+	            return true;
+	        }
+	    }); 
 
 	}
 }
