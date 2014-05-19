@@ -302,8 +302,8 @@ public class AnalysisResultActivity extends Activity {
 				String label = curr.getElement0();
 				segments[i] = new Segment(label, count);
 				int color = Color.argb(255,
-						generator.nextInt(156), generator.nextInt(156),
-						generator.nextInt(156));
+						generator.nextInt(125), generator.nextInt(125),
+						generator.nextInt(125));
 				sf[i] = new SegmentFormatter(color);
 				sf[i].getFillPaint().setMaskFilter(emf);
 
