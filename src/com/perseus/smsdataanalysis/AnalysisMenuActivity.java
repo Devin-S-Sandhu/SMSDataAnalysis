@@ -31,6 +31,7 @@ public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
 	private Spinner scope;
+	private Spinner time_span;
 	private TextView startDate, endDate, analysisDescriptionView;
 	private CustomMultiAutoCompleteTextView selectContact;
 	private SharedPreferences mPrefs;
@@ -73,9 +74,13 @@ public class AnalysisMenuActivity extends Activity {
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
+		time_span = (Spinner) findViewById(R.id.time_span);
+		
+		scope.setSelection(mPrefs.getInt("scope", 0));
+		analysisType.setSelection(mPrefs.getInt("analysisType", 0));
+		time_span.setSelection(mPrefs.getInt("time_span", 0));
 		
 		updateDatePicker();
-		
 		setCurrentDateOnView();
 
 		analysisType.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -200,14 +205,15 @@ public class AnalysisMenuActivity extends Activity {
 	public void setCurrentDateOnView() {
 		setCurrentDate();
 		// set current date into textview
-		startDate.setText(new StringBuilder()
-				// Month is 0 based, just add 1
-				.append(start_month + 1).append("-").append(start_day)
-				.append("-").append(start_year).append(" "));
-		endDate.setText(new StringBuilder()
-				// Month is 0 based, just add 1
-				.append(end_month + 1).append("-").append(end_day).append("-")
-				.append(end_year).append(" "));
+		String newStartDate = new StringBuilder()
+		.append(start_month + 1).append("-").append(start_day)
+		.append("-").append(start_year).append(" ").toString();
+		String newEndDate = new StringBuilder()
+		.append(end_month + 1).append("-").append(end_day).append("-")
+		.append(end_year).append(" ").toString();
+		
+		startDate.setText(mPrefs.getString("startDate", newStartDate));
+		endDate.setText(mPrefs.getString("endDate", newEndDate));
 	}
 
 	private void setCurrentDate() {
@@ -327,6 +333,16 @@ public class AnalysisMenuActivity extends Activity {
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		myIntent.putExtra("contacts", selectContact.getText().toString());
+		
+
+		SharedPreferences.Editor ed = mPrefs.edit();
+		ed.putInt("scope", scope.getSelectedItemPosition());
+		ed.putInt("analysisType", analysisType.getSelectedItemPosition());
+		ed.putInt("time_span", time_span.getSelectedItemPosition());
+		ed.putString("startDate", startDate.getText().toString());
+		ed.putString("endDate", endDate.getText().toString());
+		ed.commit();
+		
 		AnalysisMenuActivity.this.startActivity(myIntent);
 	}
 
@@ -337,7 +353,7 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	private void updateStartDate(){
-		String timeSpan = ((Spinner) findViewById(R.id.time_span)).getSelectedItem().toString();
+		String time_span_str = time_span.getSelectedItem().toString();
 		
 		Calendar c = Calendar.getInstance();
 		c.setTime(TODAY);
@@ -348,7 +364,7 @@ public class AnalysisMenuActivity extends Activity {
 		for (int i = 0; i < timeSpanArray.length; i++) {
 			timeSpans.put(timeSpanArray[i], i);
 		}
-		switch (timeSpans.get(timeSpan)) {
+		switch (timeSpans.get(time_span_str)) {
 		case 0:
 			c.add(Calendar.MONTH, -1);
 			break;
