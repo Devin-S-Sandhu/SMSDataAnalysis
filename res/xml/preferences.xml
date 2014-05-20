@@ -11,6 +11,12 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="advancedDatePicker"
+        android:summary="Choose your own time range to analyze"
+        android:title="Show advanced date picker" />
+    
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="info_dump"
         android:summary="Dump all of the messages and their counts"
         android:title="Show all results" />

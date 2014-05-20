@@ -62,6 +62,16 @@ public class Settings extends PreferenceActivity {
 	            return true;
 	        }
 	    }); 
+	    final CheckBoxPreference advancedDatePref = (CheckBoxPreference) findPreference("advancedDatePicker");
+	    advancedDatePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
+	        public boolean onPreferenceChange(Preference preference, Object newValue) {
+	        	SharedPreferences.Editor ed = prefs.edit();
+				ed.putBoolean("advancedDatePicker", (Boolean)newValue);
+				ed.commit();
+	            return true;
+	        }
+	    }); 
+
 
 	}
 }
