@@ -25,7 +25,6 @@ public class SmsUtil {
 
 	public static HashMap<String, String> selectedContact = new HashMap<String, String>();
 
-
 	public static ArrayList<Contact> getContacts(Context context) {
 		ArrayList<Contact> contacts = new ArrayList<Contact>();
 		try {

@@ -29,6 +29,7 @@
         <activity
             android:name="com.perseus.smsdataanalysis.AnalysisMenuActivity"
             android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -44,6 +45,13 @@
         <activity
             android:name="com.perseus.smsdataanalysis.BattleResultActivity"
             android:label="@string/title_activity_battle_result" >
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.perseus.smsdataanalysis.ContactPickerActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".Settings"

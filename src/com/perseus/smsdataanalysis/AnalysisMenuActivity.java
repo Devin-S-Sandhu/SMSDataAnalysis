@@ -56,8 +56,8 @@ public class AnalysisMenuActivity extends Activity {
 	private static final int OPTION_MENU_RESULT = 1002;
 
 	public static final String[] PEOPLE_PROJECTION = new String[] {
-			ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
-			ContactsContract.CommonDataKinds.Phone.NUMBER };
+		ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
+		ContactsContract.CommonDataKinds.Phone.NUMBER };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class AnalysisMenuActivity extends Activity {
 
 		mPrefs = getSharedPreferences("ttt_prefs", MODE_PRIVATE);
 		advanceDatePicker = mPrefs.getBoolean("advancedDatePicker", false);
-		
+
 		this.setTitle("Data Analysis Menu");
 		scope = (Spinner) findViewById(R.id.scope_spinner);
 		startDate = (TextView) findViewById(R.id.start_date_display);
@@ -75,11 +75,11 @@ public class AnalysisMenuActivity extends Activity {
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
 		time_span = (Spinner) findViewById(R.id.time_span);
-		
+
 		scope.setSelection(mPrefs.getInt("scope", 0));
 		analysisType.setSelection(mPrefs.getInt("analysisType", 0));
 		time_span.setSelection(mPrefs.getInt("time_span", 0));
-		
+
 		updateDatePicker();
 		setCurrentDateOnView();
 
@@ -113,7 +113,7 @@ public class AnalysisMenuActivity extends Activity {
 		selectContact.setAdapter(adapter);
 		selectContact.setText("");
 	}
-	
+
 	private void updateDatePicker() {
 		if(advanceDatePicker){
 			findViewById(R.id.datePickerlabel).setVisibility(View.GONE);
@@ -147,52 +147,52 @@ public class AnalysisMenuActivity extends Activity {
 				+ " resultCode: " + resultCode + "data: " + data);
 		if (requestCode == OPTION_MENU_RESULT)
 			Log.d(LOG_TAG, "Option menu result, recreating activity");
-			recreate();
-			
+		recreate();
+
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
-				Uri contactData = data.getData();
-				@SuppressWarnings("deprecation")
-				Cursor c = managedQuery(contactData, null, null, null, null);
-				if (c.moveToFirst()) {
-					String id = c
-							.getString(c
-									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-
-					String hasPhone = c
-							.getString(c
-									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-					if (hasPhone.equalsIgnoreCase("1")) {
-						Cursor phones = getContentResolver()
-								.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-										null,
-										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
-												+ " = " + id, null, null);
-						phones.moveToFirst();
-						String cNumber = phones
-								.getString(phones
-										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-						/*
-						 * Toast.makeText(getApplicationContext(), cNumber,
-						 * Toast.LENGTH_SHORT).show();
-						 */
-
-						String nameContact = c
-								.getString(c
-										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-						StringBuilder result = new StringBuilder(nameContact)
-								.append(" <").append(cNumber).append(">,");
-
-						SmsUtil.selectedContact.put(cNumber, nameContact);
-						selectContact.updateQuickContactList();
-						selectContact.setSelection(selectContact.getText()
-								.length());
-						selectContact.replaceText(result);
-						// selectContact.setWidth(500);
-					}
-				}
+//				Uri contactData = data.getData();
+//				@SuppressWarnings("deprecation")
+//				Cursor c = managedQuery(contactData, null, null, null, null);
+//				if (c.moveToFirst()) {
+//					String id = c
+//							.getString(c
+//									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+//
+//					String hasPhone = c
+//							.getString(c
+//									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+//
+//					if (hasPhone.equalsIgnoreCase("1")) {
+//						Cursor phones = getContentResolver()
+//								.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+//										null,
+//										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+//										+ " = " + id, null, null);
+//						phones.moveToFirst();
+//						String cNumber = phones
+//								.getString(phones
+//										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+//						/*
+//						 * Toast.makeText(getApplicationContext(), cNumber,
+//						 * Toast.LENGTH_SHORT).show();
+//						 */
+//
+//						String nameContact = c
+//								.getString(c
+//										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
+//						StringBuilder result = new StringBuilder(nameContact)
+//						.append(" <").append(cNumber).append(">,");
+//
+//						SmsUtil.selectedContact.put(cNumber, nameContact);
+//						selectContact.updateQuickContactList();
+//						selectContact.setSelection(selectContact.getText()
+//								.length());
+//						selectContact.replaceText(result);
+//						// selectContact.setWidth(500);
+//					}
+//				}
 				break;
 			}
 		} else {
@@ -211,7 +211,7 @@ public class AnalysisMenuActivity extends Activity {
 		String newEndDate = new StringBuilder()
 		.append(end_month + 1).append("-").append(end_day).append("-")
 		.append(end_year).append(" ").toString();
-		
+
 		startDate.setText(mPrefs.getString("startDate", newStartDate));
 		endDate.setText(mPrefs.getString("endDate", newEndDate));
 	}
@@ -227,12 +227,11 @@ public class AnalysisMenuActivity extends Activity {
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
-
 		switch (id) {
 		case START_DATE_DIALOG_ID:
 			// set date picker as current date
 			startDatePickerDialog
-					.updateDate(start_year, start_month, start_day);
+			.updateDate(start_year, start_month, start_day);
 			return startDatePickerDialog;
 		case END_DATE_DIALOG_ID:
 			// set date picker as current date
@@ -250,7 +249,7 @@ public class AnalysisMenuActivity extends Activity {
 			if ((selectedYear > end_year)
 					|| (selectedYear == end_year && selectedMonth > end_month)
 					|| (selectedYear == end_year
-							&& selectedMonth == start_month && selectedDay > end_day)) {
+					&& selectedMonth == start_month && selectedDay > end_day)) {
 				Toast.makeText(AnalysisMenuActivity.this,
 						"Invalid start date!", Toast.LENGTH_SHORT).show();
 				startDatePickerDialog.updateDate(start_year, start_month,
@@ -274,7 +273,7 @@ public class AnalysisMenuActivity extends Activity {
 			if ((selectedYear > CURR_YEAR)
 					|| (selectedYear == CURR_YEAR && selectedMonth > CURR_MONTH)
 					|| (selectedYear == CURR_YEAR
-							&& selectedMonth == CURR_MONTH && selectedDay > CURR_DAY)) {
+					&& selectedMonth == CURR_MONTH && selectedDay > CURR_DAY)) {
 				Toast.makeText(AnalysisMenuActivity.this,
 						"Invalid end date! Cannot analyze future texts!",
 						Toast.LENGTH_SHORT).show();
@@ -283,15 +282,15 @@ public class AnalysisMenuActivity extends Activity {
 				if ((selectedYear < start_year)
 						|| (selectedYear == start_year && selectedMonth < start_month)
 						|| (selectedYear == start_year
-								&& selectedMonth == start_month && selectedDay < start_day)) {
+						&& selectedMonth == start_month && selectedDay < start_day)) {
 					start_day = end_day;
 					start_month = end_month;
 					start_year = end_year;
 					// set selected date into textview
 					startDate.setText(new StringBuilder()
-							.append(start_month + 1).append("-")
-							.append(start_day).append("-").append(start_year)
-							.append(" "));
+					.append(start_month + 1).append("-")
+					.append(start_day).append("-").append(start_year)
+					.append(" "));
 					startDatePickerDialog.updateDate(start_year, start_month,
 							start_day);
 				}
@@ -333,7 +332,7 @@ public class AnalysisMenuActivity extends Activity {
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		myIntent.putExtra("contacts", selectContact.getText().toString());
-		
+
 
 		SharedPreferences.Editor ed = mPrefs.edit();
 		ed.putInt("scope", scope.getSelectedItemPosition());
@@ -342,22 +341,21 @@ public class AnalysisMenuActivity extends Activity {
 		ed.putString("startDate", startDate.getText().toString());
 		ed.putString("endDate", endDate.getText().toString());
 		ed.commit();
-		
+
 		AnalysisMenuActivity.this.startActivity(myIntent);
 	}
 
 	public void doLaunchContactPicker(View view) {
-		Intent intent = new Intent(Intent.ACTION_PICK,
-				ContactsContract.Contacts.CONTENT_URI);
+		Intent intent = new Intent(AnalysisMenuActivity.this, ContactPickerActivity.class);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
 	private void updateStartDate(){
 		String time_span_str = time_span.getSelectedItem().toString();
-		
+
 		Calendar c = Calendar.getInstance();
 		c.setTime(TODAY);
-		
+
 		HashMap<String, Integer> timeSpans = new HashMap<String, Integer>();
 		String[] timeSpanArray = getApplicationContext().getResources()
 				.getStringArray(R.array.time_span_array);
