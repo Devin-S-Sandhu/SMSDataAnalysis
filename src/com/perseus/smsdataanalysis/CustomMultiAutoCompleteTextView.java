@@ -576,7 +576,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 	 * there is update(add/delete)on SmsUtil.selectedContact
 	 */
 	public void updateQuickContactList() {
-		ArrayList<Contact> contactList = SmsUtil.getContacts(context, false);
+		ArrayList<Contact> contactList = SmsUtil.getContacts(context);
 		((ContactPickerAdapter) this.getAdapter()).setContactList(contactList);
 	}
 

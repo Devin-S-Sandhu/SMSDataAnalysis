@@ -1,6 +1,7 @@
 package com.perseus.smsdataanalysis;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -8,17 +9,19 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,9 +31,11 @@ public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
 	private Spinner analysisType;
 	private Spinner scope;
+	private Spinner time_span;
 	private TextView startDate, endDate, analysisDescriptionView;
-	private CheckBox infoDump;
 	private CustomMultiAutoCompleteTextView selectContact;
+	private SharedPreferences mPrefs;
+	private boolean advanceDatePicker;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -41,12 +46,14 @@ public class AnalysisMenuActivity extends Activity {
 	static final int START_DATE_DIALOG_ID = 0;
 	static final int END_DATE_DIALOG_ID = 1;
 
-	static final int CURR_YEAR = Calendar.getInstance().get(Calendar.YEAR);
-	static final int CURR_MONTH = Calendar.getInstance().get(Calendar.MONTH);
-	static final int CURR_DAY = Calendar.getInstance().get(
+	private static final int CURR_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+	private static final int CURR_MONTH = Calendar.getInstance().get(Calendar.MONTH);
+	private static final int CURR_DAY = Calendar.getInstance().get(
 			Calendar.DAY_OF_MONTH);
+	private static Date TODAY = new Date(CURR_YEAR, CURR_MONTH, CURR_DAY);
 
 	private static final int CONTACT_PICKER_RESULT = 1001;
+	private static final int OPTION_MENU_RESULT = 1002;
 
 	public static final String[] PEOPLE_PROJECTION = new String[] {
 			ContactsContract.Contacts._ID, Contacts.DISPLAY_NAME,
@@ -57,14 +64,23 @@ public class AnalysisMenuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_analysis_menu);
 
+		mPrefs = getSharedPreferences("ttt_prefs", MODE_PRIVATE);
+		advanceDatePicker = mPrefs.getBoolean("advancedDatePicker", false);
+		
 		this.setTitle("Data Analysis Menu");
 		scope = (Spinner) findViewById(R.id.scope_spinner);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
 		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
-		infoDump = (CheckBox) findViewById(R.id.checkBoxInfoDump);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
+		time_span = (Spinner) findViewById(R.id.time_span);
+		
+		scope.setSelection(mPrefs.getInt("scope", 0));
+		analysisType.setSelection(mPrefs.getInt("analysisType", 0));
+		time_span.setSelection(mPrefs.getInt("time_span", 0));
+		
+		updateDatePicker();
 		setCurrentDateOnView();
 
 		analysisType.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -93,15 +109,46 @@ public class AnalysisMenuActivity extends Activity {
 				end_year, end_month, end_day);
 		SmsUtil.selectedContact = new HashMap<String, String>();
 		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
-				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this,
-						false));
+				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this));
 		selectContact.setAdapter(adapter);
 		selectContact.setText("");
 	}
+	
+	private void updateDatePicker() {
+		if(advanceDatePicker){
+			findViewById(R.id.datePickerlabel).setVisibility(View.GONE);
+			findViewById(R.id.datePickerRow).setVisibility(View.GONE);
+		}
+		else{
+			findViewById(R.id.advancedDatePickerLabel).setVisibility(View.GONE);
+			findViewById(R.id.advancedDatePickerRow).setVisibility(View.GONE);
+		}
+	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(LOG_TAG, "in onOptionsItemSelected selecting");
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivityForResult(new Intent(this, Settings.class), OPTION_MENU_RESULT);
+			return true;
+		}
+		return false;
+	}
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d("onActivityResult", "requestCode: " + requestCode
 				+ " resultCode: " + resultCode + "data: " + data);
+		if (requestCode == OPTION_MENU_RESULT)
+			Log.d(LOG_TAG, "Option menu result, recreating activity");
+			recreate();
+			
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
@@ -158,14 +205,15 @@ public class AnalysisMenuActivity extends Activity {
 	public void setCurrentDateOnView() {
 		setCurrentDate();
 		// set current date into textview
-		startDate.setText(new StringBuilder()
-				// Month is 0 based, just add 1
-				.append(start_month + 1).append("-").append(start_day)
-				.append("-").append(start_year).append(" "));
-		endDate.setText(new StringBuilder()
-				// Month is 0 based, just add 1
-				.append(end_month + 1).append("-").append(end_day).append("-")
-				.append(end_year).append(" "));
+		String newStartDate = new StringBuilder()
+		.append(start_month + 1).append("-").append(start_day)
+		.append("-").append(start_year).append(" ").toString();
+		String newEndDate = new StringBuilder()
+		.append(end_month + 1).append("-").append(end_day).append("-")
+		.append(end_year).append(" ").toString();
+		
+		startDate.setText(mPrefs.getString("startDate", newStartDate));
+		endDate.setText(mPrefs.getString("endDate", newEndDate));
 	}
 
 	private void setCurrentDate() {
@@ -275,12 +323,26 @@ public class AnalysisMenuActivity extends Activity {
 
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
-		myIntent.putExtra("info_dump", infoDump.isChecked());
+		myIntent.putExtra("info_dump", mPrefs.getBoolean("info_dump", false));
 		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
 		myIntent.putExtra("scope", scope.getSelectedItem().toString());
+		if(!advanceDatePicker)
+		{
+			updateStartDate();
+		}
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		myIntent.putExtra("contacts", selectContact.getText().toString());
+		
+
+		SharedPreferences.Editor ed = mPrefs.edit();
+		ed.putInt("scope", scope.getSelectedItemPosition());
+		ed.putInt("analysisType", analysisType.getSelectedItemPosition());
+		ed.putInt("time_span", time_span.getSelectedItemPosition());
+		ed.putString("startDate", startDate.getText().toString());
+		ed.putString("endDate", endDate.getText().toString());
+		ed.commit();
+		
 		AnalysisMenuActivity.this.startActivity(myIntent);
 	}
 
@@ -290,4 +352,33 @@ public class AnalysisMenuActivity extends Activity {
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
+	private void updateStartDate(){
+		String time_span_str = time_span.getSelectedItem().toString();
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(TODAY);
+		
+		HashMap<String, Integer> timeSpans = new HashMap<String, Integer>();
+		String[] timeSpanArray = getApplicationContext().getResources()
+				.getStringArray(R.array.time_span_array);
+		for (int i = 0; i < timeSpanArray.length; i++) {
+			timeSpans.put(timeSpanArray[i], i);
+		}
+		switch (timeSpans.get(time_span_str)) {
+		case 0:
+			c.add(Calendar.MONTH, -1);
+			break;
+		case 1:
+			c.add(Calendar.YEAR, -1);
+			break;
+		default:
+			c.set(1980, 0, 1);
+			break;
+		}
+		Date newDate = c.getTime();
+		startDate.setText(
+				new StringBuilder().append(newDate.getMonth() + 1)
+				.append("-").append(newDate.getDate()).append("-")
+				.append(newDate.getYear()).append(" "));
+	}
 }

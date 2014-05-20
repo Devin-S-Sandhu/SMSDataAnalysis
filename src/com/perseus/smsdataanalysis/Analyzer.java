@@ -25,7 +25,8 @@ import android.util.Log;
 public class Analyzer {
 	private static final String[] SET_VALUES = new String[] {"a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because","been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our","ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up","very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves", "", "@", "#","$" ,"\\", "/", "%", "^","&","*","(",")"};
 	private static final Set<String> STOP_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
-	private static final boolean SKIP_STOP_WORDS = true;
+	private boolean skip_stop_words;
+	private boolean analyze_all_sms;
 	
 	private HashMap<String, Integer> types;
 	private HashMap<String, String> scopes;
@@ -123,6 +124,8 @@ public class Analyzer {
 
 	public Analyzer(Context context) {
 		includeAllContacts = false;
+		skip_stop_words = true;
+		analyze_all_sms = false;
 		this.context = context;
 		contactNames = new HashMap<String, String>();
 		types = new HashMap<String, Integer>();
@@ -138,6 +141,14 @@ public class Analyzer {
 		scopes.put(analysisScopes[1], "sent");
 		scopes.put(analysisScopes[2], "inbox");
 
+	}
+	
+	public void enableStopwords(Boolean enable){
+		skip_stop_words = enable;
+	}
+	
+	public void enableAnalyzeAll(Boolean enable){
+		analyze_all_sms = enable;
 	}
 
 	// Parsing the query and calling the correct method
@@ -247,7 +258,10 @@ public class Analyzer {
 			Long endDate, ArrayList<String> contactsList, String sortOrder) {
 		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
 				+ " AND " + endDate);
-		if (contactsList.size() != 0) {
+		if (contactsList.size() == 0 && !analyze_all_sms) {
+			contactsList = SmsUtil.getContactsString(context);
+		}
+		if(contactsList.size() != 0) {
 			selection.append(" AND (address");
 			boolean first = true;
 			for (String contact : contactsList) {
@@ -311,7 +325,7 @@ public class Analyzer {
 				// Grab all words without punctuation and ignoring case
 				for (String s : cursor.getString(0).split("\\s+")) {
 					s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
-					if(SKIP_STOP_WORDS && STOP_WORDS.contains(s))
+					if(skip_stop_words && STOP_WORDS.contains(s))
 						continue;
 					if (freq.containsKey(s))
 						freq.put(s, freq.get(s) + 1);
