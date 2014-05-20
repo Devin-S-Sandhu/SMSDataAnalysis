@@ -53,6 +53,15 @@ public class Settings extends PreferenceActivity {
 	            return true;
 	        }
 	    }); 
+	    final CheckBoxPreference analyzeAllPref = (CheckBoxPreference) findPreference("analyze_all");
+	    analyzeAllPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
+	        public boolean onPreferenceChange(Preference preference, Object newValue) {
+	        	SharedPreferences.Editor ed = prefs.edit();
+				ed.putBoolean("analyze_all", (Boolean)newValue);
+				ed.commit();       
+	            return true;
+	        }
+	    }); 
 
 	}
 }
