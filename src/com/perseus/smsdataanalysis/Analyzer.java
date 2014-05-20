@@ -252,22 +252,24 @@ public class Analyzer {
 			Long endDate, ArrayList<String> contactsList, String sortOrder) {
 		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
 				+ " AND " + endDate);
-		if (contactsList.size() != 0) {
-			selection.append(" AND (address");
-			boolean first = true;
-			for (String contact : contactsList) {
-				if (!first)
-					selection.append(" OR address");
-				// handles country code issues, but makes the matching a lot
-				// fuzzier which may have unintended consequences
-				selection.append(" LIKE '%");
-				Log.d(LOG_TAG, contact);
-				selection.append(contact);
-				selection.append("'");
-				first = false;
-			}
-			selection.append(")");
+		if (contactsList.size() == 0) {
+			contactsList = SmsUtil.getContactsString(context);
 		}
+		
+		selection.append(" AND (address");
+		boolean first = true;
+		for (String contact : contactsList) {
+			if (!first)
+				selection.append(" OR address");
+			// handles country code issues, but makes the matching a lot
+			// fuzzier which may have unintended consequences
+			selection.append(" LIKE '%");
+			Log.d(LOG_TAG, contact);
+			selection.append(contact);
+			selection.append("'");
+			first = false;
+		}
+		selection.append(")");
 		return context.getContentResolver().query(
 				Uri.parse("content://sms/" + scope), projection,
 				selection.toString(), null, sortOrder);

@@ -96,8 +96,7 @@ public class AnalysisMenuActivity extends Activity {
 				end_year, end_month, end_day);
 		SmsUtil.selectedContact = new HashMap<String, String>();
 		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
-				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this,
-						false));
+				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this));
 		selectContact.setAdapter(adapter);
 		selectContact.setText("");
 	}

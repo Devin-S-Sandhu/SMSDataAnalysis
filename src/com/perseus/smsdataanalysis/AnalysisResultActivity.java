@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,6 +52,7 @@ import com.androidplot.xy.BarFormatter;
 import com.androidplot.xy.BarRenderer;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.XYGraphWidget;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
 import com.perseus.smsdataanalysis.Analyzer.Query;
@@ -358,10 +360,15 @@ public class AnalysisResultActivity extends Activity {
 	}
 
 	private void onPlotClicked(PointF point) {
-
+		// handle null pointer expcetion
+		if(plot == null || point == null) return;
 		// make sure the point lies within the graph area. we use gridrect
 		// because it accounts for margins and padding as well.
-		if (plot.getGraphWidget().getGridRect().contains(point.x, point.y)) {
+		XYGraphWidget widget = plot.getGraphWidget();
+		if(widget == null) return;
+		RectF rect = widget.getGridRect();
+		if(rect == null) return;
+		if (rect.contains(point.x, point.y)) {
 			Number x = plot.getXVal(point);
 			Number y = plot.getYVal(point);
 

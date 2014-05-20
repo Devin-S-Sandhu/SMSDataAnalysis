@@ -3,7 +3,7 @@
  * By Krishna Lal Shrestha
  * Modified by Po-Chen Yang
  * 
-*/
+ */
 package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
@@ -26,15 +26,14 @@ public class SmsUtil {
 	public static HashMap<String, String> selectedContact = new HashMap<String, String>();
 
 
-	public static ArrayList<Contact> getContacts(Context context,
-			boolean addAllConatct) {
+	public static ArrayList<Contact> getContacts(Context context) {
 		ArrayList<Contact> contacts = new ArrayList<Contact>();
 		try {
 
 			Cursor cursor = context.getContentResolver()
 					.query(Phone.CONTENT_URI,
 							new String[] { Phone._ID, Phone.DISPLAY_NAME,
-									Phone.NUMBER }, null, null, null);
+							Phone.NUMBER }, null, null, null);
 			cursor.moveToFirst();
 			while (cursor.moveToNext()) {
 				Contact contact = new Contact();
@@ -60,11 +59,34 @@ public class SmsUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		Log.i("contactLength",String.valueOf(contacts.size()));
 		return contacts;
 	}
 
+	public static ArrayList<String> getContactsString(Context context) {
+		ArrayList<String> contacts = new ArrayList<String>();
+		try {
+
+			Cursor cursor = context.getContentResolver()
+					.query(Phone.CONTENT_URI,
+							new String[] { Phone._ID, Phone.DISPLAY_NAME,
+							Phone.NUMBER }, null, null, null);
+			cursor.moveToFirst();
+			while (cursor.moveToNext()) {
+				contacts.add(cursor.getString(cursor
+						.getColumnIndex(Phone.NUMBER)));
+			}
+
+			Collections.sort(contacts);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Log.i("contactLength",String.valueOf(contacts.size()));
+		return contacts;
+	}
 
 
 
