@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -154,6 +155,8 @@ public class AnalysisMenuActivity extends Activity {
 				{
 				    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
 				    ((TextView)row.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
+				    row.removeView(row.findViewById(R.id.paddingleft));
+				    row.setPadding(30, 0, 0, 0);
 				    contactTable.addView(row,contactTable.getChildCount()-1);
 				}
 				else{
@@ -162,7 +165,9 @@ public class AnalysisMenuActivity extends Activity {
 					    // Inflate your row "template" and fill out the fields.
 					    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
 					    ((TextView)row.findViewById(R.id.attrib_name)).setText(SmsUtil.selectedContact.get(number));
-					    ((TextView)row.findViewById(R.id.attrib_value)).setText(number);
+						ImageView contact_photo = ((ImageView) row.findViewById(R.id.contact_photo));
+						new ContactPhotoHelper(this, contact_photo,
+								number).addThumbnail();
 					    contactTable.addView(row,contactTable.getChildCount()-1);
 					}
 				}

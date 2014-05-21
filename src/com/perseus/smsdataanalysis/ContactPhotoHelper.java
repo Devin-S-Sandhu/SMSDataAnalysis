@@ -24,7 +24,7 @@ public final class ContactPhotoHelper {
 
 	public ContactPhotoHelper(final Context context,
 			final ImageView imageView, final String phoneNumber) {
-
+		assert(imageView != null);
 		this.imageView = imageView;
 		this.phoneNumber = phoneNumber;
 		contentResolver = context.getContentResolver();
