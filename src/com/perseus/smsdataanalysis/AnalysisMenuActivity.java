@@ -10,20 +10,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +33,9 @@ public class AnalysisMenuActivity extends Activity {
 	private Spinner scope;
 	private Spinner time_span;
 	private TextView startDate, endDate, analysisDescriptionView;
-	private CustomMultiAutoCompleteTextView selectContact;
 	private SharedPreferences mPrefs;
 	private boolean advanceDatePicker;
+	private TableLayout contactTable;
 
 	private int start_year, end_year;
 	private int start_month, end_month;
@@ -71,10 +71,10 @@ public class AnalysisMenuActivity extends Activity {
 		scope = (Spinner) findViewById(R.id.scope_spinner);
 		startDate = (TextView) findViewById(R.id.start_date_display);
 		endDate = (TextView) findViewById(R.id.end_date_display);
-		selectContact = (CustomMultiAutoCompleteTextView) findViewById(R.id.select_contact);
 		analysisType = (Spinner) findViewById(R.id.analysis_type_spinner);
 		analysisDescriptionView = (TextView) findViewById(R.id.analysis_description_view);
 		time_span = (Spinner) findViewById(R.id.time_span);
+		contactTable = (TableLayout) findViewById(R.id.contactTable);
 
 		scope.setSelection(mPrefs.getInt("scope", 0));
 		analysisType.setSelection(mPrefs.getInt("analysisType", 0));
@@ -108,10 +108,6 @@ public class AnalysisMenuActivity extends Activity {
 		endDatePickerDialog = new DatePickerDialog(this, endDatePickerListener,
 				end_year, end_month, end_day);
 		SmsUtil.selectedContact = new HashMap<String, String>();
-		ContactPickerAdapter adapter = new ContactPickerAdapter(this,
-				android.R.layout.simple_list_item_1, SmsUtil.getContacts(this));
-		selectContact.setAdapter(adapter);
-		selectContact.setText("");
 	}
 
 	private void updateDatePicker() {
@@ -153,51 +149,24 @@ public class AnalysisMenuActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
-				//				HashMap<String,String> added = (HashMap<String, String>) data.getExtras().get("added");
-				//				Log.d(LOG_TAG, "adding from picker result");
-				//				Log.d(LOG_TAG, "adding from picker result");
-				//				for(String num : added.keySet())
-				//				{					
-				//					StringBuilder result = new StringBuilder(added.get(num)).append(" <").append(num).append(">,");
-				//					Log.d(LOG_TAG, "result: " + result);
-				//					Log.d(LOG_TAG, "textView before adding: " + selectContact.getText());
-				//					SmsUtil.selectedContact.put(num, added.get(num));
-				//					selectContact.updateQuickContactList();
-				//					selectContact.setSelection(selectContact.getText().length());
-				//					selectContact.replaceText(result);
-				//					Log.d(LOG_TAG, "textView after adding: " + selectContact.getText());
-				//				}
-				//					selectContact.updateQuickContactList();
-				//				StringBuilder result = new StringBuilder("");
-				//				for(String num : SmsUtil.selectedContact.keySet())
-				//				{
-				//					result.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">");
-				//					selectContact.setText(result.toString());
-				//				}
-				selectContact.updateQuickContactList();
-//				StringBuilder result = new StringBuilder("");
-//				for(String num : SmsUtil.selectedContact.keySet())
-//				{
-//					result.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
-//				}
-//				selectContact.setText(result.toString());
-				for(String num : SmsUtil.selectedContact.keySet())
+				contactTable.removeAllViews();
+				if(SmsUtil.selectedContact.size() == 0)
 				{
-					Log.d(LOG_TAG, "loop: " +num);
-					StringBuilder result2 = new StringBuilder("");
-					result2.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
-					Log.d(LOG_TAG, "selected:" + selectContact.getSelectionStart() + " to " + selectContact.getSelectionEnd());
-					selectContact.setSelection(selectContact.getText().length());
-					Log.d(LOG_TAG, "selected:" + selectContact.getSelectionStart() + " to " + selectContact.getSelectionEnd());
-					selectContact.replaceText(result2);
-					Log.d(LOG_TAG, "Endloop: " +num);
+				    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
+				    ((TextView)row.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
+				    contactTable.addView(row,contactTable.getChildCount()-1);
 				}
-
-				//						selectContact.setSelection(selectContact.getText()
-				//								.length());
-				//						selectContact.replaceText(result);
-				//			selectContact.setSelection(0);
-				//			selectContact.replaceText(result);
+				else{
+					for(String number : SmsUtil.selectedContact.keySet())
+					{
+					    // Inflate your row "template" and fill out the fields.
+					    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
+					    ((TextView)row.findViewById(R.id.attrib_name)).setText(SmsUtil.selectedContact.get(number));
+					    ((TextView)row.findViewById(R.id.attrib_value)).setText(number);
+					    contactTable.addView(row,contactTable.getChildCount()-1);
+					}
+				}
+				contactTable.requestLayout(); 
 				break;
 			}
 		} else {
@@ -321,10 +290,6 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	public void analyze(View view) {
-		// hides the keyboard
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(selectContact.getWindowToken(), 0);
-
 		Intent myIntent = new Intent(AnalysisMenuActivity.this,
 				AnalysisResultActivity.class);
 		myIntent.putExtra("info_dump", mPrefs.getBoolean("info_dump", false));
@@ -336,9 +301,11 @@ public class AnalysisMenuActivity extends Activity {
 		}
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
-		myIntent.putExtra("contacts", selectContact.getText().toString());
-
-
+		
+		StringBuilder selectedContacts = new StringBuilder("");
+		for(String num : SmsUtil.selectedContact.keySet())
+			selectedContacts.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
+		myIntent.putExtra("contacts", selectedContacts.toString());
 		SharedPreferences.Editor ed = mPrefs.edit();
 		ed.putInt("scope", scope.getSelectedItemPosition());
 		ed.putInt("analysisType", analysisType.getSelectedItemPosition());

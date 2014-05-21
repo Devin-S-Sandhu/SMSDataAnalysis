@@ -214,6 +214,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 		boolean checkSpannable = false;
 		String overallString;
 		if (s == null) {
+			Log.d("addOrCheckSpannable", "s is null");
 			checkSpannable = true;
 			s = this.getText();
 			startIndex = this.getSelectionEnd();
@@ -223,6 +224,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			if (TextUtils.isEmpty(overallString.trim()))
 				return;
 		} else {
+			Log.d("addOrCheckSpannable", "s is not null, decrement start index");
 			overallString = s.toString();
 			startIndex = startIndex - 1;
 		}
@@ -230,9 +232,11 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 				+ " startIndex: " + startIndex);
 
 		int spanEnd = 0;
+		Log.d("addOrCheckSpannable", "look for comma from startIndex to 0");
 		for (int i = startIndex - 1; i >= 0; i--) {
 			Character c = overallString.charAt(i);
 			if (c == ',') {
+				Log.d("addOrCheckSpannable", "found comma, spanEnd: " + i);
 				spanEnd = i;
 				break;
 			}
