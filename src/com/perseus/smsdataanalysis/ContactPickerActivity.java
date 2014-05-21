@@ -209,6 +209,17 @@ public class ContactPickerActivity extends Activity {
 						CheckBox cb = (CheckBox) v ;
 						ContactCheckbox contact = (ContactCheckbox) cb.getTag();
 						contact.setChecked( cb.isChecked() );
+						Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getNumber() );
+						if(contact.isChecked())
+						{
+							Log.d(LOG_TAG, "added into selectedContact");
+							SmsUtil.selectedContact.put(contact.number, contact.name);
+						}
+						else
+						{
+							SmsUtil.selectedContact.remove(contact.number);
+							Log.d(LOG_TAG, "removed from selectedContact");
+						}
 					}
 				});        
 			}
