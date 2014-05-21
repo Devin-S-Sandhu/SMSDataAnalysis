@@ -278,6 +278,7 @@ public class CustomMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
 			}
 		}
 
+		Log.d("addOrCheckSpannable", "spanEnd: " + spanEnd);
 		if (startIndex > -1 && spanEnd > -1) {
 			Log.i("addOrCheckSpannable", "startIndex > -1 && spanEnd > -1");
 

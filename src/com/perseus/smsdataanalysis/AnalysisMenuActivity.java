@@ -146,53 +146,58 @@ public class AnalysisMenuActivity extends Activity {
 		Log.d("onActivityResult", "requestCode: " + requestCode
 				+ " resultCode: " + resultCode + "data: " + data);
 		if (requestCode == OPTION_MENU_RESULT)
+		{
 			Log.d(LOG_TAG, "Option menu result, recreating activity");
-		recreate();
-
+			recreate();
+		}
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
-//				Uri contactData = data.getData();
-//				@SuppressWarnings("deprecation")
-//				Cursor c = managedQuery(contactData, null, null, null, null);
-//				if (c.moveToFirst()) {
-//					String id = c
-//							.getString(c
-//									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-//
-//					String hasPhone = c
-//							.getString(c
-//									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-//
-//					if (hasPhone.equalsIgnoreCase("1")) {
-//						Cursor phones = getContentResolver()
-//								.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-//										null,
-//										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
-//										+ " = " + id, null, null);
-//						phones.moveToFirst();
-//						String cNumber = phones
-//								.getString(phones
-//										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-//						/*
-//						 * Toast.makeText(getApplicationContext(), cNumber,
-//						 * Toast.LENGTH_SHORT).show();
-//						 */
-//
-//						String nameContact = c
-//								.getString(c
-//										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-//						StringBuilder result = new StringBuilder(nameContact)
-//						.append(" <").append(cNumber).append(">,");
-//
-//						SmsUtil.selectedContact.put(cNumber, nameContact);
-//						selectContact.updateQuickContactList();
-//						selectContact.setSelection(selectContact.getText()
-//								.length());
-//						selectContact.replaceText(result);
-//						// selectContact.setWidth(500);
-//					}
+				//				HashMap<String,String> added = (HashMap<String, String>) data.getExtras().get("added");
+				//				Log.d(LOG_TAG, "adding from picker result");
+				//				Log.d(LOG_TAG, "adding from picker result");
+				//				for(String num : added.keySet())
+				//				{					
+				//					StringBuilder result = new StringBuilder(added.get(num)).append(" <").append(num).append(">,");
+				//					Log.d(LOG_TAG, "result: " + result);
+				//					Log.d(LOG_TAG, "textView before adding: " + selectContact.getText());
+				//					SmsUtil.selectedContact.put(num, added.get(num));
+				//					selectContact.updateQuickContactList();
+				//					selectContact.setSelection(selectContact.getText().length());
+				//					selectContact.replaceText(result);
+				//					Log.d(LOG_TAG, "textView after adding: " + selectContact.getText());
+				//				}
+				//					selectContact.updateQuickContactList();
+				//				StringBuilder result = new StringBuilder("");
+				//				for(String num : SmsUtil.selectedContact.keySet())
+				//				{
+				//					result.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">");
+				//					selectContact.setText(result.toString());
+				//				}
+				selectContact.updateQuickContactList();
+//				StringBuilder result = new StringBuilder("");
+//				for(String num : SmsUtil.selectedContact.keySet())
+//				{
+//					result.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
 //				}
+//				selectContact.setText(result.toString());
+				for(String num : SmsUtil.selectedContact.keySet())
+				{
+					Log.d(LOG_TAG, "loop: " +num);
+					StringBuilder result2 = new StringBuilder("");
+					result2.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
+					Log.d(LOG_TAG, "selected:" + selectContact.getSelectionStart() + " to " + selectContact.getSelectionEnd());
+					selectContact.setSelection(selectContact.getText().length());
+					Log.d(LOG_TAG, "selected:" + selectContact.getSelectionStart() + " to " + selectContact.getSelectionEnd());
+					selectContact.replaceText(result2);
+					Log.d(LOG_TAG, "Endloop: " +num);
+				}
+
+				//						selectContact.setSelection(selectContact.getText()
+				//								.length());
+				//						selectContact.replaceText(result);
+				//			selectContact.setSelection(0);
+				//			selectContact.replaceText(result);
 				break;
 			}
 		} else {
