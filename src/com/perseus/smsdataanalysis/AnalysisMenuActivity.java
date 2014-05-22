@@ -1,5 +1,6 @@
 package com.perseus.smsdataanalysis;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -161,25 +162,41 @@ public class AnalysisMenuActivity extends Activity {
 				    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
 				    ((TextView)row.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
 				    row.removeView(row.findViewById(R.id.paddingleft));
+				    row.setClickable(false);
 				    contactTable.addView(row,contactTable.getChildCount()-1);
 				}
 				else{
-					for(String number : SmsUtil.selectedContact.keySet())
+					ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
+					
+					int bottom = contactTable.getChildCount();
+					{
+					    TableRow hint = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
+					    TextView text = (TextView)hint.findViewById(R.id.attrib_name);
+					    text.setText("Click on contact to remove");
+					    hint.removeView(hint.findViewById(R.id.contact_photo));
+					    hint.removeView(hint.findViewById(R.id.paddingleft));
+					    hint.removeView(hint.findViewById(R.id.paddingRight));
+					    hint.setPadding(30, 0, 0, 0);
+					    hint.setClickable(false);
+					    TableRow.LayoutParams params = (TableRow.LayoutParams) text.getLayoutParams();
+					    params.span = 4;
+					    params.weight = 1;
+					    text.setLayoutParams(params);
+					    contactTable.addView(hint, bottom++);
+					}
+					for(Contact c : selected)
 					{
 					    // Inflate your row "template" and fill out the fields.
 					    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
-					    ((TextView)row.findViewById(R.id.attrib_name)).setText(SmsUtil.selectedContact.get(number));
+					    ((TextView)row.findViewById(R.id.attrib_name)).setText(c.contactName);
 						ImageView contact_photo = ((ImageView) row.findViewById(R.id.contact_photo));
 						new ContactPhotoHelper(this, contact_photo,
-								number).addThumbnail();
-					    contactTable.addView(row,contactTable.getChildCount()-1);
+								c.num).addThumbnail();
+					    contactTable.addView(row,bottom++);
 					    if(contact_photo.getDrawable() == null)
-					    {
 					    	contact_photo.setVisibility(View.GONE);
-					    }
 					}
 				}
-				//contactTable.requestLayout(); 
 				break;
 			}
 		} else {
@@ -333,6 +350,29 @@ public class AnalysisMenuActivity extends Activity {
 	public void doLaunchContactPicker(View view) {
 		Intent intent = new Intent(AnalysisMenuActivity.this, ContactPickerActivity.class);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
+	}
+
+	public void removeSelf(View view) {
+	    TableRow row = (TableRow)view;
+	    String contactName = ((TextView)row.findViewById(R.id.attrib_name)).getText().toString();
+	    for(String num : SmsUtil.selectedContact.keySet())
+	    {
+	    	if(SmsUtil.selectedContact.get(num).equalsIgnoreCase(contactName))
+	    	{
+	    		SmsUtil.selectedContact.remove(num);
+	    		break;
+	    	}
+	    }
+		view.setVisibility(View.GONE);
+		if(SmsUtil.selectedContact.size()==0)
+		{
+		    contactTable.getChildAt(0).setVisibility(View.GONE);
+		    TableRow hint = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
+		    ((TextView)hint.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
+		    hint.removeView(hint.findViewById(R.id.paddingleft));
+		    hint.setClickable(false);
+		    contactTable.addView(hint,contactTable.getChildCount()-1);
+		}
 	}
 
 	private void updateStartDate(){

@@ -33,5 +33,6 @@
     <string name="results_text">Results:</string>
     <string name="wins_text">Wins</string>
     <string name="info_dump_text">Show all results</string>
+    <string name="contact_image_desc">Image of contact</string>
 
 </resources>

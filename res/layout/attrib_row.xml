@@ -2,6 +2,7 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:onClick="removeSelf"
     android:gravity="center_vertical" >
 
     <View
@@ -14,13 +15,14 @@
         android:id="@+id/contact_photo"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:contentDescription="contact_photo" />
+        android:contentDescription="@string/contact_image_desc" />
     <TextView
         android:id="@+id/attrib_name"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <View
+        android:id="@+id/paddingRight"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1" />
