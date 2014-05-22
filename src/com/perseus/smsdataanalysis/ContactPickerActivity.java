@@ -69,7 +69,6 @@ public class ContactPickerActivity extends Activity {
 		if ( contacts == null ) {
 			ArrayList<Contact> contactList = SmsUtil.getContacts(getBaseContext());
 			ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
-			int selectedContactSize = selected.size();
 			contacts = new ContactCheckbox[contactList.size()];
 			int i = 0;
 			for(Contact c : selected)
