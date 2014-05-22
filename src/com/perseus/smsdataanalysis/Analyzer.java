@@ -289,15 +289,33 @@ public class Analyzer {
 			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts) {
 		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
+		HashSet<String> tempNameList = new HashSet<String>();
+		
 		for (Entry<String, Integer> e : hash.entrySet())
-			out.add(new Pair<String, Integer>(e.getKey(), e.getValue()));
-
+		{
+			if(tempNameList.contains(e.getKey()))
+			{
+				Pair<String, Integer> duplication = out.get(out.indexOf(e.getKey()));
+				duplication.setElement1(duplication.getElement1()+e.getValue());
+			}
+			else
+			{
+				out.add(new Pair<String, Integer>(e.getKey(), e.getValue()));
+				tempNameList.add(e.getKey());
+			}
+		}
 		// if given a contact list, check if we haven't added a contact to the
 		// out list and add them with a dummy value
 		if (includeAllContacts && reallyIncludeAllContacts) {
 			for (String contact : contactNames.values()) {
 				if (!hash.containsKey(contact))
-					out.add(new Pair<String, Integer>(contact, 0));
+				{
+					if(!tempNameList.contains(contact))
+					{
+						out.add(new Pair<String, Integer>(contact, 0));
+						tempNameList.add(contact);
+					}
+				}
 			}
 		}
 
