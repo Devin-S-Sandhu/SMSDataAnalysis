@@ -24,9 +24,10 @@ import android.view.View.MeasureSpec;
 public class SmsUtil {
 
 	public static HashMap<String, String> selectedContact = new HashMap<String, String>();
-
-	public static ArrayList<Contact> getContacts(Context context) {
-		ArrayList<Contact> contacts = new ArrayList<Contact>();
+	private static ArrayList<Contact> contactList;
+	
+	private static void initalizeContacts(Context context){
+		contactList = new ArrayList<Contact>();
 		Cursor cursor = context.getContentResolver()
 				.query(Phone.CONTENT_URI,
 						new String[] { Phone._ID, Phone.DISPLAY_NAME,
@@ -38,23 +39,35 @@ public class SmsUtil {
 					.getColumnIndex(Phone.DISPLAY_NAME));
 			contact.num = cursor.getString(cursor
 					.getColumnIndex(Phone.NUMBER));
-			if (selectedContact.get(contact.num) == null)
-				contacts.add(contact);
+			contactList.add(contact);
 		}
+		Collections.sort(contactList);
 
-		Collections.sort(contacts, new Comparator<Contact>() {
-
-			@Override
-			public int compare(Contact object1, Contact object2) {
-				// TODO Auto-generated method stub
-				return object1.contactName
-						.compareToIgnoreCase(object2.contactName);
-			}
-
-		});
-
-		Log.i("contactLength",String.valueOf(contacts.size()));
-		return contacts;
+		Log.i("contactLength",String.valueOf(contactList.size()));
+	}
+	
+	public static ArrayList<Contact> getSelectedContacts(){
+		return null;
+	}
+	
+	public static ArrayList<Contact> getContacts(Context context){
+		if(contactList == null)
+			initalizeContacts(context);
+		return contactList;
+		
+	}
+	
+	public static ArrayList<Contact> getUnselectedContacts(Context context) {
+		if(contactList == null)
+			initalizeContacts(context);
+		ArrayList<Contact> result = (ArrayList<Contact>) contactList.clone();
+		
+		for(int i = 0; i < result.size(); i++)
+		{
+			if(selectedContact.containsKey(result.get(i).num))
+				result.remove(i);
+		}
+		return contactList;
 	}
 
 	public static ArrayList<String> getContactsString(Context context) {
