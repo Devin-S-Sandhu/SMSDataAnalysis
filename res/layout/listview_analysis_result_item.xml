@@ -4,6 +4,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <com.androidplot.pie.PieChart
+        android:id="@+id/mySimplePieChart"
+        android:layout_width="fill_parent"
+        android:layout_height="520dp"
+        androidPlot.title="A Simple Pie Chart"
+        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+
     <com.androidplot.xy.XYPlot
         android:id="@+id/xyplot"
         android:layout_width="fill_parent"
@@ -26,13 +33,6 @@
         androidPlot.legendWidget.widthMetric.value="1"
         androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
         androidPlot.title="Result"
-        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
-
-    <com.androidplot.pie.PieChart
-        android:id="@+id/mySimplePieChart"
-        android:layout_width="fill_parent"
-        android:layout_height="520dp"
-        androidPlot.title="A Simple Pie Chart"
         androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
 
     <LinearLayout
@@ -69,7 +69,7 @@
         <TextView
             android:id="@+id/text_result"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>
