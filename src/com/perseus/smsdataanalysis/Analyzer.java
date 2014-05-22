@@ -259,7 +259,7 @@ public class Analyzer {
 		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
 				+ " AND " + endDate);
 		if (contactsList.size() == 0 && !analyze_all_sms) {
-			contactsList = SmsUtil.getContactsString(context);
+			contactsList = SmsUtil.getContactsNumbers(context);
 		}
 		if(contactsList.size() != 0) {
 			selection.append(" AND (address");

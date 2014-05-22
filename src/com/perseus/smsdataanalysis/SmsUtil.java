@@ -8,18 +8,12 @@ package com.perseus.smsdataanalysis;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.Log;
-import android.view.View;
-import android.view.View.MeasureSpec;
 
 public class SmsUtil {
 
@@ -47,7 +41,11 @@ public class SmsUtil {
 	}
 	
 	public static ArrayList<Contact> getSelectedContacts(){
-		return null;
+		ArrayList<Contact> result = new ArrayList<Contact>();
+		for(String number : selectedContact.keySet())
+			result.add(new Contact(selectedContact.get(number), number));
+		Collections.sort(result);
+		return result;
 	}
 	
 	public static ArrayList<Contact> getContacts(Context context){
@@ -70,48 +68,15 @@ public class SmsUtil {
 		return contactList;
 	}
 
-	public static ArrayList<String> getContactsString(Context context) {
+	public static ArrayList<String> getContactsNumbers(Context context) {
 		ArrayList<String> contacts = new ArrayList<String>();
-		try {
-
-			Cursor cursor = context.getContentResolver()
-					.query(Phone.CONTENT_URI,
-							new String[] { Phone._ID, Phone.DISPLAY_NAME,
-							Phone.NUMBER }, null, null, null);
-			cursor.moveToFirst();
-			while (cursor.moveToNext()) {
-				contacts.add(cursor.getString(cursor
-						.getColumnIndex(Phone.NUMBER)));
-			}
-
-			Collections.sort(contacts);
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		ArrayList<Contact> cList = getContacts(context);
+		for(Contact contact : cList)
+		{
+			contacts.add(contact.num);
 		}
-
 		Log.i("contactLength",String.valueOf(contacts.size()));
 		return contacts;
-	}
-
-
-
-	public static Object extractBitmapFromTextView(View view) {
-
-		int spec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		view.measure(spec, spec);
-		view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-		Bitmap b = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
-				Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(b);
-		c.translate(-view.getScrollX(), -view.getScrollY());
-		view.draw(c);
-		view.setDrawingCacheEnabled(true);
-		Bitmap cacheBmp = view.getDrawingCache();
-		Bitmap viewBmp = cacheBmp.copy(Bitmap.Config.ARGB_8888, true);
-		view.destroyDrawingCache();
-		return new BitmapDrawable(viewBmp);
-
 	}
 
 }

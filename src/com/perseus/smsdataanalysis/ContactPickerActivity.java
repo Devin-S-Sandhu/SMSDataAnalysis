@@ -67,14 +67,14 @@ public class ContactPickerActivity extends Activity {
 
 		contacts = (ContactCheckbox[]) getLastNonConfigurationInstance() ;
 		if ( contacts == null ) {
-			ArrayList<Contact> contactList = SmsUtil.getContacts(getBaseContext());
-			int selectedContactSize = SmsUtil.selectedContact.size();
+			ArrayList<Contact> contactList = SmsUtil.getUnselectedContacts(getBaseContext());
+			ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
+			int selectedContactSize = selected.size();
 			contacts = new ContactCheckbox[contactList.size()+selectedContactSize];
 			int i = 0;
-			
-			for(String num : SmsUtil.selectedContact.keySet())
+			for(Contact c : selected)
 			{
-				contacts[i++] = new ContactCheckbox( SmsUtil.selectedContact.get(num), num, true);
+				contacts[i++] = new ContactCheckbox( c.contactName, c.num, true);
 			}
 			while(i < contacts.length)
 			{
