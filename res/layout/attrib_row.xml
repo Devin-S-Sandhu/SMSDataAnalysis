@@ -7,7 +7,7 @@
     <View
         android:id="@+id/paddingleft"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="50dp"
         android:layout_weight="1" />
     
    <ImageView 

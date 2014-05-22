@@ -80,6 +80,11 @@ public class AnalysisMenuActivity extends Activity {
 		scope.setSelection(mPrefs.getInt("scope", 0));
 		analysisType.setSelection(mPrefs.getInt("analysisType", 0));
 		time_span.setSelection(mPrefs.getInt("time_span", 0));
+		
+	    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
+	    ((TextView)row.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
+	    row.removeView(row.findViewById(R.id.paddingleft));
+	    contactTable.addView(row,contactTable.getChildCount()-1);
 
 		updateDatePicker();
 		setCurrentDateOnView();
@@ -156,7 +161,6 @@ public class AnalysisMenuActivity extends Activity {
 				    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
 				    ((TextView)row.findViewById(R.id.attrib_name)).setText("Analyze all contacts");
 				    row.removeView(row.findViewById(R.id.paddingleft));
-				    row.setPadding(30, 0, 0, 0);
 				    contactTable.addView(row,contactTable.getChildCount()-1);
 				}
 				else{
@@ -169,9 +173,13 @@ public class AnalysisMenuActivity extends Activity {
 						new ContactPhotoHelper(this, contact_photo,
 								number).addThumbnail();
 					    contactTable.addView(row,contactTable.getChildCount()-1);
+					    if(contact_photo.getDrawable() == null)
+					    {
+					    	contact_photo.setVisibility(View.GONE);
+					    }
 					}
 				}
-				contactTable.requestLayout(); 
+				//contactTable.requestLayout(); 
 				break;
 			}
 		} else {

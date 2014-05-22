@@ -27,37 +27,31 @@ public class SmsUtil {
 
 	public static ArrayList<Contact> getContacts(Context context) {
 		ArrayList<Contact> contacts = new ArrayList<Contact>();
-		try {
+		Cursor cursor = context.getContentResolver()
+				.query(Phone.CONTENT_URI,
+						new String[] { Phone._ID, Phone.DISPLAY_NAME,
+						Phone.NUMBER }, null, null, null);
+		cursor.moveToFirst();
+		while (cursor.moveToNext()) {
+			Contact contact = new Contact();
+			contact.contactName = cursor.getString(cursor
+					.getColumnIndex(Phone.DISPLAY_NAME));
+			contact.num = cursor.getString(cursor
+					.getColumnIndex(Phone.NUMBER));
+			if (selectedContact.get(contact.num) == null)
+				contacts.add(contact);
+		}
 
-			Cursor cursor = context.getContentResolver()
-					.query(Phone.CONTENT_URI,
-							new String[] { Phone._ID, Phone.DISPLAY_NAME,
-							Phone.NUMBER }, null, null, null);
-			cursor.moveToFirst();
-			while (cursor.moveToNext()) {
-				Contact contact = new Contact();
-				contact.contactName = cursor.getString(cursor
-						.getColumnIndex(Phone.DISPLAY_NAME));
-				contact.num = cursor.getString(cursor
-						.getColumnIndex(Phone.NUMBER));
-				if (selectedContact.get(contact.num) == null)
-					contacts.add(contact);
+		Collections.sort(contacts, new Comparator<Contact>() {
+
+			@Override
+			public int compare(Contact object1, Contact object2) {
+				// TODO Auto-generated method stub
+				return object1.contactName
+						.compareToIgnoreCase(object2.contactName);
 			}
 
-			Collections.sort(contacts, new Comparator<Contact>() {
-
-				@Override
-				public int compare(Contact object1, Contact object2) {
-					// TODO Auto-generated method stub
-					return object1.contactName
-							.compareToIgnoreCase(object2.contactName);
-				}
-
-			});
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
 
 		Log.i("contactLength",String.valueOf(contacts.size()));
 		return contacts;

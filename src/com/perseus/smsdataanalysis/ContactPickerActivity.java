@@ -3,6 +3,7 @@ package com.perseus.smsdataanalysis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 import android.app.Activity;
 import android.content.Context;
@@ -71,7 +72,8 @@ public class ContactPickerActivity extends Activity {
 			int selectedContactSize = SmsUtil.selectedContact.size();
 			contacts = new ContactCheckbox[contactList.size()+selectedContactSize];
 			int i = 0;
-			for(String num : SmsUtil.selectedContact.keySet())
+			TreeSet<String> numbers = new TreeSet<String>(SmsUtil.selectedContact.keySet());
+			for(String num : numbers)
 			{
 				contacts[i++] = new ContactCheckbox( SmsUtil.selectedContact.get(num), num, true);
 			}
