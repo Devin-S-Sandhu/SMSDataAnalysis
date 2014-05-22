@@ -71,7 +71,20 @@ public class Settings extends PreferenceActivity {
 	            return true;
 	        }
 	    }); 
-
+	    
+	    Preference reset = (Preference)findPreference("reset");
+	    reset.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+	                    @Override
+	                    public boolean onPreferenceClick(Preference arg0) { 
+	                		numResultsPref.setSummary("Number of analysis results to display: " + 10);
+	                		numResultsPref.setValue("10");
+	                		stopwordsPref.setChecked(true);
+	                		dumpPref.setChecked(false);
+	                		analyzeAllPref.setChecked(false);
+	                		advancedDatePref.setChecked(false);
+	                        return true;
+	                    }
+	                });
 
 	}
 }
