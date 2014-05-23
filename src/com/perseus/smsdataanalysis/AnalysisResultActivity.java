@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -104,7 +105,7 @@ public class AnalysisResultActivity extends Activity {
 				intent.getStringExtra("type"), intent.getStringExtra("scope"),
 				intent.getStringExtra("start_date"),
 				intent.getStringExtra("end_date"),
-				intent.getStringExtra("contacts"));
+				(HashMap<String, String>)intent.getSerializableExtra("contacts"));
 
 		Log.d(LOG_TAG, "before asnyc task");
 
@@ -210,9 +211,10 @@ public class AnalysisResultActivity extends Activity {
 						+ intent.getStringExtra("start_date"));
 				endDate.setText("End Date: "
 						+ intent.getStringExtra("end_date"));
+				HashMap<String, String> list = (HashMap<String, String>)intent.getSerializableExtra("contacts");
 				contacts.setText("Contacts: "
-						+ (intent.getStringExtra("contacts").equals("") ? "Analyzed all contacts"
-								: intent.getStringExtra("contacts")));
+						+ (list.isEmpty() ? "Analyzed all contacts"
+								: list.toString()));
 				result.setText(textDump());
 			} else
 				((LinearLayout) v.findViewById(R.id.infoDumpLayout))

@@ -89,10 +89,9 @@ public class BattleResultActivity extends Activity {
 		contactOneNumber = intent.getStringExtra("contactOneNumber");
 		contactTwoNumber = intent.getStringExtra("contactTwoNumber");
 
-		String contacts = new StringBuilder().append(contactOneName)
-				.append(" <").append(contactOneNumber).append(">").append(", ")
-				.append(contactTwoName).append(" <").append(contactTwoNumber)
-				.append(">").toString();
+		HashMap<String,String> contacts = new HashMap<String,String>();
+		contacts.put(contactOneNumber, contactOneName);
+		contacts.put(contactTwoNumber, contactTwoName);
 
 		String start = (startDate.getMonth() + 1) + "-" + startDate.getDay()
 				+ "-" + startDate.getYear();

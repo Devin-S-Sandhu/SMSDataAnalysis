@@ -191,7 +191,7 @@ public class AnalysisMenuActivity extends Activity {
 					    ((TextView)row.findViewById(R.id.attrib_name)).setText(c.contactName);
 						ImageView contact_photo = ((ImageView) row.findViewById(R.id.contact_photo));
 						new ContactPhotoHelper(this, contact_photo,
-								c.num).addThumbnail();
+								c.id).addThumbnail();
 					    contactTable.addView(row,bottom++);
 					    if(contact_photo.getDrawable() == null)
 					    	contact_photo.setVisibility(View.GONE);
@@ -332,10 +332,7 @@ public class AnalysisMenuActivity extends Activity {
 		myIntent.putExtra("start_date", startDate.getText().toString());
 		myIntent.putExtra("end_date", endDate.getText().toString());
 		
-		StringBuilder selectedContacts = new StringBuilder("");
-		for(String num : SmsUtil.selectedContact.keySet())
-			selectedContacts.append(SmsUtil.selectedContact.get(num)).append(" <").append(num).append(">,");
-		myIntent.putExtra("contacts", selectedContacts.toString());
+		myIntent.putExtra("contacts", SmsUtil.selectedContact);
 		SharedPreferences.Editor ed = mPrefs.edit();
 		ed.putInt("scope", scope.getSelectedItemPosition());
 		ed.putInt("analysisType", analysisType.getSelectedItemPosition());

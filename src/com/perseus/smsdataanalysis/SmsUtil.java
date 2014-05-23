@@ -24,15 +24,14 @@ public class SmsUtil {
 		contactList = new ArrayList<Contact>();
 		Cursor cursor = context.getContentResolver()
 				.query(Phone.CONTENT_URI,
-						new String[] { Phone._ID, Phone.DISPLAY_NAME,
-						Phone.NUMBER }, null, null, null);
+						new String[] { Phone.CONTACT_ID, Phone.DISPLAY_NAME}, null, null, null);
 		cursor.moveToFirst();
 		while (cursor.moveToNext()) {
 			Contact contact = new Contact();
 			contact.contactName = cursor.getString(cursor
 					.getColumnIndex(Phone.DISPLAY_NAME));
-			contact.num = cursor.getString(cursor
-					.getColumnIndex(Phone.NUMBER));
+			contact.id = cursor.getString(cursor
+					.getColumnIndex(Phone.CONTACT_ID));
 			contactList.add(contact);
 		}
 		Collections.sort(contactList);
@@ -42,8 +41,8 @@ public class SmsUtil {
 	
 	public static ArrayList<Contact> getSelectedContacts(){
 		ArrayList<Contact> result = new ArrayList<Contact>();
-		for(String number : selectedContact.keySet())
-			result.add(new Contact(selectedContact.get(number), number));
+		for(String id : selectedContact.keySet())
+			result.add(new Contact(selectedContact.get(id), id));
 		Collections.sort(result);
 		return result;
 	}
@@ -62,18 +61,18 @@ public class SmsUtil {
 		
 		for(int i = 0; i < result.size(); i++)
 		{
-			if(selectedContact.containsKey(result.get(i).num))
+			if(selectedContact.containsKey(result.get(i).id))
 				result.remove(i);
 		}
 		return contactList;
 	}
 
-	public static ArrayList<String> getContactsNumbers(Context context) {
+	public static ArrayList<String> getContactsID(Context context) {
 		ArrayList<String> contacts = new ArrayList<String>();
 		ArrayList<Contact> cList = getContacts(context);
 		for(Contact contact : cList)
 		{
-			contacts.add(contact.num);
+			contacts.add(contact.id);
 		}
 		Log.i("contactLength",String.valueOf(contacts.size()));
 		return contacts;
