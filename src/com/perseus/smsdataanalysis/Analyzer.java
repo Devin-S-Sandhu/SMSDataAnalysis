@@ -235,7 +235,7 @@ public class Analyzer {
 	}
 
 	// creates a hash of numbers to names
-	private void getContactNames(ArrayList<String> contactsList) {
+	private void getContactNames() {
 		// contact names was already populated in parseContacts()
 		if (contactNames.size() != 0)
 			return;
@@ -369,7 +369,7 @@ public class Analyzer {
 		String name;
 		String number;
 		if (cursor.moveToFirst()) {
-			getContactNames(contactsList);
+			getContactNames();
 			while (!cursor.isAfterLast()) {
 				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
 				// if we don't have a name for the number let's try some fuzzy
@@ -408,7 +408,7 @@ public class Analyzer {
 		int messageLength;
 		String address;
 		if (cursor.moveToFirst()) {
-			getContactNames(contactsList);
+			getContactNames();
 			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
 				address = cursor.getString(1);
@@ -475,7 +475,7 @@ public class Analyzer {
 		Long curDate;
 
 		if (cursor.moveToFirst()) {
-			getContactNames(contactsList);
+			getContactNames();
 			oldAddress = cursor.getString(0);
 			oldDate = cursor.getLong(1);
 			cursor.moveToNext();
