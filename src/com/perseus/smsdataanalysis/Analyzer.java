@@ -236,9 +236,9 @@ public class Analyzer {
 		if (contactNames.size() != 0)
 			return;
 		Cursor cursor = context.getContentResolver().query(
-				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-				new String[] { Phone.DISPLAY_NAME, Phone.CONTACT_ID }, null, null,
-				Phone.DISPLAY_NAME + " ASC");
+				ContactsContract.RawContacts.CONTENT_URI,
+				new String[] { ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY, ContactsContract.RawContacts._ID }, null, null,
+				ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY + " ASC");
 		if (cursor.moveToFirst()) {
 			do {
 				// key = id, value = contact name

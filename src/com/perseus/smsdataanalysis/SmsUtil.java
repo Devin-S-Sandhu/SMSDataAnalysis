@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 public class SmsUtil {
@@ -23,15 +23,16 @@ public class SmsUtil {
 	private static void initalizeContacts(Context context){
 		contactList = new ArrayList<Contact>();
 		Cursor cursor = context.getContentResolver()
-				.query(Phone.CONTENT_URI,
-						new String[] { Phone.CONTACT_ID, Phone.DISPLAY_NAME}, null, null, null);
+				.query(ContactsContract.RawContacts.CONTENT_URI,
+						new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY}, null, null, null);
+		
 		cursor.moveToFirst();
 		while (cursor.moveToNext()) {
 			Contact contact = new Contact();
 			contact.contactName = cursor.getString(cursor
-					.getColumnIndex(Phone.DISPLAY_NAME));
+					.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
 			contact.id = cursor.getString(cursor
-					.getColumnIndex(Phone.CONTACT_ID));
+					.getColumnIndex(ContactsContract.RawContacts._ID));
 			contactList.add(contact);
 		}
 		Collections.sort(contactList);
