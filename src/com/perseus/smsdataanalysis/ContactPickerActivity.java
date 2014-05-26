@@ -237,7 +237,7 @@ public class ContactPickerActivity extends Activity {
 			checkBox.setTag( contact ); 
 
 			checkBox.setChecked( contact.isChecked() );
-			textView.setText( new StringBuilder().append(contact.getName()).append(" <").append(contact.getID()).append(">").toString() );      
+			textView.setText(contact.getName() );      
 
 			return convertView;
 		}

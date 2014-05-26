@@ -11,15 +11,11 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
 public class Analyzer {
@@ -423,19 +419,7 @@ public class Analyzer {
 		HashMap<String, Integer> average = new HashMap<String, Integer>();
 		String name;
 		for (String key : smsLength.keySet()) {
-			if (contactNames.containsKey(key))
-				name = contactNames.get(key);
-			else {
-				name = key;
-				// time for terrible performance to deal with those pesky
-				// country codes
-				for (String s : contactNames.keySet())
-					if (PhoneNumberUtils.compare(s, key)) {
-						name = contactNames.get(s);
-						contactNames.put(key, name);
-						break;
-					}
-			}
+			name = contactNames.get(key);
 			average.put(name, (Integer) smsLength.get(key).getElement1()
 					/ smsLength.get(key).getElement0());
 		}
@@ -499,19 +483,7 @@ public class Analyzer {
 		String name;
 		Long hours;
 		for (String key : smsInterval.keySet()) {
-			if (contactNames.containsKey(key))
-				name = contactNames.get(key);
-			else {
-				name = key;
-				// time for terrible performance to deal with those
-				// pesky country codes
-				for (String s : contactNames.keySet())
-					if (PhoneNumberUtils.compare(s, key)) {
-						name = contactNames.get(s);
-						contactNames.put(key, name);
-						break;
-					}
-			}
+			name = contactNames.get(key);
 			hours = (smsInterval.get(key).getElement0() / smsInterval.get(key).getElement1()) / MILLISEC_TO_HOURS;
 			Log.d(LOG_TAG, name);
 			Log.d(LOG_TAG,""+hours);

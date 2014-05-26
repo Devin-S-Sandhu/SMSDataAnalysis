@@ -9,9 +9,9 @@ public class Contact implements Comparable<Contact>{
 		contactName = "";
 		id = "";
 	}
-	public Contact(String contactName, String id){
+	public Contact(String contactName, String num){
 		this.contactName = contactName;
-		this.id = id;
+		this.id = num;
 	}
 
 	public int compareTo(Contact anotherContact){
