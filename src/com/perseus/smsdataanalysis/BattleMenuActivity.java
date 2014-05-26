@@ -100,7 +100,7 @@ public class BattleMenuActivity extends Activity {
 								.query(ContactsContract.Data.CONTENT_URI,
 										null,
 										ContactsContract.Data.CONTACT_ID
-												+ " = " + id, null, null);
+												+ " = '" + id +"'", null, null);
 						phones.moveToFirst();
 						String cNumber = phones
 								.getString(phones
