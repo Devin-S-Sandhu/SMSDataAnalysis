@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
@@ -190,11 +191,13 @@ public class AnalysisMenuActivity extends Activity {
 					    TableRow row = (TableRow)LayoutInflater.from(this).inflate(R.layout.attrib_row, null);
 					    ((TextView)row.findViewById(R.id.attrib_name)).setText(c.contactName);
 						ImageView contact_photo = ((ImageView) row.findViewById(R.id.contact_photo));
-						new ContactPhotoHelper(this, contact_photo,
-								c.id).addThumbnail();
+
+						Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
+						if(u != null)
+							contact_photo.setImageURI(u);
+						else
+							contact_photo.setVisibility(View.GONE);
 					    contactTable.addView(row,bottom++);
-					    if(contact_photo.getDrawable() == null)
-					    	contact_photo.setVisibility(View.GONE);
 					}
 				}
 				break;
