@@ -214,7 +214,7 @@ public class AnalysisResultActivity extends Activity {
 				HashMap<String, String> list = (HashMap<String, String>)intent.getSerializableExtra("contacts");
 				contacts.setText("Contacts: "
 						+ (list.isEmpty() ? "Analyzed all contacts"
-								: list.toString()));
+								: list.values().toString()));
 				result.setText(textDump());
 			} else
 				((LinearLayout) v.findViewById(R.id.infoDumpLayout))
