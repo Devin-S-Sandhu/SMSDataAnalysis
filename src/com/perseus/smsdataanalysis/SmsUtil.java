@@ -9,10 +9,12 @@ package com.perseus.smsdataanalysis;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Data;
 import android.util.Log;
 
 public class SmsUtil {
@@ -22,17 +24,26 @@ public class SmsUtil {
 	
 	private static void initalizeContacts(Context context){
 		contactList = new ArrayList<Contact>();
+		HashSet<String> addedSet = new HashSet<String>();
+		
+		StringBuffer selection = new StringBuffer();
+		selection.append(Data.HAS_PHONE_NUMBER).append("=1 AND ");
+		selection.append(Data.MIMETYPE).append("='").append(Phone.CONTENT_ITEM_TYPE).append("'");
 		Cursor cursor = context.getContentResolver()
-				.query(Phone.CONTENT_URI,
-						new String[] { Phone._ID, Phone.DISPLAY_NAME,
-						Phone.NUMBER }, null, null, null);
+				.query( Data.CONTENT_URI,
+						new String[] { Data.RAW_CONTACT_ID, Data.DISPLAY_NAME_PRIMARY, Data.HAS_PHONE_NUMBER, Data.MIMETYPE}, selection.toString(), null, null);
+		
 		cursor.moveToFirst();
 		while (cursor.moveToNext()) {
+			String id = cursor.getString(cursor
+					.getColumnIndex(Data.RAW_CONTACT_ID));
+			if(addedSet.contains(id))
+				continue;
 			Contact contact = new Contact();
 			contact.contactName = cursor.getString(cursor
-					.getColumnIndex(Phone.DISPLAY_NAME));
-			contact.num = cursor.getString(cursor
-					.getColumnIndex(Phone.NUMBER));
+					.getColumnIndex(Data.DISPLAY_NAME_PRIMARY));
+			contact.id = id;
+			addedSet.add(id);
 			contactList.add(contact);
 		}
 		Collections.sort(contactList);
@@ -42,8 +53,8 @@ public class SmsUtil {
 	
 	public static ArrayList<Contact> getSelectedContacts(){
 		ArrayList<Contact> result = new ArrayList<Contact>();
-		for(String number : selectedContact.keySet())
-			result.add(new Contact(selectedContact.get(number), number));
+		for(String id : selectedContact.keySet())
+			result.add(new Contact(selectedContact.get(id), id));
 		Collections.sort(result);
 		return result;
 	}
@@ -62,18 +73,18 @@ public class SmsUtil {
 		
 		for(int i = 0; i < result.size(); i++)
 		{
-			if(selectedContact.containsKey(result.get(i).num))
+			if(selectedContact.containsKey(result.get(i).id))
 				result.remove(i);
 		}
 		return contactList;
 	}
 
-	public static ArrayList<String> getContactsNumbers(Context context) {
+	public static ArrayList<String> getContactsID(Context context) {
 		ArrayList<String> contacts = new ArrayList<String>();
 		ArrayList<Contact> cList = getContacts(context);
 		for(Contact contact : cList)
 		{
-			contacts.add(contact.num);
+			contacts.add(contact.id);
 		}
 		Log.i("contactLength",String.valueOf(contacts.size()));
 		return contacts;

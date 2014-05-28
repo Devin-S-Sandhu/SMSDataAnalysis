@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -89,10 +90,9 @@ public class BattleResultActivity extends Activity {
 		contactOneNumber = intent.getStringExtra("contactOneNumber");
 		contactTwoNumber = intent.getStringExtra("contactTwoNumber");
 
-		String contacts = new StringBuilder().append(contactOneName)
-				.append(" <").append(contactOneNumber).append(">").append(", ")
-				.append(contactTwoName).append(" <").append(contactTwoNumber)
-				.append(">").toString();
+		HashMap<String,String> contacts = new HashMap<String,String>();
+		contacts.put(contactOneNumber, contactOneName);
+		contacts.put(contactTwoNumber, contactTwoName);
 
 		String start = (startDate.getMonth() + 1) + "-" + startDate.getDay()
 				+ "-" + startDate.getYear();
@@ -186,16 +186,18 @@ public class BattleResultActivity extends Activity {
 			ImageView winnerPhoto = ((ImageView) findViewById(R.id.winner_photo));
 			if (contactOneWins > contactTwoWins) {
 				winner = contactOneName + " Wins!";
-				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto,
-						contactOneNumber).addThumbnail();
-				// winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(),
-				// contactOneId, contactOnePhotoId));
+				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactOneNumber);
+				if(u != null)
+					winnerPhoto.setImageURI(u);
+				else
+					winnerPhoto.setVisibility(View.GONE);
 			} else if (contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
-				new ContactPhotoHelper(BattleResultActivity.this, winnerPhoto,
-						contactTwoNumber).addThumbnail();
-				// winnerPhoto.setImageBitmap(loadContactPhoto(getContentResolver(),
-				// contactTwoId, contactTwoPhotoId));
+				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactTwoNumber);
+				if(u != null)
+					winnerPhoto.setImageURI(u);
+				else
+					winnerPhoto.setVisibility(View.GONE);
 			}
 			winnerLabel.setText(winner);
 

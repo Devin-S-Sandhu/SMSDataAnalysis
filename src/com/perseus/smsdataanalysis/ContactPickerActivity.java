@@ -50,15 +50,15 @@ public class ContactPickerActivity extends Activity {
 				contact.toggleChecked();
 				ContactViewHolder viewHolder = (ContactViewHolder) item.getTag();
 				viewHolder.getCheckBox().setChecked( contact.isChecked() );
-				Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getNumber() );
+				Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getID() );
 				if(contact.isChecked())
 				{
 					Log.d(LOG_TAG, "added into selectedContact");
-					SmsUtil.selectedContact.put(contact.number, contact.name);
+					SmsUtil.selectedContact.put(contact.id, contact.name);
 				}
 				else
 				{
-					SmsUtil.selectedContact.remove(contact.number);
+					SmsUtil.selectedContact.remove(contact.id);
 					Log.d(LOG_TAG, "removed from selectedContact");
 				}
 			}
@@ -73,14 +73,14 @@ public class ContactPickerActivity extends Activity {
 			int i = 0;
 			for(Contact c : selected)
 			{
-				contacts[i++] = new ContactCheckbox( c.contactName, c.num, true);
+				contacts[i++] = new ContactCheckbox( c.contactName, c.id, true);
 			}
 			for(Contact c: contactList)
 			{
 
-				if(!SmsUtil.selectedContact.containsKey(c.num))
+				if(!SmsUtil.selectedContact.containsKey(c.id))
 				{
-					contacts[i++] = new ContactCheckbox( c.contactName, c.num);
+					contacts[i++] = new ContactCheckbox( c.contactName, c.id);
 				}
 			}
 		}
@@ -118,15 +118,15 @@ public class ContactPickerActivity extends Activity {
 
 	private static class ContactCheckbox {
 		private String name = "" ;
-		private String number = "";
+		private String id = "";
 		private boolean checked = false ;
-		public ContactCheckbox( String name, String number ) {
+		public ContactCheckbox( String name, String id ) {
 			this.setName(name);
-			this.setNumber(number);
+			this.setID(id);
 		}
-		public ContactCheckbox( String name, String number, boolean checked ) {
+		public ContactCheckbox( String name, String id, boolean checked ) {
 			this.setName(name);
-			this.setNumber(number);
+			this.setID(id);
 			this.setChecked(checked);
 		}
 		public String getName() {
@@ -147,11 +147,11 @@ public class ContactPickerActivity extends Activity {
 		public void toggleChecked() {
 			checked = !checked ;
 		}
-		public String getNumber() {
-			return number;
+		public String getID() {
+			return id;
 		}
-		public void setNumber(String number) {
-			this.number = number;
+		public void setID(String id) {
+			this.id = id;
 		}
 	}
 
@@ -212,15 +212,15 @@ public class ContactPickerActivity extends Activity {
 						CheckBox cb = (CheckBox) v ;
 						ContactCheckbox contact = (ContactCheckbox) cb.getTag();
 						contact.setChecked( cb.isChecked() );
-						Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getNumber() );
+						Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getID() );
 						if(contact.isChecked())
 						{
 							Log.d(LOG_TAG, "added into selectedContact");
-							SmsUtil.selectedContact.put(contact.number, contact.name);
+							SmsUtil.selectedContact.put(contact.id, contact.name);
 						}
 						else
 						{
-							SmsUtil.selectedContact.remove(contact.number);
+							SmsUtil.selectedContact.remove(contact.id);
 							Log.d(LOG_TAG, "removed from selectedContact");
 						}
 					}
@@ -237,7 +237,7 @@ public class ContactPickerActivity extends Activity {
 			checkBox.setTag( contact ); 
 
 			checkBox.setChecked( contact.isChecked() );
-			textView.setText( new StringBuilder().append(contact.getName()).append(" <").append(contact.getNumber()).append(">").toString() );      
+			textView.setText(contact.getName() );      
 
 			return convertView;
 		}

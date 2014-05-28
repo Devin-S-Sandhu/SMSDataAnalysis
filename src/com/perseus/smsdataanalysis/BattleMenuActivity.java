@@ -97,14 +97,14 @@ public class BattleMenuActivity extends Activity {
 
 					if (hasPhone.equalsIgnoreCase("1")) {
 						Cursor phones = getContentResolver()
-								.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+								.query(ContactsContract.Data.CONTENT_URI,
 										null,
-										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
-												+ " = " + id, null, null);
+										ContactsContract.Data.CONTACT_ID
+												+ " = '" + id +"'", null, null);
 						phones.moveToFirst();
 						String cNumber = phones
 								.getString(phones
-										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+										.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
 						Toast.makeText(getApplicationContext(), cNumber,
 								Toast.LENGTH_SHORT).show();
 
