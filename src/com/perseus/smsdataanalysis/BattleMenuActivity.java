@@ -104,7 +104,7 @@ public class BattleMenuActivity extends Activity {
 						phones.moveToFirst();
 						String cNumber = phones
 								.getString(phones
-										.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
+										.getColumnIndex(ContactsContract.Data.CONTACT_ID));
 						Toast.makeText(getApplicationContext(), cNumber,
 								Toast.LENGTH_SHORT).show();
 

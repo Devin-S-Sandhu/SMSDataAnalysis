@@ -15,8 +15,11 @@ import java.util.Set;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.PhoneLookup;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
 public class Analyzer {
@@ -27,6 +30,7 @@ public class Analyzer {
 
 	private HashMap<String, Integer> types;
 	private HashMap<String, String> scopes;
+	private HashMap<String, String> contactNames;
 	private Context context;
 	private boolean includeAllContacts;
 	private final static Long MILLISEC_TO_HOURS = 3600000l;
@@ -125,6 +129,7 @@ public class Analyzer {
 		skip_stop_words = true;
 		analyze_all_sms = false;
 		this.context = context;
+		contactNames = new HashMap<String, String>();
 		types = new HashMap<String, Integer>();
 		scopes = new HashMap<String, String>();
 		String[] analysisTypes = context.getResources().getStringArray(
@@ -220,7 +225,10 @@ public class Analyzer {
 		for(String id : contacts.keySet()){
 			selection.append(CommonDataKinds.Phone.CONTACT_ID).append("='").append(id).append("' OR ");
 		}
-		selection.delete(selection.length()-3, selection.length());
+		if(selection.length() > 4){
+			selection.delete(selection.length()-3, selection.length());
+			includeAllContacts = true;
+		}
 		Cursor cursor = context.getContentResolver().query(
 				CommonDataKinds.Phone.CONTENT_URI,
 				new String[] { CommonDataKinds.Phone.CONTACT_ID, CommonDataKinds.Phone.NUMBER },
@@ -229,14 +237,14 @@ public class Analyzer {
 
 		while (cursor.moveToNext()) 
 		{
-			result.add(cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER)));
+			String number = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER));
+			String name = getNameByPhone(number);
+			result.add(number);
+			contactNames.put(number, name);
+			contactNames.put(number.replace("+", ""), name);
 		} 
 
 		cursor.close();
-		
-		Log.d(LOG_TAG, result.toString());
-		if (result.size() != 0)
-			includeAllContacts = true;
 		return result;
 	}
 
@@ -270,6 +278,25 @@ public class Analyzer {
 				selection.toString(), null, sortOrder);
 	}
 
+
+	// creates a hash of numbers to names
+	private void getContactNames() {
+		// contact names was already populated in parseContacts()
+		if (contactNames.size() != 0)
+			return;
+		Cursor cursor = context.getContentResolver().query(
+				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+				new String[] { Phone.DISPLAY_NAME, Phone.NUMBER }, null, null,
+				Phone.DISPLAY_NAME + " ASC");
+		if (cursor.moveToFirst()) {
+			do {
+				// key = parsed phone number, value = contact name
+				contactNames.put(
+						PhoneNumberUtils.stripSeparators(cursor.getString(1)),
+						cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+	}
 	private String getNameByPhone(String number) {
 		/// number is the phone number
 		Uri lookupUri = Uri.withAppendedPath(
@@ -292,7 +319,7 @@ public class Analyzer {
 	// Also, if contacts list is not makes sure that each contact is in the out
 	// array
 	private ArrayList<Pair<String, Integer>> formatResult(
-			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts, ArrayList<String> contactsList) {
+			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts) {
 		Log.i(LOG_TAG, "formatResult");
 		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
@@ -314,14 +341,13 @@ public class Analyzer {
 		// if given a contact list, check if we haven't added a contact to the
 		// out list and add them with a dummy value
 		if (includeAllContacts && reallyIncludeAllContacts) {
-			for (String contact : contactsList) {
-				String temp =  getNameByPhone(contact);
-				if (!hash.containsKey(temp))
+			for (String contact : contactNames.values()) {
+				if (!hash.containsKey(contact))
 				{
-					if(!tempNameList.contains(temp))
+					if(!tempNameList.contains(contact))
 					{
-						out.add(new Pair<String, Integer>(temp, 0));
-						tempNameList.add(temp);
+						out.add(new Pair<String, Integer>(contact, 0));
+						tempNameList.add(contact);
 					}
 				}
 			}
@@ -365,7 +391,7 @@ public class Analyzer {
 
 		// we graph words not contacts so we don't need to pass contactslist to
 		// 
-		return formatResult(freq, false, contactsList);
+		return formatResult(freq, false);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsFrequency(String scope,
@@ -379,9 +405,22 @@ public class Analyzer {
 		String name;
 		String number;
 		if (cursor.moveToFirst()) {
+			getContactNames();
 			while (!cursor.isAfterLast()) {
-				number = cursor.getString(0);
-				name = getNameByPhone(number);
+				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
+				// if we don't have a name for the number let's try some fuzzy
+				// matching and if that fails the number if their name
+				if (contactNames.containsKey(number))
+					name = contactNames.get(number);
+				else {
+					name = number;
+					for (String s : contactNames.keySet())
+						if (PhoneNumberUtils.compare(s, number)) {
+							name = contactNames.get(s);
+							contactNames.put(number, name);
+							break;
+						}
+				}
 				Log.d(LOG_TAG, "number: " + number);
 				if (freq.containsKey(name))
 					freq.put(name, freq.get(name) + 1);
@@ -392,7 +431,7 @@ public class Analyzer {
 		}
 		Log.d(LOG_TAG, "### " + freq.toString());
 
-		return formatResult(freq, true, contactsList);
+		return formatResult(freq, true);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsLength(String scope,
@@ -406,6 +445,7 @@ public class Analyzer {
 		int messageLength;
 		String number;
 		if (cursor.moveToFirst()) {
+			getContactNames();
 			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
 				number = cursor.getString(1);
@@ -436,12 +476,24 @@ public class Analyzer {
 		HashMap<String, Integer> average = new HashMap<String, Integer>();
 		String name;
 		for (String key : smsLength.keySet()) {
-			name = getNameByPhone(key);
+			if (contactNames.containsKey(key))
+				name = contactNames.get(key);
+			else {
+				name = key;
+				// time for terrible performance to deal with those pesky
+				// country codes
+				for (String s : contactNames.keySet())
+					if (PhoneNumberUtils.compare(s, key)) {
+						name = contactNames.get(s);
+						contactNames.put(key, name);
+						break;
+					}
+			}
 			average.put(name, (Integer) smsLength.get(key).getElement1()
 					/ smsLength.get(key).getElement0());
 		}
 
-		ArrayList<Pair<String, Integer>> result = formatResult(average, true, contactsList);
+		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
 		if (reverse)
 			Collections.reverse(result);
 		return result;
@@ -461,6 +513,7 @@ public class Analyzer {
 		Long curDate;
 
 		if (cursor.moveToFirst()) {
+			getContactNames();
 			oldAddress = cursor.getString(0);
 			oldDate = cursor.getLong(1);
 			cursor.moveToNext();
@@ -509,7 +562,7 @@ public class Analyzer {
 				average.put(name, hours.intValue());
 		}
 
-		ArrayList<Pair<String, Integer>> result = formatResult(average, true, contactsList);
+		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
 		if (reverse){
 			Collections.reverse(result);
 		}
