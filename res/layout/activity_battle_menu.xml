@@ -40,7 +40,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="vs"
-            android:textSize="20sp" />
+            android:textStyle="bold|italic" 
+            android:textSize="30sp" />
     </TableRow>
 
     <TableRow

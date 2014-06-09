@@ -3,12 +3,11 @@ package com.perseus.smsdataanalysis;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -108,6 +107,9 @@ public class BattleMenuActivity extends Activity {
 								.getString(c
 										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 
+						ImageView contact_photo = ((ImageView) findViewById(R.id.contact_one_button));
+						Uri u = null;
+
 						if (pickingContactOne) {
 							contactOne = new StringBuilder()
 									.append(nameContact).append(" <")
@@ -119,23 +121,7 @@ public class BattleMenuActivity extends Activity {
 
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
 							label.setText(nameContact);
-
-							ImageView contact_photo = ((ImageView) findViewById(R.id.contact_one_button));
-
-							Uri u = ContactPhotoHelper.getPhotoUri(this, contactOneNumber);
-							
-							if(u != null){
-								contact_photo.getLayoutParams().height = 300;
-								contact_photo.setImageURI(u);
-							}
-							if(contact_photo.getDrawable() == null){
-								String uri = "@drawable/fighter1";
-								int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
-								contact_photo.setImageResource(imageResource);
-							}
-						    
-							pickingContactOne = false;
-							pickingContactTwo = false;
+							u = ContactPhotoHelper.getPhotoUri(this, contactOneNumber);
 						} else if (pickingContactTwo) {
 							contactTwo = new StringBuilder()
 									.append(nameContact).append(" <")
@@ -147,23 +133,26 @@ public class BattleMenuActivity extends Activity {
 
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
 							label.setText(nameContact);
-							ImageView contact_photo = ((ImageView) findViewById(R.id.contact_two_button));
+							contact_photo = ((ImageView) findViewById(R.id.contact_two_button));
 
-							Uri u = ContactPhotoHelper.getPhotoUri(this, contactTwoNumber);
-							
-							if(u != null){
-								contact_photo.getLayoutParams().height = 300;
-								contact_photo.setImageURI(u);
-							}
-							if(contact_photo.getDrawable() == null){
-								String uri = "@drawable/fighter2";
-								int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
-								contact_photo.setImageResource(imageResource);
-							}
-							
-							pickingContactOne = false;
-							pickingContactTwo = false;
+							u = ContactPhotoHelper.getPhotoUri(this, contactTwoNumber);
 						}
+						
+						if(u != null){
+							contact_photo.getLayoutParams().height = 300;
+							contact_photo.setImageURI(u);
+						}
+						if(contact_photo.getDrawable() == null){
+							String uri = "@drawable/fighter1";
+							if(pickingContactTwo)
+								uri = "@drawable/fighter2";
+							int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+							contact_photo.setImageResource(imageResource);
+						}
+						
+						pickingContactOne = false;
+						pickingContactTwo = false;
+					    
 						
 					}
 				}
