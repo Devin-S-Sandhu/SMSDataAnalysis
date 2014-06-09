@@ -195,7 +195,7 @@ public class AnalysisMenuActivity extends Activity {
 						Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
 						if(u != null)
 							contact_photo.setImageURI(u);
-						else
+						if(contact_photo.getDrawable() == null)
 							contact_photo.setVisibility(View.GONE);
 					    contactTable.addView(row,bottom++);
 					}

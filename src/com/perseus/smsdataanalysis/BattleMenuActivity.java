@@ -3,12 +3,14 @@ package com.perseus.smsdataanalysis;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +38,6 @@ public class BattleMenuActivity extends Activity {
 
 		contactOne = contactTwo = "";
 		contactOneNumber = contactTwoNumber = "";
-
-		TextView label = (TextView) findViewById(R.id.friend_one_label);
-		label.setText("");
-
-		label = (TextView) findViewById(R.id.friend_two_label);
-		label.setText("");
 	}
 
 	public void doBattle(View view) {
@@ -66,10 +62,10 @@ public class BattleMenuActivity extends Activity {
 	}
 
 	public void doLaunchContactPicker(View view) {
-		if (view.getId() == R.id.contact_one_button) {
+		if (view.getId() == R.id.contact_one) {
 			pickingContactOne = true;
 			pickingContactTwo = false;
-		} else if (view.getId() == R.id.contact_two_button) {
+		} else if (view.getId() == R.id.contact_two) {
 			pickingContactOne = false;
 			pickingContactTwo = true;
 		}
@@ -124,6 +120,20 @@ public class BattleMenuActivity extends Activity {
 							TextView label = (TextView) findViewById(R.id.friend_one_label);
 							label.setText(nameContact);
 
+							ImageView contact_photo = ((ImageView) findViewById(R.id.contact_one_button));
+
+							Uri u = ContactPhotoHelper.getPhotoUri(this, contactOneNumber);
+							
+							if(u != null){
+								contact_photo.getLayoutParams().height = 300;
+								contact_photo.setImageURI(u);
+							}
+							if(contact_photo.getDrawable() == null){
+								String uri = "@drawable/fighter1";
+								int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+								contact_photo.setImageResource(imageResource);
+							}
+						    
 							pickingContactOne = false;
 							pickingContactTwo = false;
 						} else if (pickingContactTwo) {
@@ -137,10 +147,24 @@ public class BattleMenuActivity extends Activity {
 
 							TextView label = (TextView) findViewById(R.id.friend_two_label);
 							label.setText(nameContact);
+							ImageView contact_photo = ((ImageView) findViewById(R.id.contact_two_button));
 
+							Uri u = ContactPhotoHelper.getPhotoUri(this, contactTwoNumber);
+							
+							if(u != null){
+								contact_photo.getLayoutParams().height = 300;
+								contact_photo.setImageURI(u);
+							}
+							if(contact_photo.getDrawable() == null){
+								String uri = "@drawable/fighter2";
+								int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+								contact_photo.setImageResource(imageResource);
+							}
+							
 							pickingContactOne = false;
 							pickingContactTwo = false;
 						}
+						
 					}
 				}
 				break;
