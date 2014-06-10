@@ -5,10 +5,10 @@
     android:layout_weight="1" >
 
     <TableRow
+        android:id="@+id/contact_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-            android:id="@+id/contact_one"
         android:onClick="doLaunchContactPicker"
         android:padding="5dip" >
 
@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="blank contact photo 1"
+            android:contentDescription="@string/contact_image_desc"
             android:src="@drawable/fighter1" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Select Player 1"
+            android:text="@string/select_player1_hint"
             android:textSize="20sp" />
     </TableRow>
 
@@ -39,13 +39,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="vs"
-            android:textStyle="bold|italic" 
-            android:textSize="30sp" />
+            android:text="@string/versus"
+            android:textSize="30sp"
+            android:textStyle="bold|italic" />
     </TableRow>
 
     <TableRow
-            android:id="@+id/contact_two"
+        android:id="@+id/contact_two"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Select Player 2"
+            android:text="@string/select_player1_hint"
             android:textSize="20sp" />
 
         <ImageView
@@ -66,7 +66,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="blank contact photo 2"
+            android:contentDescription="@string/contact_image_desc"
             android:src="@drawable/fighter2" />
     </TableRow>
 

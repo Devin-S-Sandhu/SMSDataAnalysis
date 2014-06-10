@@ -7,6 +7,8 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,7 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class ContactPickerActivity extends Activity {
@@ -73,14 +77,16 @@ public class ContactPickerActivity extends Activity {
 			int i = 0;
 			for(Contact c : selected)
 			{
-				contacts[i++] = new ContactCheckbox( c.contactName, c.id, true);
+				Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
+				contacts[i++] = new ContactCheckbox( c.contactName, c.id, u, true);
 			}
 			for(Contact c: contactList)
 			{
 
 				if(!SmsUtil.selectedContact.containsKey(c.id))
 				{
-					contacts[i++] = new ContactCheckbox( c.contactName, c.id);
+					Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
+					contacts[i++] = new ContactCheckbox( c.contactName, c.id, u);
 				}
 			}
 		}
@@ -119,15 +125,18 @@ public class ContactPickerActivity extends Activity {
 	private static class ContactCheckbox {
 		private String name = "" ;
 		private String id = "";
+		private Uri u = null;
 		private boolean checked = false ;
-		public ContactCheckbox( String name, String id ) {
+		public ContactCheckbox( String name, String id, Uri u ) {
 			this.setName(name);
 			this.setID(id);
+			this.setUri(u);
 		}
-		public ContactCheckbox( String name, String id, boolean checked ) {
+		public ContactCheckbox( String name, String id, Uri u, boolean checked ) {
 			this.setName(name);
 			this.setID(id);
 			this.setChecked(checked);
+			this.setUri(u);
 		}
 		public String getName() {
 			return name;
@@ -153,15 +162,23 @@ public class ContactPickerActivity extends Activity {
 		public void setID(String id) {
 			this.id = id;
 		}
+		public Uri getUri() {
+			return u;
+		}
+		public void setUri(Uri u) {
+			this.u = u;
+		}
 	}
 
 	/** Holds child views for one row. */
 	private static class ContactViewHolder {
 		private CheckBox checkBox ;
 		private TextView textView ;
-		public ContactViewHolder( TextView textView, CheckBox checkBox ) {
+		private ImageView imageView ;
+		public ContactViewHolder( TextView textView, CheckBox checkBox, ImageView imageView ) {
 			this.checkBox = checkBox ;
 			this.textView = textView ;
+			this.imageView = imageView ;
 		}
 		public CheckBox getCheckBox() {
 			return checkBox;
@@ -174,6 +191,12 @@ public class ContactPickerActivity extends Activity {
 		}
 		public void setTextView(TextView textView) {
 			this.textView = textView;
+		}
+		public ImageView getImageView() {
+			return imageView;
+		}
+		public void setImageView(ImageView imageView) {
+			this.imageView = imageView;
 		}    
 	}
 
@@ -194,6 +217,7 @@ public class ContactPickerActivity extends Activity {
 			// The child views in each row.
 			CheckBox checkBox ; 
 			TextView textView ; 
+			ImageView contact_photo ;
 
 			// Create a new row view
 			if ( convertView == null ) {
@@ -203,9 +227,11 @@ public class ContactPickerActivity extends Activity {
 				textView = (TextView) convertView.findViewById( R.id.rowTextView );
 				checkBox = (CheckBox) convertView.findViewById( R.id.CheckBox01 );
 
+				contact_photo = ((ImageView) convertView.findViewById(R.id.contact_photo));
+
 				// Optimization: Tag the row with it's child views, so we don't have to 
 				// call findViewById() later when we reuse the row.
-				convertView.setTag( new ContactViewHolder(textView,checkBox) );
+				convertView.setTag( new ContactViewHolder(textView,checkBox,contact_photo) );
 
 				checkBox.setOnClickListener( new View.OnClickListener() {
 					public void onClick(View v) {
@@ -232,13 +258,16 @@ public class ContactPickerActivity extends Activity {
 				ContactViewHolder viewHolder = (ContactViewHolder) convertView.getTag();
 				checkBox = viewHolder.getCheckBox() ;
 				textView = viewHolder.getTextView() ;
+				contact_photo = viewHolder.getImageView();
 			}
 
 			checkBox.setTag( contact ); 
 
 			checkBox.setChecked( contact.isChecked() );
-			textView.setText(contact.getName() );      
+			textView.setText(contact.getName() );
 
+			if(contact.getUri() != null)
+				contact_photo.setImageURI(contact.getUri());
 			return convertView;
 		}
 
