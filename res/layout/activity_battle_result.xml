@@ -130,6 +130,15 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/contact_one_messages_received"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=":"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/contact_two_messages_received"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -192,6 +201,15 @@
                 android:gravity="center"
                 android:padding="1dp"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_one_messages_received"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=":"
+                android:textStyle="bold"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/contact_two_messages_sent"
@@ -258,6 +276,15 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/contact_one_messages_received"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=":"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/contact_two_interval_received"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -320,6 +347,15 @@
                 android:gravity="center"
                 android:padding="1dp"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_one_messages_received"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=":"
+                android:textStyle="bold"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/contact_two_interval_sent"
