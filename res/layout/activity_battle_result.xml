@@ -48,7 +48,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="1dp"
-                android:text="@string/analysis_type_title"
+                android:text="ANALYSIS TYPE"
                 android:textColor="#000000"
                 android:textSize="12sp" />
 

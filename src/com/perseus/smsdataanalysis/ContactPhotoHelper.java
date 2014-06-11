@@ -2,10 +2,8 @@ package com.perseus.smsdataanalysis;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Data;
 import android.util.Log;
 
 public final class ContactPhotoHelper {

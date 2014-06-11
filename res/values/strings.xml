@@ -9,7 +9,7 @@
     <string name="dataAnalysis_text">Data Analysis</string>
     <string name="friendBattle_text">Friend Battle</string>
     <string name="analysis_type_text">Type of Analysis</string>
-    <string name="analysis_type_title">ANALYSIS TYPE</string>
+    <string name="analysis_type_title">Analysis Type</string>
     <string name="scope_text">Scope of Analysis</string>
     <string name="scope_title">Scope</string>
     <string name="analyze_text">Analyze</string>
