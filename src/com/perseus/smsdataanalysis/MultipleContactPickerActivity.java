@@ -119,10 +119,17 @@ public class MultipleContactPickerActivity extends Activity {
 			}
 		});
 	}
+	
 	public void clearSearch(View view)
 	{
 		inputSearch.setText("");
 	}
+
+	public void back(View view)
+	{
+		finish();
+	}
+	
 	private static class ContactCheckbox {
 		private String name = "" ;
 		private String id = "";
