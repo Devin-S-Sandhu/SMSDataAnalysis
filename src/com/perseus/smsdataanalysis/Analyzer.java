@@ -296,7 +296,10 @@ public class Analyzer {
 						cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
+
+		cursor.close();
 	}
+	
 	private String getNameByPhone(String number) {
 		/// number is the phone number
 		Uri lookupUri = Uri.withAppendedPath(
@@ -306,7 +309,9 @@ public class Analyzer {
 		Cursor cur = context.getContentResolver().query(lookupUri,mPhoneNumberProjection, null, null, null);
 		try {
 			if (cur.moveToFirst()) {
-				return cur.getString(cur.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+				String result = cur.getString(cur.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+				cur.close();
+				return result;
 			}
 		} finally {
 			if (cur != null)
@@ -375,8 +380,10 @@ public class Analyzer {
 
 		if (cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
+				String currentBody = cursor.getString(0);
+				Log.d(LOG_TAG, "body: " + currentBody);
 				// Grab all words without punctuation and ignoring case
-				for (String s : cursor.getString(0).split("\\s+")) {
+				for (String s : currentBody.split("\\s+")) {
 					s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
 					if(skip_stop_words && STOP_WORDS.contains(s))
 						continue;
@@ -391,6 +398,8 @@ public class Analyzer {
 
 		// we graph words not contacts so we don't need to pass contactslist to
 		// 
+
+		cursor.close();
 		return formatResult(freq, false);
 	}
 
@@ -430,7 +439,7 @@ public class Analyzer {
 			}
 		}
 		Log.d(LOG_TAG, "### " + freq.toString());
-
+		cursor.close();
 		return formatResult(freq, true);
 	}
 
@@ -496,6 +505,8 @@ public class Analyzer {
 		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
 		if (reverse)
 			Collections.reverse(result);
+
+		cursor.close();
 		return result;
 	}
 
@@ -566,6 +577,8 @@ public class Analyzer {
 		if (reverse){
 			Collections.reverse(result);
 		}
+
+		cursor.close();
 		return result;
 	}
 }
