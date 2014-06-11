@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -100,8 +99,6 @@ public class BattleMenuActivity extends Activity {
 						String cNumber = phones
 								.getString(phones
 										.getColumnIndex(ContactsContract.Data.CONTACT_ID));
-						Toast.makeText(getApplicationContext(), cNumber,
-								Toast.LENGTH_SHORT).show();
 
 						String nameContact = c
 								.getString(c

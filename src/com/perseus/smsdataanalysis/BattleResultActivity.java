@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -189,15 +190,57 @@ public class BattleResultActivity extends Activity {
 				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactOneNumber);
 				if(u != null)
 					winnerPhoto.setImageURI(u);
-				else
-					winnerPhoto.setVisibility(View.GONE);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter1";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+
+				TextView contact_one_wins = ((TextView) findViewById(R.id.contact_one_wins));
+				contact_one_wins.setText("WINNER");
+				contact_one_wins.setBackgroundColor(Color.parseColor("#bababa"));
+				
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+				photo2.setVisibility(View.GONE);
 			} else if (contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
 				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactTwoNumber);
 				if(u != null)
 					winnerPhoto.setImageURI(u);
-				else
-					winnerPhoto.setVisibility(View.GONE);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter2";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+				
+				TextView contact_two_wins = ((TextView) findViewById(R.id.contact_two_wins));
+				contact_two_wins.setText("WINNER");
+				contact_two_wins.setBackgroundColor(Color.parseColor("#bababa"));
+				
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+				photo2.setVisibility(View.GONE);
+			}
+			else{
+				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactOneNumber);
+				if(u != null)
+					winnerPhoto.setImageURI(u);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter1";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+				
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+				
+				Uri u2 = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactTwoNumber);
+				if(u2 != null)
+					photo2.setImageURI(u2);
+				if(photo2.getDrawable() == null){
+					String uri = "@drawable/fighter2";
+					int imageResource = getResources().getIdentifier(uri, null,getApplicationContext().getPackageName());
+					photo2.setImageResource(imageResource);
+				}
+				
 			}
 			winnerLabel.setText(winner);
 
@@ -225,11 +268,6 @@ public class BattleResultActivity extends Activity {
 					.setText("" + dataToDisplay.get(3).get(0) + " hours");
 			((TextView) findViewById(R.id.contact_two_interval_sent))
 					.setText("" + dataToDisplay.get(3).get(1) + " hours");
-
-			((TextView) findViewById(R.id.contact_one_wins)).setText(""
-					+ contactOneWins);
-			((TextView) findViewById(R.id.contact_two_wins)).setText(""
-					+ contactTwoWins);
 
 			mProgressDialog.dismiss();
 		}

@@ -9,7 +9,7 @@
     <string name="dataAnalysis_text">Data Analysis</string>
     <string name="friendBattle_text">Friend Battle</string>
     <string name="analysis_type_text">Type of Analysis</string>
-    <string name="analysis_type_title">Analysis Type</string>
+    <string name="analysis_type_title">ANALYSIS TYPE</string>
     <string name="scope_text">Scope of Analysis</string>
     <string name="scope_title">Scope</string>
     <string name="analyze_text">Analyze</string>
@@ -26,10 +26,10 @@
     <string name="winner_photo_desc">Winner photo</string>
     <string name="contact_one">Contact One</string>
     <string name="contact_two">Contact Two</string>
-    <string name="messages_received_text">Messages Received</string>
-    <string name="messages_sent_text">Messages Sent</string>
-    <string name="interval_received_text">Interval Received</string>
-    <string name="interval_sent_text">Interval Sent</string>
+    <string name="messages_received_text">Messages\n\t\t\t\tReceived</string>
+    <string name="messages_sent_text">Messages\n\t\t\t\tSent</string>
+    <string name="interval_received_text">Interval\n\t\tReceived</string>
+    <string name="interval_sent_text">Interval\n\t\tSent</string>
     <string name="results_text">Results:</string>
     <string name="wins_text">Wins</string>
     <string name="info_dump_text">Show all results</string>

@@ -2,236 +2,377 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical" >
-    
-    <ImageView 
+
+    <TableRow android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+    <ImageView
         android:id="@+id/winner_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginRight="25dp"
+        android:contentDescription="@string/winner_photo_desc" />
+    <ImageView
+        android:id="@+id/photo2"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/winner_photo_desc" />
         
-    <TextView 
+    </TableRow>
+
+    <TextView
         android:id="@+id/winner_label"
-        android:layout_width="match_parent" 
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:gravity="center_horizontal"
-        android:layout_margin="5dp"
         android:textSize="24sp" />
-    
-    <TextView 
-        android:text="@string/results_text"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textSize="20sp" />
-    
-    
-    <TableLayout 
+
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-        
-        	<TableRow 
-        	    android:layout_width="match_parent" 
-        	    android:layout_height="wrap_content" >
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:text="@string/analysis_type_title"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg"
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_one_name"
-        	        android:text="@string/contact_one"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_two_name"
-        	        android:text="@string/contact_two"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	        
-        	</TableRow>
-        	
-        	<TableRow 
-        	    android:layout_width="match_parent" 
-        	    android:layout_height="wrap_content" >
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:text="@string/messages_received_text"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_one_messages_received"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_two_messages_received"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	        
-        	</TableRow>
-        	
-        	<TableRow 
-        	    android:layout_width="match_parent" 
-        	    android:layout_height="wrap_content" >
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:text="@string/messages_sent_text"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_one_messages_sent"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_two_messages_sent"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	        
-        	</TableRow>
-        	
-        	<TableRow 
-        	    android:layout_width="match_parent" 
-        	    android:layout_height="wrap_content" >
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:text="@string/interval_received_text"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_one_interval_received"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_two_interval_received"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	        
-        	</TableRow>
-        	
-        	<TableRow 
-        	    android:layout_width="match_parent" 
-        	    android:layout_height="wrap_content" >
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_light_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:text="@string/interval_sent_text"
-        	        android:layout_width="0dp"
-        	        android:layout_height="wrap_content"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_one_interval_sent"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	    
-        	    <TextView 
-        	        android:background="@drawable/cell_shape_dark_bg" 
-        	        android:padding="1dp"
-        	        android:textSize="12sp"
-        	        android:id="@+id/contact_two_interval_sent"
-        	        android:layout_width="0dp"
-        	        android:layout_height="match_parent"
-        	        android:layout_weight="1" />
-        	        
-        	</TableRow>
-        
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#bababa"
+            android:padding="5dp" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="@string/analysis_type_title"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_one_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#000000"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="@string/contact_one"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_two_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#000000"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="@string/contact_two"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingLeft="10dp"
+                        android:text="Message"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:paddingRight="10dp"
+                        android:background="#bababa"
+                        android:gravity="right"
+                        android:text="Received"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/contact_one_messages_received"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_two_messages_received"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingLeft="10dp"
+                        android:text="Message"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingRight="10dp"
+                        android:gravity="right"
+                        android:text="Sent"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/contact_one_messages_sent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_two_messages_sent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingLeft="10dp"
+                        android:text="Interval"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingRight="10dp"
+                        android:gravity="right"
+                        android:text="Received"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/contact_one_interval_received"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_two_interval_received"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingLeft="10dp"
+                        android:text="Interval"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:background="#bababa"
+                        android:paddingRight="10dp"
+                        android:gravity="right"
+                        android:text="Sent"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/contact_one_interval_sent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/contact_two_interval_sent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="1dp"
+                android:textSize="12sp" />
+        </TableRow>
     </TableLayout>
-    
-    <TableRow 
-    	android:layout_width="match_parent" 
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginTop="5dp" >
-   	    
-   	    <TextView 
-   	        android:background="@drawable/cell_shape_light_bg" 
-   	        android:padding="1dp"
-   	        android:textSize="12sp"
-   	        android:text="@string/wins_text"
-   	        android:layout_width="0dp"
-   	        android:layout_height="wrap_content"
-   	        android:layout_weight="1" />
-   	    
-   	    <TextView 
-   	        android:background="@drawable/cell_shape_dark_bg"
-   	        android:padding="1dp"
-   	        android:textSize="12sp"
-   	        android:id="@+id/contact_one_wins"
-   	        android:layout_width="0dp"
-   	        android:layout_height="wrap_content"
-   	        android:layout_weight="1" />
-   	    
-   	    <TextView 
-   	        android:background="@drawable/cell_shape_dark_bg" 
-   	        android:padding="1dp"
-   	        android:textSize="12sp"
-   	        android:id="@+id/contact_two_wins"
-   	        android:layout_width="0dp"
-   	        android:layout_height="wrap_content"
-   	        android:layout_weight="1" />
-   	        
-   	</TableRow>
-        
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#bababa" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="5dp" >
+        </View>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="1dp"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/contact_one_wins"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="1dp"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/contact_two_wins"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="1dp"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+    </TableRow>
+
 </LinearLayout>
