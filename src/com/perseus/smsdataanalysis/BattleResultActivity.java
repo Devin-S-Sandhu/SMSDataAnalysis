@@ -52,7 +52,6 @@ public class BattleResultActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_battle_result);
-
 		mAnalyzer = new Analyzer(getApplicationContext());
 		Intent intent = getIntent();
 
@@ -66,6 +65,8 @@ public class BattleResultActivity extends Activity {
 
 		analysisTypes = getApplicationContext().getResources().getStringArray(
 				R.array.analaysis_type_arrays);
+
+		this.setTitle(this.getTitle() + " for " + timeSpan);
 
 		endDate = new Date(CURR_YEAR, CURR_MONTH, CURR_DAY);
 		Calendar c = Calendar.getInstance();
