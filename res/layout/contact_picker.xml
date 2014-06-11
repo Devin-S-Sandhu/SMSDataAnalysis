@@ -11,6 +11,7 @@
         android:layout_height="wrap_content" >
 
         <Button
+            android:id="@+id/back"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:onClick="back"
