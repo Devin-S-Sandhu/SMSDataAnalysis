@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class MultipleContactPickerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_picker);
 		Log.i(LOG_TAG, "In ContactPickerActivity");
-		
+
 		somethingHappened = false;
 		// Find the ListView resource. 
 		mainListView = (ListView) findViewById( R.id.list_view );
@@ -122,7 +123,7 @@ public class MultipleContactPickerActivity extends Activity {
 			}
 		});
 	}
-	
+
 	public void clearSearch(View view)
 	{
 		inputSearch.setText("");
@@ -130,9 +131,14 @@ public class MultipleContactPickerActivity extends Activity {
 
 	public void back(View view)
 	{
+		Intent data = new Intent();
+		if(somethingHappened)
+			setResult(RESULT_OK, data);
+		else
+			setResult(RESULT_CANCELED, data);
 		finish();
 	}
-	
+
 	private static class ContactCheckbox {
 		private String name = "" ;
 		private String id = "";
@@ -288,17 +294,22 @@ public class MultipleContactPickerActivity extends Activity {
 	public Object onRetainNonConfigurationInstance() {
 		return contacts ;
 	}
-	
+
 	@Override
-	public void finish() {
-	  // Prepare data intent 
-	  Intent data = new Intent();
-	  // Activity finished ok, return the data
-	  if(somethingHappened)
-		  setResult(RESULT_OK, data);
-	  else
-		  setResult(RESULT_CANCELED, data);
-	  super.finish();
-	} 
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			// Prepare data intent 
+			Intent data = new Intent();
+			// Activity finished ok, return the data
+			if(somethingHappened)
+				setResult(RESULT_OK, data);
+			else
+				setResult(RESULT_CANCELED, data);
+			finish();
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
 
 }
