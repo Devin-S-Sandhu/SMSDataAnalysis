@@ -48,7 +48,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.perseus.smsdataanalysis.ContactPickerActivity"
+            android:name="com.perseus.smsdataanalysis.MultipleContactPickerActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" >

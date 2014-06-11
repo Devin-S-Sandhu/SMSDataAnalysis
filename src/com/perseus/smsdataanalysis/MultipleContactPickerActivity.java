@@ -23,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ContactPickerActivity extends Activity {
+public class MultipleContactPickerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 	private final static String LOG_TAG = "ContactPickerActivity";
 
@@ -103,7 +103,7 @@ public class ContactPickerActivity extends Activity {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 				// When user changed the Text
-				ContactPickerActivity.this.listAdapter.getFilter().filter(cs);   
+				MultipleContactPickerActivity.this.listAdapter.getFilter().filter(cs);   
 			}
 
 			@Override
@@ -119,7 +119,10 @@ public class ContactPickerActivity extends Activity {
 			}
 		});
 	}
-
+	public void clearSearch(View view)
+	{
+		inputSearch.setText("");
+	}
 	private static class ContactCheckbox {
 		private String name = "" ;
 		private String id = "";

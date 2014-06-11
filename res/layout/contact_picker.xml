@@ -3,18 +3,35 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-     
+
     <!-- Editext for Search -->
-    <EditText android:id="@+id/inputSearch"
+
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search contacts.."
-        android:inputType="textVisiblePassword"/>
-  
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/inputSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Search contacts.."
+            android:inputType="textVisiblePassword"
+            android:layout_weight="8" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="clearSearch"
+            android:clickable="true"
+            android:text="X"
+            android:gravity="center"
+            android:layout_weight="1" />
+    </TableRow>
     <!-- List View -->
+
     <ListView
         android:id="@+id/list_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
-  
+
 </LinearLayout>

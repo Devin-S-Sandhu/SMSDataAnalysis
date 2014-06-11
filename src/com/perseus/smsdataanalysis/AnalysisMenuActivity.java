@@ -347,7 +347,7 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	public void doLaunchContactPicker(View view) {
-		Intent intent = new Intent(AnalysisMenuActivity.this, ContactPickerActivity.class);
+		Intent intent = new Intent(AnalysisMenuActivity.this, MultipleContactPickerActivity.class);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
