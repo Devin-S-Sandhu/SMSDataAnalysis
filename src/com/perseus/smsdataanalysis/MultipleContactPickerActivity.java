@@ -29,6 +29,7 @@ public class MultipleContactPickerActivity extends Activity {
 
 
 	private ListView mainListView ;
+	private static boolean somethingHappened;
 	private ContactCheckbox[] contacts ;
 	private ArrayAdapter<ContactCheckbox> listAdapter ;
 	EditText inputSearch;
@@ -39,7 +40,8 @@ public class MultipleContactPickerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_picker);
 		Log.i(LOG_TAG, "In ContactPickerActivity");
-
+		
+		somethingHappened = false;
 		// Find the ListView resource. 
 		mainListView = (ListView) findViewById( R.id.list_view );
 		inputSearch = (EditText) findViewById(R.id.inputSearch);
@@ -63,6 +65,7 @@ public class MultipleContactPickerActivity extends Activity {
 					SmsUtil.selectedContact.remove(contact.id);
 					Log.d(LOG_TAG, "removed from selectedContact");
 				}
+				somethingHappened = true;
 			}
 		});
 
@@ -257,6 +260,7 @@ public class MultipleContactPickerActivity extends Activity {
 							SmsUtil.selectedContact.remove(contact.id);
 							Log.d(LOG_TAG, "removed from selectedContact");
 						}
+						somethingHappened = true;
 					}
 				});        
 			}
@@ -290,7 +294,10 @@ public class MultipleContactPickerActivity extends Activity {
 	  // Prepare data intent 
 	  Intent data = new Intent();
 	  // Activity finished ok, return the data
-	  setResult(RESULT_OK, data);
+	  if(somethingHappened)
+		  setResult(RESULT_OK, data);
+	  else
+		  setResult(RESULT_CANCELED, data);
 	  super.finish();
 	} 
 
