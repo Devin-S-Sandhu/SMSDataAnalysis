@@ -24,6 +24,7 @@ public class Analyzer {
 	private static final Set<String> STOP_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
 	private boolean skip_stop_words;
 	private boolean analyze_all_sms;
+	private boolean analyze_all_contact;
 
 	private HashMap<String, Integer> types;
 	private HashMap<String, String> scopes;
@@ -121,6 +122,7 @@ public class Analyzer {
 	public Analyzer(Context context) {
 		skip_stop_words = true;
 		analyze_all_sms = false;
+		analyze_all_contact = false;
 		this.context = context;
 		allContact = SmsUtil.getContacts(context);
 		types = new HashMap<String, Integer>();
@@ -149,36 +151,41 @@ public class Analyzer {
 	// Parsing the query and calling the correct method
 	public ArrayList<Pair<String, Integer>> doQuery(Query query) {
 		ArrayList<Pair<String, Integer>> result = new ArrayList<Pair<String, Integer>>();
-		ArrayList<String> contactsList = parseContacts(query.getContacts());
+		Set<String> idList = query.getContacts().keySet();
+		if(idList.size() == 0)
+		{
+			idList = allContact.keySet();
+			analyze_all_contact = true;
+		}
 		Pair<Long, Long> range = parseDates(query.getStartDate(),
 				query.getEndDate());
 		switch (types.get(query.getAnalysisType())) {
 		case 0:
 			result = wordFrequency(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList);
+					range.getElement0(), range.getElement1(), idList);
 			break;
 		case 1:
 			result = smsFrequency(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList);
+					range.getElement0(), range.getElement1(), idList);
 			break;
 		case 2:
 			result = smsLength(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList,
+					range.getElement0(), range.getElement1(), idList,
 					false);
 			break;
 		case 3:
 			result = smsLength(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList,
+					range.getElement0(), range.getElement1(), idList,
 					true);
 			break;
 		case 4:
 			result = smsInterval(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList,
+					range.getElement0(), range.getElement1(), idList,
 					false);
 			break;
 		case 5:
 			result = smsInterval(scopes.get(query.getScope()),
-					range.getElement0(), range.getElement1(), contactsList,
+					range.getElement0(), range.getElement1(), idList,
 					true);
 			break;
 		}
@@ -296,7 +303,7 @@ public class Analyzer {
 	}
 
 	private ArrayList<Pair<String, Integer>> wordFrequency(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList) {
+			Long startDate, Long endDate, Set<String> idList) {
 		Cursor cursor = getCursor(scope, new String[] { "address", "body" }, startDate,
 				endDate, null);
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
@@ -305,7 +312,7 @@ public class Analyzer {
 			while (!cursor.isAfterLast()) {
 				String id = cursor.getString(0);
 				id = SmsUtil.getIDByPhone(context, id);
-				if(id == null || !contactsList.contains(id))
+				if(!analyze_all_sms && (id == null || !idList.contains(id)))
 				{
 					cursor.moveToNext();
 					continue;
@@ -332,7 +339,7 @@ public class Analyzer {
 	}
 
 	private ArrayList<Pair<String, Integer>> smsFrequency(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList) {
+			Long startDate, Long endDate, Set<String> idList) {
 		Cursor cursor = getCursor(scope, new String[] {"address" }, startDate,
 				endDate, null);
 		Log.d(LOG_TAG, "smsfreqcount: " + cursor.getCount());
@@ -346,7 +353,7 @@ public class Analyzer {
 				Log.d(LOG_TAG, "person: " + id);
 				id = SmsUtil.getIDByPhone(context, id);
 				Log.d(LOG_TAG, "person: " + id);
-				if(id == null || !contactsList.contains(id))
+				if(id == null || !idList.contains(id))
 				{
 					cursor.moveToNext();
 					continue;
@@ -364,7 +371,7 @@ public class Analyzer {
 		return formatResult(freq, true);
 	}
 	private ArrayList<Pair<String, Integer>> smsLength(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList,
+			Long startDate, Long endDate, Set<String> idList,
 			boolean reverse) {
 		Cursor cursor = getCursor(scope, new String[] { "body", "person" },
 				startDate, endDate, null);
@@ -416,7 +423,7 @@ public class Analyzer {
 	}
 
 	private ArrayList<Pair<String, Integer>> smsInterval(String scope,
-			Long startDate, Long endDate, ArrayList<String> contactsList,
+			Long startDate, Long endDate, Set<String> idList,
 			boolean reverse) {
 		Cursor cursor = getCursor(scope, new String[] { "person", "date" },
 				startDate, endDate, "person,date DESC");

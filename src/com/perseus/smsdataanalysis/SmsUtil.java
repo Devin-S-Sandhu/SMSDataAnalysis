@@ -7,8 +7,8 @@ import java.util.HashMap;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.PhoneLookup;
+import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 
 public class SmsUtil {
@@ -20,17 +20,17 @@ public class SmsUtil {
 		contactList = new HashMap<String, String>();
 
 		StringBuffer selection = new StringBuffer();
-		selection.append(Data.HAS_PHONE_NUMBER).append("=1");
+		selection.append(Contacts.HAS_PHONE_NUMBER).append("=1");
 		Cursor cursor = context.getContentResolver()
-				.query( Data.CONTENT_URI,
-						new String[] {Data.CONTACT_ID, Data.DISPLAY_NAME_PRIMARY, Data.HAS_PHONE_NUMBER}, selection.toString(), null, null);
+				.query( Contacts.CONTENT_URI,
+						new String[] { Contacts._ID, Contacts.DISPLAY_NAME_PRIMARY, Contacts.HAS_PHONE_NUMBER}, selection.toString(), null, null);
 
 		cursor.moveToFirst();
 		while (cursor.moveToNext()) {
 			String id = cursor.getString(cursor
-					.getColumnIndex(Data.CONTACT_ID));
+					.getColumnIndex(Contacts._ID));
 			String name = cursor.getString(cursor
-					.getColumnIndex(Data.DISPLAY_NAME_PRIMARY));
+					.getColumnIndex(Contacts.DISPLAY_NAME_PRIMARY));
 			if(contactList.containsKey(id))
 			{
 				Log.d("SmsUtil.initalizeContact", "contain contact: " + name + ", " + id);
