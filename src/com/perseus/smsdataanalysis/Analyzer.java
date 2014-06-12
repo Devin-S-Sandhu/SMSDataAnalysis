@@ -209,17 +209,9 @@ public class Analyzer {
 			Long endDate, String sortOrder) {
 		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
 				+ " AND " + endDate);
-		Uri u;
-		if(scope.equalsIgnoreCase("inbox"))
-			u = Telephony.Sms.Inbox.CONTENT_URI;
-		else if(scope.equalsIgnoreCase("sent"))
-			u = Telephony.Sms.Sent.CONTENT_URI;
-		else
-			u = Telephony.Sms.CONTENT_URI;	
-		Cursor result = context.getContentResolver().query(
-				u, projection,
+		return context.getContentResolver().query(
+				Uri.parse("content://sms/" + scope), projection,
 				selection.toString(), null, sortOrder);
-		return result;
 	}
 
 	// Creates an arraylist of pairs to return and be graphed
