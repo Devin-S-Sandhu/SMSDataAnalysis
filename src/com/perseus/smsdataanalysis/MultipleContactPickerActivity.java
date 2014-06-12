@@ -73,8 +73,8 @@ public class MultipleContactPickerActivity extends Activity {
 
 		contacts = (ContactCheckbox[]) getLastNonConfigurationInstance() ;
 		if ( contacts == null ) {
-			ArrayList<Contact> contactList = SmsUtil.getContacts(getBaseContext());
-			ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
+			ArrayList<Contact> contactList = SmsUtil.getContactsArray(getBaseContext());
+			ArrayList<Contact> selected = SmsUtil.getSelectedContactsArray();
 			contacts = new ContactCheckbox[contactList.size()];
 			int i = 0;
 			for(Contact c : selected)

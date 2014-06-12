@@ -7,12 +7,8 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 public final class ContactPhotoHelper {
-	public static Uri getPhotoUri(Context context, String rawid) {
-		if(rawid == null)
-			return null;
-		if(context == null)
-			return null;
-		String id = SmsUtil.contactIDlookup.get(rawid);
+	public static Uri getPhotoUri(Context context, String id) {
+		if(context == null) return null;
 		if(id == null) return null;
 		Log.d("ContactPhotoHelper", "getting photo for :" + id);
 	    Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
