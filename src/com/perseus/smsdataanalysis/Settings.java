@@ -53,15 +53,6 @@ public class Settings extends PreferenceActivity {
 	            return true;
 	        }
 	    }); 
-	    final CheckBoxPreference analyzeAllPref = (CheckBoxPreference) findPreference("analyze_all");
-	    analyzeAllPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
-	        public boolean onPreferenceChange(Preference preference, Object newValue) {
-	        	SharedPreferences.Editor ed = prefs.edit();
-				ed.putBoolean("analyze_all", (Boolean)newValue);
-				ed.commit();       
-	            return true;
-	        }
-	    }); 
 	    final CheckBoxPreference advancedDatePref = (CheckBoxPreference) findPreference("advancedDatePicker");
 	    advancedDatePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {            
 	        public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -80,7 +71,6 @@ public class Settings extends PreferenceActivity {
 	                		numResultsPref.setValue("10");
 	                		stopwordsPref.setChecked(true);
 	                		dumpPref.setChecked(false);
-	                		analyzeAllPref.setChecked(false);
 	                		advancedDatePref.setChecked(false);
 	                        return true;
 	                    }

@@ -99,7 +99,6 @@ public class AnalysisResultActivity extends Activity {
 		
 		mAnalyzer = new Analyzer(getApplicationContext());
 		mAnalyzer.enableStopwords(mPrefs.getBoolean("stopwords", true));
-		mAnalyzer.enableAnalyzeAll(mPrefs.getBoolean("analyze_all", false));
 		intent = getIntent();
 		Analyzer.Query query = mAnalyzer.new Query(
 				intent.getStringExtra("type"), intent.getStringExtra("scope"),

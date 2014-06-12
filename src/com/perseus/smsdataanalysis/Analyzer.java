@@ -15,7 +15,6 @@ import java.util.Set;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.util.Log;
 
@@ -23,8 +22,6 @@ public class Analyzer {
 	private static final String[] SET_VALUES = new String[] {"a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because","been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our","ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up","very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves", "", "@", "#","$" ,"\\", "/", "%", "^","&","*","(",")"};
 	private static final Set<String> STOP_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
 	private boolean skip_stop_words;
-	private boolean analyze_all_sms;
-	private boolean analyze_all_contact;
 
 	private HashMap<String, Integer> types;
 	private HashMap<String, String> scopes;
@@ -121,8 +118,6 @@ public class Analyzer {
 
 	public Analyzer(Context context) {
 		skip_stop_words = true;
-		analyze_all_sms = false;
-		analyze_all_contact = false;
 		this.context = context;
 		allContact = SmsUtil.getContacts(context);
 		types = new HashMap<String, Integer>();
@@ -144,10 +139,6 @@ public class Analyzer {
 		skip_stop_words = enable;
 	}
 
-	public void enableAnalyzeAll(Boolean enable){
-		analyze_all_sms = enable;
-	}
-
 	// Parsing the query and calling the correct method
 	public ArrayList<Pair<String, Integer>> doQuery(Query query) {
 		ArrayList<Pair<String, Integer>> result = new ArrayList<Pair<String, Integer>>();
@@ -155,7 +146,6 @@ public class Analyzer {
 		if(idList.size() == 0)
 		{
 			idList = allContact.keySet();
-			analyze_all_contact = true;
 		}
 		Pair<Long, Long> range = parseDates(query.getStartDate(),
 				query.getEndDate());
@@ -214,25 +204,6 @@ public class Analyzer {
 		return new Pair<Long, Long>(start, end);
 	}
 
-	// parses contact strings of the following form
-	// NAME <111-111-1111>, NAME <111-111-1111>, etc.
-	private ArrayList<String> parseContacts(HashMap<String, String> contacts) {
-		ArrayList<String> contactsList = new ArrayList<String>();
-		for(String id : contacts.keySet())
-		{
-			contactsList.add(id);
-		}
-		Log.d(LOG_TAG, contactsList.toString());
-		if (contactsList.size() == 0)
-		{
-			for(String id : allContact.keySet())
-			{
-				contactsList.add(id);
-			}
-		}
-		return contactsList;
-	}
-
 	// returns a cursor filled with the relevant texts
 	private Cursor getCursor(String scope, String[] projection, Long startDate,
 			Long endDate, String sortOrder) {
@@ -258,36 +229,21 @@ public class Analyzer {
 			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts) {
 		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
-		HashSet<String> tempNameList = new HashSet<String>();
-
 		for (Entry<String, Integer> e : hash.entrySet())
 		{
-			if(tempNameList.contains(e.getKey()))
-			{
-				Pair<String, Integer> duplication = out.get(out.indexOf(e.getKey()));
-				duplication.setElement1(duplication.getElement1()+e.getValue());
-			}
-			else
-			{
-				out.add(new Pair<String, Integer>(e.getKey(), e.getValue()));
-				tempNameList.add(e.getKey());
-			}
+			out.add(new Pair<String, Integer>(e.getKey(), e.getValue()));
 		}
 		
 		// if given a contact list, check if we haven't added a contact to the
 		// out list and add them with a dummy value
-//		if (includeAllContacts && reallyIncludeAllContacts) {
-//			for (String contact : contactNames.values()) {
-//				if (!hash.containsKey(contact))
-//				{
-//					if(!tempNameList.contains(contact))
-//					{
-//						out.add(new Pair<String, Integer>(contact, 0));
-//						tempNameList.add(contact);
-//					}
-//				}
-//			}
-//		}
+		if (reallyIncludeAllContacts && SmsUtil.selectedContact.size() > hash.size()) {
+			for(String id : SmsUtil.selectedContact.keySet())
+			{
+				if(!hash.containsKey(id)){
+					out.add(new Pair<String, Integer>(SmsUtil.selectedContact.get(id), 0));
+				}
+			}
+		}
 
 		Collections.sort(out, new Comparator<Pair<String, Integer>>() {
 
@@ -312,7 +268,7 @@ public class Analyzer {
 			while (!cursor.isAfterLast()) {
 				String id = cursor.getString(0);
 				id = SmsUtil.getIDByPhone(context, id);
-				if(!analyze_all_sms && (id == null || !idList.contains(id)))
+				if(id == null || !idList.contains(id))
 				{
 					cursor.moveToNext();
 					continue;
@@ -350,7 +306,6 @@ public class Analyzer {
 		if (cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
 				id = cursor.getString(0);
-				Log.d(LOG_TAG, "person: " + id);
 				id = SmsUtil.getIDByPhone(context, id);
 				Log.d(LOG_TAG, "person: " + id);
 				if(id == null || !idList.contains(id))
@@ -370,36 +325,37 @@ public class Analyzer {
 		cursor.close();
 		return formatResult(freq, true);
 	}
+	
 	private ArrayList<Pair<String, Integer>> smsLength(String scope,
 			Long startDate, Long endDate, Set<String> idList,
 			boolean reverse) {
-		Cursor cursor = getCursor(scope, new String[] { "body", "person" },
+		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
 				startDate, endDate, null);
 
 		HashMap<String, Pair<Integer, Integer>> smsLength = new HashMap<String, Pair<Integer, Integer>>();
 		int messageLength;
-		String person;
+		String id;
 		if (cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
-				person = cursor.getString(1);
-				Log.d(LOG_TAG, messageLength +" "+person);
-				if(person == null || messageLength < 1)
+				id = cursor.getString(1);
+				id = SmsUtil.getIDByPhone(context, id);
+				Log.d(LOG_TAG, "id: " + id);
+				if(id == null || !idList.contains(id))
 				{
-					Log.e(LOG_TAG, "Null D:");
-					//added by Po-Chen to ignore the data with null
 					cursor.moveToNext();
 					continue;
 				}
+				Log.d(LOG_TAG, messageLength +" "+id);
 
 				// key is person, value is a pair
 				// pairs are freq, total length
-				if (smsLength.containsKey(person)) {
-					Pair<Integer, Integer> pair = smsLength.get(person);
+				if (smsLength.containsKey(id)) {
+					Pair<Integer, Integer> pair = smsLength.get(id);
 					pair.setElement0(pair.getElement0() + 1);
 					pair.setElement1(pair.getElement1() + messageLength);
 				} else
-					smsLength.put(person, new Pair<Integer, Integer>(1,
+					smsLength.put(id, new Pair<Integer, Integer>(1,
 							messageLength));
 				cursor.moveToNext();
 			}
@@ -425,46 +381,57 @@ public class Analyzer {
 	private ArrayList<Pair<String, Integer>> smsInterval(String scope,
 			Long startDate, Long endDate, Set<String> idList,
 			boolean reverse) {
-		Cursor cursor = getCursor(scope, new String[] { "person", "date" },
-				startDate, endDate, "person,date DESC");
+		Cursor cursor = getCursor(scope, new String[] { "address", "date" },
+				startDate, endDate, "address,date DESC");
 
 		HashMap<String, Pair<Long, Integer>> smsInterval = new HashMap<String, Pair<Long, Integer>>();
-		String oldAddress;
-		String curAddress;
+		String oldID;
+		String curID;
 		Long oldDate;
 		Long curDate;
 
 		if (cursor.moveToFirst()) {
-			oldAddress = cursor.getString(0);
+			
+			oldID = cursor.getString(0);
+			oldID = SmsUtil.getIDByPhone(context, oldID);
+			Log.d(LOG_TAG, "id: " + oldID);
+			
+			while((oldID == null || !idList.contains(oldID)) && !cursor.isAfterLast())
+			{
+				cursor.moveToNext();
+				oldID = cursor.getString(0);
+				oldID = SmsUtil.getIDByPhone(context, oldID);
+			}
+			
 			oldDate = cursor.getLong(1);
 			cursor.moveToNext();
 			while (!cursor.isAfterLast()) {
 				Log.d(LOG_TAG, cursor.getString(0) +" "+cursor.getLong(1));
-				curAddress = cursor.getString(0);
+				curID = cursor.getString(0);
 				curDate = cursor.getLong(1);
-				if(curAddress == null)
+				curID = SmsUtil.getIDByPhone(context, curID);
+				Log.d(LOG_TAG, "id: " + curID);
+				if(curID == null || !idList.contains(curID))
 				{
-					Log.e(LOG_TAG, "Null D:");
-					//added by Po-Chen to ignore the data with null
 					cursor.moveToNext();
 					continue;
 				}
 				// if we're still looking at messages to and from the same
 				// person then update the smsInterval
-				if (curAddress.equals(oldAddress)) {
-					if (smsInterval.containsKey(curAddress)) {
-						Pair<Long, Integer> pair = smsInterval.get(curAddress);
+				if (curID.equals(oldID)) {
+					if (smsInterval.containsKey(curID)) {
+						Pair<Long, Integer> pair = smsInterval.get(curID);
 						pair.setElement0(pair.getElement0()
 								+ Math.abs(oldDate - curDate));
 						pair.setElement1(pair.getElement1() + 1);
 					} else {
-						smsInterval.put(curAddress, new Pair<Long, Integer>(
+						smsInterval.put(curID, new Pair<Long, Integer>(
 								Math.abs(oldDate - curDate), 1));
 					}
 
 				}
 
-				oldAddress = curAddress;
+				oldID = curID;
 				oldDate = curDate;
 				cursor.moveToNext();
 			}

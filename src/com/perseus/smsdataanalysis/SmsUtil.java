@@ -14,6 +14,7 @@ import android.util.Log;
 public class SmsUtil {
 
 	public static HashMap<String, String> selectedContact = new HashMap<String, String>();
+	private static HashMap<String, String> idPhoneLookup = new HashMap<String, String>();
 	private static HashMap<String, String> contactList;
 
 	private static void initalizeContacts(Context context){
@@ -44,7 +45,8 @@ public class SmsUtil {
 	}
 
 	public static String getIDByPhone(Context context, String number) {
-		/// number is the phone number
+		if(idPhoneLookup.containsKey(number))
+			return idPhoneLookup.get(number);
 		Uri lookupUri = Uri.withAppendedPath(
 				PhoneLookup.CONTENT_FILTER_URI, 
 				Uri.encode(number));
@@ -54,6 +56,7 @@ public class SmsUtil {
 			if (cur.moveToFirst()) {
 				String result = cur.getString(cur.getColumnIndex(PhoneLookup._ID));
 				cur.close();
+				idPhoneLookup.put(number, result);
 				return result;
 			}
 		} finally {
