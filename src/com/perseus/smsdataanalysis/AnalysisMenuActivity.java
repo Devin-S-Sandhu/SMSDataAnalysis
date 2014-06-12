@@ -166,7 +166,7 @@ public class AnalysisMenuActivity extends Activity {
 				    contactTable.addView(row,contactTable.getChildCount()-1);
 				}
 				else{
-					ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
+					ArrayList<Contact> selected = SmsUtil.getSelectedContactsArray();
 					
 					int bottom = contactTable.getChildCount();
 					{

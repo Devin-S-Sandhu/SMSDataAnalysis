@@ -24,11 +24,6 @@
         android:key="stopwords"
         android:summary="Exclude common words from the analysis result"
         android:title="Stop words" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="analyze_all"
-        android:summary="including those that are not on the contact list"
-        android:title="Analyze all SMS" />
     <Preference android:title="Restore to default settings"
                 android:key="reset"/>
 </PreferenceScreen>
