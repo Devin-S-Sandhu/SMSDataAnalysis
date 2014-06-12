@@ -16,10 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.provider.ContactsContract.PhoneLookup;
-import android.telephony.PhoneNumberUtils;
+import android.provider.Telephony;
 import android.util.Log;
 
 public class Analyzer {
@@ -45,7 +42,6 @@ public class Analyzer {
 
 		public Query(String analysisType, String scope, String startDate,
 				String endDate, HashMap<String, String> contacts) {
-			Log.i(LOG_TAG, "Query contructor");
 			this.analysisType = analysisType;
 			this.setScope(scope);
 			this.startDate = startDate;
@@ -124,7 +120,6 @@ public class Analyzer {
 	}
 
 	public Analyzer(Context context) {
-		Log.i(LOG_TAG, "Analyzer constructor");
 		includeAllContacts = false;
 		skip_stop_words = true;
 		analyze_all_sms = false;
@@ -155,7 +150,6 @@ public class Analyzer {
 
 	// Parsing the query and calling the correct method
 	public ArrayList<Pair<String, Integer>> doQuery(Query query) {
-		Log.i(LOG_TAG, "doQuery");
 		ArrayList<Pair<String, Integer>> result = new ArrayList<Pair<String, Integer>>();
 		ArrayList<String> contactsList = parseContacts(query.getContacts());
 		Pair<Long, Long> range = parseDates(query.getStartDate(),
@@ -196,7 +190,7 @@ public class Analyzer {
 
 	// parses dates of the format MM-DD-YYYY into longs for use in analyses
 	private Pair<Long, Long> parseDates(String startDate, String endDate) {
-		Log.i(LOG_TAG, "parseDates");
+
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss",
 				Locale.US);
 		long start;
@@ -218,66 +212,20 @@ public class Analyzer {
 	// parses contact strings of the following form
 	// NAME <111-111-1111>, NAME <111-111-1111>, etc.
 	private ArrayList<String> parseContacts(HashMap<String, String> contacts) {
-		Log.i(LOG_TAG, "parseContacts");
-		
-		ArrayList<String> result = new ArrayList<String>();
-		StringBuilder selection = new StringBuilder();
-		for(String id : contacts.keySet()){
-			selection.append(CommonDataKinds.Phone.CONTACT_ID).append("='").append(id).append("' OR ");
-		}
-		if(selection.length() > 4){
-			selection.delete(selection.length()-3, selection.length());
-			includeAllContacts = true;
-		}
-		Cursor cursor = context.getContentResolver().query(
-				CommonDataKinds.Phone.CONTENT_URI,
-				new String[] { CommonDataKinds.Phone.CONTACT_ID, CommonDataKinds.Phone.NUMBER },
-				selection.toString(), 
-				null, null);
-
-		while (cursor.moveToNext()) 
+		ArrayList<String> contactsList = new ArrayList<String>();
+		String name;
+		for(String id : contacts.keySet())
 		{
-			String number = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER));
-			String name = getNameByPhone(number);
-			result.add(number);
-			contactNames.put(number, name);
-			contactNames.put(number.replace("+", ""), name);
-		} 
-
-		cursor.close();
-		return result;
-	}
-
-	// returns a cursor filled with the relevant texts
-	private Cursor getCursor(String scope, String[] projection, Long startDate,
-			Long endDate, ArrayList<String> contactsList, String sortOrder) {
-		Log.i(LOG_TAG, "getCursor");
-		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
-				+ " AND " + endDate);
-		if (contactsList.size() == 0 && !analyze_all_sms) {
-			contactsList = SmsUtil.getContactsID(context);
+			name = contacts.get(id);
+			contactsList.add(id);
+			contactNames.put(id, name);
 		}
-		if(contactsList.size() != 0) {
-			selection.append(" AND (address");
-			boolean first = true;
-			for (String numbers : contactsList) {
-				if (!first)
-					selection.append(" OR address");
-				// handles country code issues, but makes the matching a lot
-				// fuzzier which may have unintended consequences
-				selection.append("='");
-				Log.d(LOG_TAG, numbers);
-				selection.append(numbers);
-				selection.append("'");
-				first = false;
-			}
-			selection.append(")");
-		}
-		return context.getContentResolver().query(
-				Uri.parse("content://sms/" + scope), projection,
-				selection.toString(), null, sortOrder);
+		Log.d(LOG_TAG, contactsList.toString());
+		Log.d(LOG_TAG, contactNames.toString());
+		if (contactsList.size() != 0)
+			includeAllContacts = true;
+		return contactsList;
 	}
-
 
 	// creates a hash of numbers to names
 	private void getContactNames() {
@@ -285,39 +233,57 @@ public class Analyzer {
 		if (contactNames.size() != 0)
 			return;
 		Cursor cursor = context.getContentResolver().query(
-				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-				new String[] { Phone.DISPLAY_NAME, Phone.NUMBER }, null, null,
-				Phone.DISPLAY_NAME + " ASC");
+				ContactsContract.RawContacts.CONTENT_URI,
+				new String[] { ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY, ContactsContract.RawContacts._ID }, null, null,
+				ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY + " ASC");
 		if (cursor.moveToFirst()) {
 			do {
-				// key = parsed phone number, value = contact name
+				// key = id, value = contact name
 				contactNames.put(
-						PhoneNumberUtils.stripSeparators(cursor.getString(1)),
+						cursor.getString(1),
 						cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
-
-		cursor.close();
 	}
-	
-	private String getNameByPhone(String number) {
-		/// number is the phone number
-		Uri lookupUri = Uri.withAppendedPath(
-				PhoneLookup.CONTENT_FILTER_URI, 
-				Uri.encode(number));
-		String[] mPhoneNumberProjection = {PhoneLookup.NUMBER, PhoneLookup.DISPLAY_NAME };
-		Cursor cur = context.getContentResolver().query(lookupUri,mPhoneNumberProjection, null, null, null);
-		try {
-			if (cur.moveToFirst()) {
-				String result = cur.getString(cur.getColumnIndex(PhoneLookup.DISPLAY_NAME));
-				cur.close();
-				return result;
+
+	// returns a cursor filled with the relevant texts
+	private Cursor getCursor(String scope, String[] projection, Long startDate,
+			Long endDate, ArrayList<String> contactsList, String sortOrder) {
+		StringBuilder selection = new StringBuilder("date BETWEEN " + startDate
+				+ " AND " + endDate);
+		if(contactsList != null)
+		{
+			if (contactsList.size() == 0 && !analyze_all_sms) {
+				contactsList = SmsUtil.getContactsID(context);
 			}
-		} finally {
-			if (cur != null)
-				cur.close();
+			if(contactsList.size() != 0) {
+				selection.append(" AND (person");
+				boolean first = true;
+				for (String contact : contactsList) {
+					if (!first)
+						selection.append(" OR person");
+					// handles country code issues, but makes the matching a lot
+					// fuzzier which may have unintended consequences
+					selection.append("='");
+					Log.d(LOG_TAG, contact);
+					selection.append(contact);
+					selection.append("'");
+					first = false;
+				}
+				selection.append(")");
+			}
 		}
-		return null;
+		Uri u;
+		if(scope.equalsIgnoreCase("inbox"))
+			u = Telephony.Sms.Inbox.CONTENT_URI;
+		else if(scope.equalsIgnoreCase("sent"))
+			u = Telephony.Sms.Sent.CONTENT_URI;
+		else
+			u = Telephony.Sms.CONTENT_URI;	
+		Cursor result = context.getContentResolver().query(
+				u, projection,
+				selection.toString(), null, sortOrder);
+		return result;
 	}
 
 	// Creates an arraylist of pairs to return and be graphed
@@ -325,7 +291,6 @@ public class Analyzer {
 	// array
 	private ArrayList<Pair<String, Integer>> formatResult(
 			HashMap<String, Integer> hash, boolean reallyIncludeAllContacts) {
-		Log.i(LOG_TAG, "formatResult");
 		ArrayList<Pair<String, Integer>> out = new ArrayList<Pair<String, Integer>>();
 
 		HashSet<String> tempNameList = new HashSet<String>();
@@ -373,17 +338,14 @@ public class Analyzer {
 
 	private ArrayList<Pair<String, Integer>> wordFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		Log.i(LOG_TAG, "wordFrequency");
 		Cursor cursor = getCursor(scope, new String[] { "body" }, startDate,
 				endDate, contactsList, null);
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 
 		if (cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
-				String currentBody = cursor.getString(0);
-				Log.d(LOG_TAG, "body: " + currentBody);
 				// Grab all words without punctuation and ignoring case
-				for (String s : currentBody.split("\\s+")) {
+				for (String s : cursor.getString(0).split("\\s+")) {
 					s = s.toLowerCase(Locale.US).replaceAll("\\.|!|\\?|,", "");
 					if(skip_stop_words && STOP_WORDS.contains(s))
 						continue;
@@ -398,39 +360,33 @@ public class Analyzer {
 
 		// we graph words not contacts so we don't need to pass contactslist to
 		// 
-
-		cursor.close();
 		return formatResult(freq, false);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsFrequency(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList) {
-		Log.i(LOG_TAG, "smsFrequency");
-		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
+		if(scope == "sent")
+		{
+			return smsFrequencySent(scope, startDate, endDate, contactsList);
+		}
+		Cursor cursor = getCursor(scope, new String[] { "person" }, startDate,
 				endDate, contactsList, null);
 		Log.d(LOG_TAG, "smsfreqcount: " + cursor.getCount());
 
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		String name;
-		String number;
+		String id;
 		if (cursor.moveToFirst()) {
 			getContactNames();
 			while (!cursor.isAfterLast()) {
-				number = PhoneNumberUtils.stripSeparators(cursor.getString(0));
-				// if we don't have a name for the number let's try some fuzzy
-				// matching and if that fails the number if their name
-				if (contactNames.containsKey(number))
-					name = contactNames.get(number);
-				else {
-					name = number;
-					for (String s : contactNames.keySet())
-						if (PhoneNumberUtils.compare(s, number)) {
-							name = contactNames.get(s);
-							contactNames.put(number, name);
-							break;
-						}
+				id = cursor.getString(0);
+				if(id == null)
+				{
+					cursor.moveToNext();
+					continue;
 				}
-				Log.d(LOG_TAG, "number: " + number);
+				name = contactNames.get(id);
+				Log.d(LOG_TAG, "person: " + id);
 				if (freq.containsKey(name))
 					freq.put(name, freq.get(name) + 1);
 				else
@@ -439,27 +395,60 @@ public class Analyzer {
 			}
 		}
 		Log.d(LOG_TAG, "### " + freq.toString());
-		cursor.close();
+
+		return formatResult(freq, true);
+	}
+
+	private ArrayList<Pair<String, Integer>> smsFrequencySent(String scope,
+			Long startDate, Long endDate, ArrayList<String> contactsList) {
+		Cursor cursor = getCursor(scope, new String[] { "address" }, startDate,
+				endDate, null, null);
+		Log.d(LOG_TAG, "smsfreqcount: " + cursor.getCount());
+		contactsList = SmsUtil.getContactsID(context);
+		HashMap<String, Integer> freq = new HashMap<String, Integer>();
+		String name;
+		String id;
+		if (cursor.moveToFirst()) {
+			getContactNames();
+			while (!cursor.isAfterLast()) {
+				id = cursor.getString(0);
+				Log.d(LOG_TAG, "person: " + id);
+				id = SmsUtil.getIDByPhone(context, id);
+				Log.d(LOG_TAG, "person: " + id);
+				if(id == null || !contactsList.contains(id))
+				{
+					cursor.moveToNext();
+					continue;
+				}
+				name = contactNames.get(id);
+				if (freq.containsKey(name))
+					freq.put(name, freq.get(name) + 1);
+				else
+					freq.put(name, 1);
+				cursor.moveToNext();
+			}
+		}
+		Log.d(LOG_TAG, "### " + freq.toString());
+
 		return formatResult(freq, true);
 	}
 
 	private ArrayList<Pair<String, Integer>> smsLength(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList,
 			boolean reverse) {
-		Log.i(LOG_TAG, "smsLength");
-		Cursor cursor = getCursor(scope, new String[] { "body", "address" },
+		Cursor cursor = getCursor(scope, new String[] { "body", "person" },
 				startDate, endDate, contactsList, null);
 
 		HashMap<String, Pair<Integer, Integer>> smsLength = new HashMap<String, Pair<Integer, Integer>>();
 		int messageLength;
-		String number;
+		String person;
 		if (cursor.moveToFirst()) {
 			getContactNames();
 			while (!cursor.isAfterLast()) {
 				messageLength = cursor.getString(0).length();
-				number = cursor.getString(1);
-				Log.d(LOG_TAG, messageLength +" "+number);
-				if(number == null || messageLength < 1)
+				person = cursor.getString(1);
+				Log.d(LOG_TAG, messageLength +" "+person);
+				if(person == null || messageLength < 1)
 				{
 					Log.e(LOG_TAG, "Null D:");
 					//added by Po-Chen to ignore the data with null
@@ -469,12 +458,12 @@ public class Analyzer {
 
 				// key is person, value is a pair
 				// pairs are freq, total length
-				if (smsLength.containsKey(number)) {
-					Pair<Integer, Integer> pair = smsLength.get(number);
+				if (smsLength.containsKey(person)) {
+					Pair<Integer, Integer> pair = smsLength.get(person);
 					pair.setElement0(pair.getElement0() + 1);
 					pair.setElement1(pair.getElement1() + messageLength);
 				} else
-					smsLength.put(number, new Pair<Integer, Integer>(1,
+					smsLength.put(person, new Pair<Integer, Integer>(1,
 							messageLength));
 				cursor.moveToNext();
 			}
@@ -485,19 +474,7 @@ public class Analyzer {
 		HashMap<String, Integer> average = new HashMap<String, Integer>();
 		String name;
 		for (String key : smsLength.keySet()) {
-			if (contactNames.containsKey(key))
-				name = contactNames.get(key);
-			else {
-				name = key;
-				// time for terrible performance to deal with those pesky
-				// country codes
-				for (String s : contactNames.keySet())
-					if (PhoneNumberUtils.compare(s, key)) {
-						name = contactNames.get(s);
-						contactNames.put(key, name);
-						break;
-					}
-			}
+			name = contactNames.get(key);
 			average.put(name, (Integer) smsLength.get(key).getElement1()
 					/ smsLength.get(key).getElement0());
 		}
@@ -505,17 +482,14 @@ public class Analyzer {
 		ArrayList<Pair<String, Integer>> result = formatResult(average, true);
 		if (reverse)
 			Collections.reverse(result);
-
-		cursor.close();
 		return result;
 	}
 
 	private ArrayList<Pair<String, Integer>> smsInterval(String scope,
 			Long startDate, Long endDate, ArrayList<String> contactsList,
 			boolean reverse) {
-		Log.i(LOG_TAG, "smsInterval");
-		Cursor cursor = getCursor(scope, new String[] { "address", "date" },
-				startDate, endDate, contactsList, "address, date DESC");
+		Cursor cursor = getCursor(scope, new String[] { "person", "date" },
+				startDate, endDate, contactsList, "person,date DESC");
 
 		HashMap<String, Pair<Long, Integer>> smsInterval = new HashMap<String, Pair<Long, Integer>>();
 		String oldAddress;
@@ -564,7 +538,7 @@ public class Analyzer {
 		String name;
 		Long hours;
 		for (String key : smsInterval.keySet()) {
-			name = getNameByPhone(key);
+			name = contactNames.get(key);
 			hours = (smsInterval.get(key).getElement0() / smsInterval.get(key).getElement1()) / MILLISEC_TO_HOURS;
 			Log.d(LOG_TAG, name);
 			Log.d(LOG_TAG,""+hours);
@@ -577,8 +551,6 @@ public class Analyzer {
 		if (reverse){
 			Collections.reverse(result);
 		}
-
-		cursor.close();
 		return result;
 	}
 }
