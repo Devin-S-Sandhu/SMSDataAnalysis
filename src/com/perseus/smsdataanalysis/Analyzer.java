@@ -15,7 +15,6 @@ import java.util.Set;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.Telephony;
 import android.util.Log;
 
 public class Analyzer {
