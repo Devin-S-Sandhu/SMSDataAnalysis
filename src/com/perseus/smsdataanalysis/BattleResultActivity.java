@@ -1,6 +1,5 @@
 package com.perseus.smsdataanalysis;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,16 +7,11 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,7 +45,6 @@ public class BattleResultActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_battle_result);
-
 		mAnalyzer = new Analyzer(getApplicationContext());
 		Intent intent = getIntent();
 
@@ -65,6 +58,8 @@ public class BattleResultActivity extends Activity {
 
 		analysisTypes = getApplicationContext().getResources().getStringArray(
 				R.array.analaysis_type_arrays);
+
+		this.setTitle(this.getTitle() + " for " + timeSpan);
 
 		endDate = new Date(CURR_YEAR, CURR_MONTH, CURR_DAY);
 		Calendar c = Calendar.getInstance();
@@ -120,8 +115,8 @@ public class BattleResultActivity extends Activity {
 	}
 
 	private class BattleTask
-			extends
-			AsyncTask<Analyzer.Query, Void, ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>> {
+	extends
+	AsyncTask<Analyzer.Query, Void, ArrayList<ArrayList<Analyzer.Pair<String, Integer>>>> {
 		ProgressDialog mProgressDialog;
 
 		@Override
@@ -154,16 +149,103 @@ public class BattleResultActivity extends Activity {
 			int contactOneWins = 0, contactTwoWins = 0;
 			ArrayList<ArrayList<Integer>> dataToDisplay = new ArrayList<ArrayList<Integer>>();
 
-			for (ArrayList<Analyzer.Pair<String, Integer>> queryResult : result) {
-				if (queryResult.size() < 2) {
-					mProgressDialog.dismiss();
-					return;
-				}
 
-				ArrayList<Integer> row = new ArrayList<Integer>();
+			//message received
+			ArrayList<Analyzer.Pair<String, Integer>> queryResult = result.get(0);
+			if(queryResult.size()<2){
+				mProgressDialog.dismiss();
+				return;
+			}
 
-				String winnerName = queryResult.get(0).getElement0().trim();
+			ArrayList<Integer> row = new ArrayList<Integer>();
 
+			String winnerName = queryResult.get(0).getElement0().trim();
+			int oneMsgReceiveCount = 0, twoMsgReceiveCount = 0;
+
+			if (queryResult.get(0).getElement1() == queryResult.get(1)
+					.getElement1()) {
+				row.add(queryResult.get(0).getElement1());
+				row.add(queryResult.get(1).getElement1());
+				oneMsgReceiveCount = queryResult.get(0).getElement1();
+				twoMsgReceiveCount = queryResult.get(0).getElement1();
+			} else if (winnerName.equals(contactOneName)) {
+				contactOneWins++;
+				row.add(queryResult.get(0).getElement1());
+				row.add(queryResult.get(1).getElement1());
+				oneMsgReceiveCount = queryResult.get(0).getElement1();
+				twoMsgReceiveCount = queryResult.get(1).getElement1();
+			} else if (winnerName.equals(contactTwoName)) {
+				contactTwoWins++;
+				row.add(queryResult.get(1).getElement1());
+				row.add(queryResult.get(0).getElement1());
+				oneMsgReceiveCount = queryResult.get(1).getElement1();
+				twoMsgReceiveCount = queryResult.get(0).getElement1();
+			}
+
+			dataToDisplay.add(row);
+
+			//message sent
+			queryResult = result.get(1);
+			if(queryResult.size()<2){
+				mProgressDialog.dismiss();
+				return;
+			}
+
+			row = new ArrayList<Integer>();
+
+			winnerName = queryResult.get(0).getElement0().trim();
+			int oneMsgSentCount = 0, twoMsgSentCount = 0;
+
+			if (queryResult.get(0).getElement1() == queryResult.get(1)
+					.getElement1()) {
+				row.add(queryResult.get(0).getElement1());
+				row.add(queryResult.get(1).getElement1());
+				oneMsgSentCount = queryResult.get(0).getElement1();
+				twoMsgSentCount = queryResult.get(0).getElement1();
+			} else if (winnerName.equals(contactOneName)) {
+				contactOneWins++;
+				row.add(queryResult.get(0).getElement1());
+				row.add(queryResult.get(1).getElement1());
+				oneMsgSentCount = queryResult.get(0).getElement1();
+				twoMsgSentCount = queryResult.get(1).getElement1();
+			} else if (winnerName.equals(contactTwoName)) {
+				contactTwoWins++;
+				row.add(queryResult.get(1).getElement1());
+				row.add(queryResult.get(0).getElement1());
+				oneMsgSentCount = queryResult.get(1).getElement1();
+				twoMsgSentCount = queryResult.get(0).getElement1();
+			}
+
+			dataToDisplay.add(row);
+
+			//interval received
+			queryResult = result.get(2);
+			if(queryResult.size()<2){
+				mProgressDialog.dismiss();
+				return;
+			}
+
+			row = new ArrayList<Integer>();
+
+			winnerName = queryResult.get(0).getElement0().trim();
+
+
+			if(oneMsgReceiveCount == 0 && twoMsgReceiveCount > 0)
+			{
+				row.add(Integer.MAX_VALUE);
+				row.add(queryResult.get(0).getElement1());
+			}
+			else if(oneMsgReceiveCount > 0 && twoMsgReceiveCount == 0)
+			{
+				row.add(queryResult.get(0).getElement1());
+				row.add(Integer.MAX_VALUE);
+			}
+			else if(oneMsgReceiveCount == 0 && twoMsgReceiveCount == 0)
+			{
+				row.add(Integer.MAX_VALUE);
+				row.add(Integer.MAX_VALUE);
+			}
+			else{
 				if (queryResult.get(0).getElement1() == queryResult.get(1)
 						.getElement1()) {
 					row.add(queryResult.get(0).getElement1());
@@ -177,9 +259,50 @@ public class BattleResultActivity extends Activity {
 					row.add(queryResult.get(1).getElement1());
 					row.add(queryResult.get(0).getElement1());
 				}
-
-				dataToDisplay.add(row);
 			}
+
+			dataToDisplay.add(row);
+			//interval sent
+			queryResult = result.get(3);
+			if(queryResult.size()<2){
+				mProgressDialog.dismiss();
+				return;
+			}
+
+			row = new ArrayList<Integer>();
+
+			winnerName = queryResult.get(0).getElement0().trim();
+			if(oneMsgSentCount == 0 && twoMsgSentCount > 0)
+			{
+				row.add(Integer.MAX_VALUE);
+				row.add(queryResult.get(0).getElement1());
+			}
+			else if(oneMsgSentCount > 0 && twoMsgSentCount == 0)
+			{
+				row.add(queryResult.get(0).getElement1());
+				row.add(Integer.MAX_VALUE);
+			}
+			else if(oneMsgSentCount == 0 && twoMsgSentCount == 0)
+			{
+				row.add(Integer.MAX_VALUE);
+				row.add(Integer.MAX_VALUE);
+			}
+			else{
+				if (queryResult.get(0).getElement1() == queryResult.get(1)
+						.getElement1()) {
+					row.add(queryResult.get(0).getElement1());
+					row.add(queryResult.get(1).getElement1());
+				} else if (winnerName.equals(contactOneName)) {
+					contactOneWins++;
+					row.add(queryResult.get(0).getElement1());
+					row.add(queryResult.get(1).getElement1());
+				} else if (winnerName.equals(contactTwoName)) {
+					contactTwoWins++;
+					row.add(queryResult.get(1).getElement1());
+					row.add(queryResult.get(0).getElement1());
+				}
+			}
+			dataToDisplay.add(row);
 
 			TextView winnerLabel = ((TextView) findViewById(R.id.winner_label));
 			String winner = "It's a tie!";
@@ -189,95 +312,101 @@ public class BattleResultActivity extends Activity {
 				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactOneNumber);
 				if(u != null)
 					winnerPhoto.setImageURI(u);
-				else
-					winnerPhoto.setVisibility(View.GONE);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter1";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+
+				TextView contact_one_wins = ((TextView) findViewById(R.id.contact_one_wins));
+				contact_one_wins.setText("WINNER");
+				contact_one_wins.setBackgroundColor(Color.parseColor("#bababa"));
+
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+				photo2.setVisibility(View.GONE);
 			} else if (contactTwoWins > contactOneWins) {
 				winner = contactTwoName + " Wins!";
 				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactTwoNumber);
 				if(u != null)
 					winnerPhoto.setImageURI(u);
-				else
-					winnerPhoto.setVisibility(View.GONE);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter2";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+
+				TextView contact_two_wins = ((TextView) findViewById(R.id.contact_two_wins));
+				contact_two_wins.setText("WINNER");
+				contact_two_wins.setBackgroundColor(Color.parseColor("#bababa"));
+
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+				photo2.setVisibility(View.GONE);
+			}
+			else{
+				Uri u = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactOneNumber);
+				if(u != null)
+					winnerPhoto.setImageURI(u);
+				if(winnerPhoto.getDrawable() == null){
+					String uri = "@drawable/fighter1";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					winnerPhoto.setImageResource(imageResource);
+				}
+
+				ImageView photo2 = (ImageView) findViewById(R.id.photo2);
+
+				Uri u2 = ContactPhotoHelper.getPhotoUri(BattleResultActivity.this, contactTwoNumber);
+				if(u2 != null)
+					photo2.setImageURI(u2);
+				if(photo2.getDrawable() == null){
+					String uri = "@drawable/fighter2";
+					int imageResource = getResources().getIdentifier(uri, null,getApplicationContext().getPackageName());
+					photo2.setImageResource(imageResource);
+				}
+
 			}
 			winnerLabel.setText(winner);
 
 			((TextView) findViewById(R.id.contact_one_name))
-					.setText(contactOneName);
+			.setText(contactOneName);
 			((TextView) findViewById(R.id.contact_two_name))
-					.setText(contactTwoName);
+			.setText(contactTwoName);
 
 			((TextView) findViewById(R.id.contact_one_messages_received))
-					.setText("" + dataToDisplay.get(0).get(0));
+			.setText("" + dataToDisplay.get(0).get(0));
 			((TextView) findViewById(R.id.contact_two_messages_received))
-					.setText("" + dataToDisplay.get(0).get(1));
+			.setText("" + dataToDisplay.get(0).get(1));
 
 			((TextView) findViewById(R.id.contact_one_messages_sent))
-					.setText("" + dataToDisplay.get(1).get(0));
+			.setText("" + dataToDisplay.get(1).get(0));
 			((TextView) findViewById(R.id.contact_two_messages_sent))
-					.setText("" + dataToDisplay.get(1).get(1));
+			.setText("" + dataToDisplay.get(1).get(1));
 
-			((TextView) findViewById(R.id.contact_one_interval_received))
-					.setText("" + dataToDisplay.get(2).get(0) + " hours");
-			((TextView) findViewById(R.id.contact_two_interval_received))
-					.setText("" + dataToDisplay.get(2).get(1) + " hours");
+			if(dataToDisplay.get(2).get(0) == Integer.MAX_VALUE)
+				((TextView) findViewById(R.id.contact_one_interval_received)).setText("N/A");
+			else	
+				((TextView) findViewById(R.id.contact_one_interval_received))
+				.setText("" + dataToDisplay.get(2).get(0) + " hours");
+			if(dataToDisplay.get(2).get(1) == Integer.MAX_VALUE)
+				((TextView) findViewById(R.id.contact_two_interval_received)).setText("N/A");
+			else
+				((TextView) findViewById(R.id.contact_two_interval_received))
+				.setText("" + dataToDisplay.get(2).get(1) + " hours");
 
-			((TextView) findViewById(R.id.contact_one_interval_sent))
-					.setText("" + dataToDisplay.get(3).get(0) + " hours");
-			((TextView) findViewById(R.id.contact_two_interval_sent))
-					.setText("" + dataToDisplay.get(3).get(1) + " hours");
-
-			((TextView) findViewById(R.id.contact_one_wins)).setText(""
-					+ contactOneWins);
-			((TextView) findViewById(R.id.contact_two_wins)).setText(""
-					+ contactTwoWins);
+			if(dataToDisplay.get(3).get(0) == Integer.MAX_VALUE)
+				((TextView) findViewById(R.id.contact_one_interval_sent)).setText("N/A");
+			else
+				((TextView) findViewById(R.id.contact_one_interval_sent))
+				.setText("" + dataToDisplay.get(3).get(0) + " hours");
+			if(dataToDisplay.get(3).get(1) == Integer.MAX_VALUE)
+				((TextView) findViewById(R.id.contact_two_interval_sent))
+				.setText("N/A");
+			else
+				((TextView) findViewById(R.id.contact_two_interval_sent))
+				.setText("" + dataToDisplay.get(3).get(1) + " hours");
 
 			mProgressDialog.dismiss();
 		}
 
-	}
-
-	public static Bitmap loadContactPhoto(ContentResolver cr, long id,
-			long photo_id) {
-
-		Uri uri = ContentUris.withAppendedId(
-				ContactsContract.Contacts.CONTENT_URI, id);
-		InputStream input = ContactsContract.Contacts
-				.openContactPhotoInputStream(cr, uri);
-		if (input != null) {
-			return BitmapFactory.decodeStream(input);
-		} else {
-			Log.d("PHOTO", "first try failed to load photo");
-
-		}
-
-		byte[] photoBytes = null;
-
-		Uri photoUri = ContentUris.withAppendedId(
-				ContactsContract.Data.CONTENT_URI, photo_id);
-
-		Cursor c = cr.query(photoUri,
-				new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO },
-				null, null, null);
-
-		try {
-			if (c.moveToFirst())
-				photoBytes = c.getBlob(0);
-
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-
-		} finally {
-
-			c.close();
-		}
-
-		if (photoBytes != null)
-			return BitmapFactory.decodeByteArray(photoBytes, 0,
-					photoBytes.length);
-		else
-			Log.d("PHOTO", "second try also failed");
-		return null;
 	}
 
 }

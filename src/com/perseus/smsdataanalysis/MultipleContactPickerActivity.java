@@ -24,12 +24,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ContactPickerActivity extends Activity {
+public class MultipleContactPickerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 	private final static String LOG_TAG = "ContactPickerActivity";
 
 
 	private ListView mainListView ;
+	private static boolean somethingHappened;
 	private ContactCheckbox[] contacts ;
 	private ArrayAdapter<ContactCheckbox> listAdapter ;
 	EditText inputSearch;
@@ -41,25 +42,31 @@ public class ContactPickerActivity extends Activity {
 		setContentView(R.layout.contact_picker);
 		Log.i(LOG_TAG, "In ContactPickerActivity");
 
+		somethingHappened = false;
 		// Find the ListView resource. 
 		mainListView = (ListView) findViewById( R.id.list_view );
 		inputSearch = (EditText) findViewById(R.id.inputSearch);
-		findViewById(R.id.back).setVisibility(View.GONE);
 
 		mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick( AdapterView<?> parent, View item, 
 					int position, long id) {
 				ContactCheckbox contact = listAdapter.getItem( position );
+				contact.toggleChecked();
+				ContactViewHolder viewHolder = (ContactViewHolder) item.getTag();
+				viewHolder.getCheckBox().setChecked( contact.isChecked() );
 				Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getID() );
-
-				SmsUtil.selectedContact.put(contact.id, contact.name);
-				
-				Intent data = new Intent();
-				data.putExtra("name", contact.getName());
-				data.putExtra("ID", contact.getID());
-				setResult(RESULT_OK, data);
-				finish();
+				if(contact.isChecked())
+				{
+					Log.d(LOG_TAG, "added into selectedContact");
+					SmsUtil.selectedContact.put(contact.id, contact.name);
+				}
+				else
+				{
+					SmsUtil.selectedContact.remove(contact.id);
+					Log.d(LOG_TAG, "removed from selectedContact");
+				}
+				somethingHappened = true;
 			}
 		});
 
@@ -67,14 +74,22 @@ public class ContactPickerActivity extends Activity {
 		contacts = (ContactCheckbox[]) getLastNonConfigurationInstance() ;
 		if ( contacts == null ) {
 			ArrayList<Contact> contactList = SmsUtil.getContacts(getBaseContext());
-			contacts = new ContactCheckbox[contactList.size()-SmsUtil.selectedContact.size()];
+			ArrayList<Contact> selected = SmsUtil.getSelectedContacts();
+			contacts = new ContactCheckbox[contactList.size()];
 			int i = 0;
+			for(Contact c : selected)
+			{
+				Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
+				contacts[i++] = new ContactCheckbox( c.contactName, c.id, u, true);
+			}
 			for(Contact c: contactList)
 			{
-				if(SmsUtil.selectedContact.containsKey(c.id))
-					continue;
-				Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
-				contacts[i++] = new ContactCheckbox( c.contactName, c.id, u);
+
+				if(!SmsUtil.selectedContact.containsKey(c.id))
+				{
+					Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
+					contacts[i++] = new ContactCheckbox( c.contactName, c.id, u);
+				}
 			}
 		}
 		ArrayList<ContactCheckbox> contactList = new ArrayList<ContactCheckbox>();
@@ -92,7 +107,7 @@ public class ContactPickerActivity extends Activity {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 				// When user changed the Text
-				ContactPickerActivity.this.listAdapter.getFilter().filter(cs);   
+				MultipleContactPickerActivity.this.listAdapter.getFilter().filter(cs);   
 			}
 
 			@Override
@@ -108,7 +123,7 @@ public class ContactPickerActivity extends Activity {
 			}
 		});
 	}
-	
+
 	public void clearSearch(View view)
 	{
 		inputSearch.setText("");
@@ -116,17 +131,28 @@ public class ContactPickerActivity extends Activity {
 
 	public void back(View view)
 	{
+		Intent data = new Intent();
+		if(somethingHappened)
+			setResult(RESULT_OK, data);
+		else
+			setResult(RESULT_CANCELED, data);
 		finish();
 	}
-	
+
 	private static class ContactCheckbox {
 		private String name = "" ;
 		private String id = "";
 		private Uri u = null;
-		
+		private boolean checked = false ;
 		public ContactCheckbox( String name, String id, Uri u ) {
 			this.setName(name);
 			this.setID(id);
+			this.setUri(u);
+		}
+		public ContactCheckbox( String name, String id, Uri u, boolean checked ) {
+			this.setName(name);
+			this.setID(id);
+			this.setChecked(checked);
 			this.setUri(u);
 		}
 		public String getName() {
@@ -135,8 +161,17 @@ public class ContactPickerActivity extends Activity {
 		public void setName(String name) {
 			this.name = name;
 		}
+		public boolean isChecked() {
+			return checked;
+		}
+		public void setChecked(boolean checked) {
+			this.checked = checked;
+		}
 		public String toString() {
 			return name ; 
+		}
+		public void toggleChecked() {
+			checked = !checked ;
 		}
 		public String getID() {
 			return id;
@@ -154,11 +189,19 @@ public class ContactPickerActivity extends Activity {
 
 	/** Holds child views for one row. */
 	private static class ContactViewHolder {
+		private CheckBox checkBox ;
 		private TextView textView ;
 		private ImageView imageView ;
-		public ContactViewHolder( TextView textView, ImageView imageView ) {
+		public ContactViewHolder( TextView textView, CheckBox checkBox, ImageView imageView ) {
+			this.checkBox = checkBox ;
 			this.textView = textView ;
 			this.imageView = imageView ;
+		}
+		public CheckBox getCheckBox() {
+			return checkBox;
+		}
+		public void setCheckBox(CheckBox checkBox) {
+			this.checkBox = checkBox;
 		}
 		public TextView getTextView() {
 			return textView;
@@ -189,6 +232,7 @@ public class ContactPickerActivity extends Activity {
 			ContactCheckbox contact = (ContactCheckbox) this.getItem( position ); 
 
 			// The child views in each row.
+			CheckBox checkBox ; 
 			TextView textView ; 
 			ImageView contact_photo ;
 
@@ -198,23 +242,46 @@ public class ContactPickerActivity extends Activity {
 
 				// Find the child views.
 				textView = (TextView) convertView.findViewById( R.id.rowTextView );
-				convertView.findViewById( R.id.CheckBox01 ).setVisibility(View.GONE);
+				checkBox = (CheckBox) convertView.findViewById( R.id.CheckBox01 );
 
 				contact_photo = ((ImageView) convertView.findViewById(R.id.contact_photo));
 
 				// Optimization: Tag the row with it's child views, so we don't have to 
 				// call findViewById() later when we reuse the row.
-				convertView.setTag( new ContactViewHolder(textView,contact_photo) );
+				convertView.setTag( new ContactViewHolder(textView,checkBox,contact_photo) );
+
+				checkBox.setOnClickListener( new View.OnClickListener() {
+					public void onClick(View v) {
+						CheckBox cb = (CheckBox) v ;
+						ContactCheckbox contact = (ContactCheckbox) cb.getTag();
+						contact.setChecked( cb.isChecked() );
+						Log.d(LOG_TAG, "Checkbox toggled: name:" + contact.getName() + " number: " +contact.getID() );
+						if(contact.isChecked())
+						{
+							Log.d(LOG_TAG, "added into selectedContact");
+							SmsUtil.selectedContact.put(contact.id, contact.name);
+						}
+						else
+						{
+							SmsUtil.selectedContact.remove(contact.id);
+							Log.d(LOG_TAG, "removed from selectedContact");
+						}
+						somethingHappened = true;
+					}
+				});        
 			}
 			// Reuse existing row view
 			else {
 				// Because we use a ViewHolder, we avoid having to call findViewById().
 				ContactViewHolder viewHolder = (ContactViewHolder) convertView.getTag();
+				checkBox = viewHolder.getCheckBox() ;
 				textView = viewHolder.getTextView() ;
 				contact_photo = viewHolder.getImageView();
 			}
 
-			textView.setTag( contact ); 
+			checkBox.setTag( contact ); 
+
+			checkBox.setChecked( contact.isChecked() );
 			textView.setText(contact.getName() );
 
 			if(contact.getUri() != null)
@@ -227,6 +294,22 @@ public class ContactPickerActivity extends Activity {
 	public Object onRetainNonConfigurationInstance() {
 		return contacts ;
 	}
-	
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			// Prepare data intent 
+			Intent data = new Intent();
+			// Activity finished ok, return the data
+			if(somethingHappened)
+				setResult(RESULT_OK, data);
+			else
+				setResult(RESULT_CANCELED, data);
+			finish();
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
 
 }

@@ -1,69 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:layout_weight="1" >
 
     <TableRow
+        android:id="@+id/contact_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="doLaunchContactPicker"
         android:padding="5dip" >
 
-        <TextView
+        <ImageView
+            android:id="@+id/contact_one_button"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/select_contact_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
+            android:contentDescription="@string/contact_image_desc"
+            android:src="@drawable/fighter1" />
 
         <TextView
             android:id="@+id/friend_one_label"
-            android:textSize="20sp"
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/contact_one_button"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="doLaunchContactPicker"
-            android:text="@string/contact_one" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/select_player1_hint"
+            android:textSize="20sp" />
     </TableRow>
 
     <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/versus"
+            android:textSize="30sp"
+            android:textStyle="bold|italic" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/contact_two"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="doLaunchContactPicker"
         android:padding="5dip" >
 
         <TextView
             android:id="@+id/friend_two_label"
-            android:textSize="20sp"
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/contact_two_button"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="doLaunchContactPicker"
-            android:text="@string/contact_two" />
-    </TableRow>
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/select_player2_hint"
+            android:textSize="20sp" />
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp" >
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray" />
+        <ImageView
+            android:id="@+id/contact_two_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/contact_image_desc"
+            android:src="@drawable/fighter2" />
     </TableRow>
 
     <TableRow
@@ -79,17 +84,6 @@
             android:text="@string/time_span"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="20sp" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
 
         <Spinner
             android:id="@+id/time_span"
@@ -97,22 +91,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:entries="@array/time_span_array" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp" >
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray" />
     </TableRow>
 
     <TableRow

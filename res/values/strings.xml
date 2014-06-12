@@ -26,13 +26,16 @@
     <string name="winner_photo_desc">Winner photo</string>
     <string name="contact_one">Contact One</string>
     <string name="contact_two">Contact Two</string>
-    <string name="messages_received_text">Messages Received</string>
-    <string name="messages_sent_text">Messages Sent</string>
-    <string name="interval_received_text">Interval Received</string>
-    <string name="interval_sent_text">Interval Sent</string>
+    <string name="messages_received_text">Messages\n\t\t\t\tReceived</string>
+    <string name="messages_sent_text">Messages\n\t\t\t\tSent</string>
+    <string name="interval_received_text">Interval\n\t\tReceived</string>
+    <string name="interval_sent_text">Interval\n\t\tSent</string>
     <string name="results_text">Results:</string>
     <string name="wins_text">Wins</string>
     <string name="info_dump_text">Show all results</string>
     <string name="contact_image_desc">Image of contact</string>
+    <string name="select_player1_hint">Select Player 1</string>
+    <string name="select_player2_hint">Select Player 2</string>
+    <string name="versus">vs</string>
 
 </resources>

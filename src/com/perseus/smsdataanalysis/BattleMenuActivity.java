@@ -1,5 +1,7 @@
 package com.perseus.smsdataanalysis;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -7,8 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +38,7 @@ public class BattleMenuActivity extends Activity {
 
 		contactOne = contactTwo = "";
 		contactOneNumber = contactTwoNumber = "";
-
-		TextView label = (TextView) findViewById(R.id.friend_one_label);
-		label.setText("");
-
-		label = (TextView) findViewById(R.id.friend_two_label);
-		label.setText("");
+		SmsUtil.selectedContact = new HashMap<String, String>();
 	}
 
 	public void doBattle(View view) {
@@ -56,7 +53,7 @@ public class BattleMenuActivity extends Activity {
 			intent.putExtra("contactTwoName", contactTwoName);
 			intent.putExtra("timeSpan",
 					((Spinner) findViewById(R.id.time_span)).getSelectedItem()
-							.toString());
+					.toString());
 
 			startActivity(intent);
 		} else {
@@ -66,16 +63,18 @@ public class BattleMenuActivity extends Activity {
 	}
 
 	public void doLaunchContactPicker(View view) {
-		if (view.getId() == R.id.contact_one_button) {
+		if (view.getId() == R.id.contact_one) {
 			pickingContactOne = true;
 			pickingContactTwo = false;
-		} else if (view.getId() == R.id.contact_two_button) {
+			SmsUtil.selectedContact.remove(contactOneNumber);
+		} else if (view.getId() == R.id.contact_two) {
 			pickingContactOne = false;
 			pickingContactTwo = true;
+			SmsUtil.selectedContact.remove(contactTwoNumber);
 		}
 
-		Intent intent = new Intent(Intent.ACTION_PICK,
-				ContactsContract.Contacts.CONTENT_URI);
+		Intent intent = new Intent(BattleMenuActivity.this,
+				ContactPickerActivity.class);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
@@ -83,71 +82,63 @@ public class BattleMenuActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
-				Uri contactData = data.getData();
-				@SuppressWarnings("deprecation")
-				Cursor c = managedQuery(contactData, null, null, null, null);
-				if (c.moveToFirst()) {
-					String id = c
-							.getString(c
-									.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+				String nameContact = data.getStringExtra("name");
+				String cNumber = data.getStringExtra("ID");
+				
+				ImageView contact_photo = ((ImageView) findViewById(R.id.contact_one_button));
+				Uri u = null;
 
-					String hasPhone = c
-							.getString(c
-									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+				if (pickingContactOne) {
+					contactOne = new StringBuilder()
+					.append(nameContact).append(" <")
+					.append(cNumber).append(">").append(", ")
+					.toString();
 
-					if (hasPhone.equalsIgnoreCase("1")) {
-						Cursor phones = getContentResolver()
-								.query(ContactsContract.Data.CONTENT_URI,
-										null,
-										ContactsContract.Data.CONTACT_ID
-												+ " = '" + id +"'", null, null);
-						phones.moveToFirst();
-						String cNumber = phones
-								.getString(phones
-										.getColumnIndex(ContactsContract.Data.CONTACT_ID));
-						Toast.makeText(getApplicationContext(), cNumber,
-								Toast.LENGTH_SHORT).show();
+					contactOneNumber = cNumber;
+					contactOneName = nameContact;
 
-						String nameContact = c
-								.getString(c
-										.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
+					TextView label = (TextView) findViewById(R.id.friend_one_label);
+					label.setText(nameContact);
+					u = ContactPhotoHelper.getPhotoUri(this, contactOneNumber);
+				} else if (pickingContactTwo) {
+					contactTwo = new StringBuilder()
+					.append(nameContact).append(" <")
+					.append(cNumber).append(">").append(", ")
+					.toString();
 
-						if (pickingContactOne) {
-							contactOne = new StringBuilder()
-									.append(nameContact).append(" <")
-									.append(cNumber).append(">").append(", ")
-									.toString();
+					contactTwoNumber = cNumber;
+					contactTwoName = nameContact;
 
-							contactOneNumber = cNumber;
-							contactOneName = nameContact;
+					TextView label = (TextView) findViewById(R.id.friend_two_label);
+					label.setText(nameContact);
+					contact_photo = ((ImageView) findViewById(R.id.contact_two_button));
 
-							TextView label = (TextView) findViewById(R.id.friend_one_label);
-							label.setText(nameContact);
-
-							pickingContactOne = false;
-							pickingContactTwo = false;
-						} else if (pickingContactTwo) {
-							contactTwo = new StringBuilder()
-									.append(nameContact).append(" <")
-									.append(cNumber).append(">").append(", ")
-									.toString();
-
-							contactTwoNumber = cNumber;
-							contactTwoName = nameContact;
-
-							TextView label = (TextView) findViewById(R.id.friend_two_label);
-							label.setText(nameContact);
-
-							pickingContactOne = false;
-							pickingContactTwo = false;
-						}
-					}
+					u = ContactPhotoHelper.getPhotoUri(this, contactTwoNumber);
 				}
+
+				if(u != null){
+					contact_photo.getLayoutParams().height = 300;
+					contact_photo.setImageURI(u);
+				}
+				if(contact_photo.getDrawable() == null){
+					String uri = "@drawable/fighter1";
+					if(pickingContactTwo)
+						uri = "@drawable/fighter2";
+					int imageResource = getResources().getIdentifier(uri, null, getApplicationContext().getPackageName());
+					contact_photo.setImageResource(imageResource);
+				}
+
+				pickingContactOne = false;
+				pickingContactTwo = false;
 				break;
 			}
 		} else {
-			// gracefully handle failure
-			Log.w(LOG_TAG, "Warning: activity result not ok");
+			if(pickingContactOne && !contactOneNumber.equals("") && !contactOneName.equals(""))
+				SmsUtil.selectedContact.put(contactOneNumber, contactOneName);
+			else if(pickingContactTwo && !contactTwoNumber.equals("") && !contactTwoName.equals(""))
+				SmsUtil.selectedContact.put(contactTwoNumber, contactTwoName);
+			pickingContactOne = false;
+			pickingContactTwo = false;
 		}
 	}
 

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -195,7 +194,7 @@ public class AnalysisMenuActivity extends Activity {
 						Uri u = ContactPhotoHelper.getPhotoUri(this, c.id);
 						if(u != null)
 							contact_photo.setImageURI(u);
-						else
+						if(contact_photo.getDrawable() == null)
 							contact_photo.setVisibility(View.GONE);
 					    contactTable.addView(row,bottom++);
 					}
@@ -348,7 +347,7 @@ public class AnalysisMenuActivity extends Activity {
 	}
 
 	public void doLaunchContactPicker(View view) {
-		Intent intent = new Intent(AnalysisMenuActivity.this, ContactPickerActivity.class);
+		Intent intent = new Intent(AnalysisMenuActivity.this, MultipleContactPickerActivity.class);
 		startActivityForResult(intent, CONTACT_PICKER_RESULT);
 	}
 
