@@ -387,13 +387,6 @@ public class Analyzer {
 			oldID = SmsUtil.getIDByPhone(context, oldID);
 			Log.d(LOG_TAG, "id: " + oldID);
 			
-			while((oldID == null || !idList.contains(oldID)) && !cursor.isAfterLast())
-			{
-				cursor.moveToNext();
-				oldID = cursor.getString(0);
-				oldID = SmsUtil.getIDByPhone(context, oldID);
-			}
-			
 			oldDate = cursor.getLong(1);
 			cursor.moveToNext();
 			while (!cursor.isAfterLast()) {
