@@ -100,7 +100,7 @@ public class AnalysisMenuActivity extends Activity {
 				AnalysisResultActivity.class);
 		myIntent.putExtra("info_dump", false);
 		myIntent.putExtra("type", "SMS Frequency");
-		myIntent.putExtra("scope", "Sent");
+		myIntent.putExtra("scope", "Received");
 		myIntent.putExtra("start_date", aYearAgo());
 		myIntent.putExtra("end_date", TODAYSTR);
 		myIntent.putExtra("contacts", new HashMap<String, String>());
