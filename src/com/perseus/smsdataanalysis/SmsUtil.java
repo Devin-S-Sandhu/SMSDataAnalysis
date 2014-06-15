@@ -20,6 +20,7 @@ public class SmsUtil {
 	private static HashMap<String, String> contactNameList;
 
 	private static void initalizeContacts(Context context){
+		Log.i("SmsUtil", "initalizing contact list");
 		contactNameList = new HashMap<String, String>();
 
 		StringBuffer selection = new StringBuffer();
@@ -43,19 +44,27 @@ public class SmsUtil {
 		}
 
 		cursor.close();
-		Log.i("contactLength",String.valueOf(contactNameList.size()));
+		Log.d("contactLength",String.valueOf(contactNameList.size()));
 	}
 	
 	private static void initalizePhoneList(Context context){
+		Log.i("SmsUtil", "initalizing phone list");
 		ID_Phone = new HashMap<String,HashSet<String>>();
 		
 		Cursor cursor = context.getContentResolver().query(
 				Uri.parse("content://sms/"), new String[] { "address"},
 				null, null, null);
+		HashSet<String> added = new HashSet<String>();
 		String number, id;
 		if (cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
 				number = cursor.getString(0);
+				if(added.contains(number))
+				{
+					cursor.moveToNext();
+					continue;
+				}
+				added.add(number);
 				id = SmsUtil.getIDByPhone(context, number);
 				if(ID_Phone.containsKey(id)){
 					ID_Phone.get(id).add(number);
@@ -69,6 +78,8 @@ public class SmsUtil {
 			}
 		}
 		cursor.close();
+
+		Log.i("SmsUtil", "Done initalizing phone list");
 	}
 
 	public static String getIDByPhone(Context context, String number) {
