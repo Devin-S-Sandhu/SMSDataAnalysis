@@ -1,33 +1,14 @@
 package com.perseus.smsdataanalysis;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.DatePicker;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class AnalysisMenuActivity extends Activity {
 	private final static String LOG_TAG = "AnalysisMenuActivity_tag";
@@ -107,26 +88,5 @@ public class AnalysisMenuActivity extends Activity {
 
 		AnalysisMenuActivity.this.startActivity(myIntent);
 		
-	}
-	
-	public void analyze(View view) {
-		Intent myIntent = new Intent(AnalysisMenuActivity.this,
-				AnalysisResultActivity.class);
-//		myIntent.putExtra("info_dump", mPrefs.getBoolean("info_dump", false));
-//		myIntent.putExtra("type", analysisType.getSelectedItem().toString());
-//		myIntent.putExtra("scope", scope.getSelectedItem().toString());
-//		myIntent.putExtra("start_date", startDate.getText().toString());
-//		myIntent.putExtra("end_date", endDate.getText().toString());
-//		
-//		myIntent.putExtra("contacts", SmsUtil.selectedContact);
-//		SharedPreferences.Editor ed = mPrefs.edit();
-//		ed.putInt("scope", scope.getSelectedItemPosition());
-//		ed.putInt("analysisType", analysisType.getSelectedItemPosition());
-//		ed.putInt("time_span", time_span.getSelectedItemPosition());
-//		ed.putString("startDate", startDate.getText().toString());
-//		ed.putString("endDate", endDate.getText().toString());
-//		ed.commit();
-
-		AnalysisMenuActivity.this.startActivity(myIntent);
 	}
 }
